@@ -1,1 +1,29 @@
+# dependencies
 node_modules
+.pnp
+.pnp.js
+
+# build output
+.next
+.turbo
+dist
+out
+build
+tsconfig.tsbuildinfo
+
+# env files
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# misc
+.DS_Store
+*.tsbuildinfo
+npm-debug.log*
+
+# vercel
+.vercel
+
+# supabase
+supabase/.temp

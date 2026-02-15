@@ -1,0 +1,8 @@
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/icu_normalizer-089f64a673b7919b.d: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/properties.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/provider.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/uts46.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libicu_normalizer-089f64a673b7919b.rmeta: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/properties.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/provider.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/uts46.rs
+
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/lib.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/properties.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/provider.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_normalizer-2.1.1/src/uts46.rs:

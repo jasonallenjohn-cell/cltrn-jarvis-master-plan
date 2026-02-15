@@ -1,0 +1,20 @@
+[package]
+name = "kore-desktop"
+version = "0.0.0"
+description = "K0RE Desktop"
+authors = ["you"]
+license = ""
+repository = ""
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "1", features = [] }
+
+[dependencies]
+tauri = { version = "1", features = [ "global-shortcut-all", "macos-private-api", "shell-open", "shell-open-api", "system-tray", "global-shortcut"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

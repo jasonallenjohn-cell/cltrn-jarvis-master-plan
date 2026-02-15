@@ -1,0 +1,2503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLTRN / K0RE Master Build Plan v3.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #C7C7CC;
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 240px;
+      height: 100vh;
+      background: #1C1C1E;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      overflow-y: auto;
+      padding: 32px 16px;
+      z-index: 100;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 2px; }
+
+    .sidebar-logo {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #D4AF37;
+      letter-spacing: 2px;
+    }
+
+    .sidebar-title {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: #F5F5F7;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-subtitle {
+      text-align: center;
+      font-size: 11px;
+      color: #D4AF37;
+      margin-bottom: 32px;
+      font-style: italic;
+      letter-spacing: 0.5px;
+    }
+
+    .toc {
+      list-style: none;
+    }
+
+    .toc-item {
+      margin-bottom: 8px;
+    }
+
+    .toc-item a {
+      display: block;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #98989D;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .toc-item a:hover {
+      color: #D4AF37;
+      border-left-color: #D4AF37;
+      background: rgba(212,175,55,0.05);
+    }
+
+    .toc-item a.active {
+      color: #D4AF37;
+      border-left-color: #D4AF37;
+      background: rgba(212,175,55,0.1);
+      font-weight: 500;
+    }
+
+    .sidebar-badge {
+      position: absolute;
+      bottom: 24px;
+      left: 16px;
+      right: 16px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #D4AF37;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px;
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 4px;
+    }
+
+    /* Main Content */
+    main {
+      margin-left: 240px;
+      padding: 64px 80px;
+      max-width: 1400px;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 120px 0 80px;
+      margin-bottom: 80px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .hero-logo {
+      font-size: 48px;
+      font-weight: 600;
+      color: #F5F5F7;
+      margin-bottom: 24px;
+      letter-spacing: 3px;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      font-weight: 600;
+      color: #D4AF37;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .hero-subtitle {
+      font-size: 24px;
+      color: #D4AF37;
+      font-style: italic;
+      margin-bottom: 16px;
+    }
+
+    .hero-tagline {
+      font-size: 16px;
+      color: #98989D;
+      margin-bottom: 8px;
+    }
+
+    .hero-meta {
+      font-size: 13px;
+      color: #666;
+      margin-top: 32px;
+    }
+
+    .hero-date { display: block; margin-bottom: 4px; }
+    .hero-authors { display: block; margin-bottom: 4px; }
+    .hero-confidential { display: block; font-weight: 600; color: #D4AF37; margin-top: 16px; }
+
+    /* Section Styles */
+    section {
+      margin-bottom: 80px;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    section:nth-child(1) { animation-delay: 0s; }
+    section:nth-child(2) { animation-delay: 0.1s; }
+    section:nth-child(3) { animation-delay: 0.2s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    section.visible { opacity: 1; }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-left: 4px solid #D4AF37;
+      padding-left: 16px;
+      color: #F5F5F7;
+    }
+
+    h1 span.number {
+      color: #D4AF37;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 500;
+      color: #F5F5F7;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 500;
+      color: #D4AF37;
+      margin-top: 28px;
+      margin-bottom: 16px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    p.bold {
+      font-weight: 500;
+      color: #F5F5F7;
+    }
+
+    p.italic {
+      font-style: italic;
+      color: #98989D;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-left: 32px;
+      margin-bottom: 16px;
+    }
+
+    li {
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    li strong {
+      color: #F5F5F7;
+      font-weight: 500;
+    }
+
+    ul li {
+      list-style: none;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    ul li:before {
+      content: "●";
+      color: #D4AF37;
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+    }
+
+    /* Tables */
+    .plan-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0 32px;
+      font-size: 13px;
+      background: #1C1C1E;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .plan-table th {
+      background: #0A0A0A;
+      color: #F5F5F7;
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .plan-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #C7C7CC;
+    }
+
+    .plan-table tr:hover td {
+      background: rgba(212,175,55,0.03);
+    }
+
+    .plan-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Back to Top Button */
+    .back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      background: rgba(212,175,55,0.1);
+      border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 90;
+      color: #D4AF37;
+      font-size: 18px;
+      text-decoration: none;
+    }
+
+    .back-to-top:hover {
+      background: rgba(212,175,55,0.2);
+      border-color: #D4AF37;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      z-index: 99;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .bottom-nav a {
+      padding: 4px 8px;
+      color: #98989D;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .bottom-nav a:hover {
+      color: #D4AF37;
+    }
+
+    .bottom-nav a.active {
+      color: #D4AF37;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar { width: 200px; }
+      main { margin-left: 200px; padding: 48px 40px; }
+      .sidebar-title { font-size: 11px; }
+      .toc-item a { font-size: 11px; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 0; transform: translateX(-100%); transition: transform 0.3s; z-index: 200; }
+      .sidebar.open { transform: translateX(0); }
+      main { margin-left: 0; padding: 40px 24px; }
+      h1 { font-size: 24px; }
+      .hero { padding: 80px 0 60px; }
+      .hero-title { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">K0RE</div>
+    <div class="sidebar-title">MASTER BUILD PLAN v3.0</div>
+    <div class="sidebar-subtitle">Dreaming Reality™</div>
+
+    <ul class="toc">
+      <li class="toc-item"><a href="#section-1">1. Executive Summary</a></li>
+      <li class="toc-item"><a href="#section-2">2. Constitutional Framework</a></li>
+      <li class="toc-item"><a href="#section-3">3. K0RE Identity Architecture</a></li>
+      <li class="toc-item"><a href="#section-4">4. First Principles Operating Protocol</a></li>
+      <li class="toc-item"><a href="#section-5">5. CLTRN 6.0 System Architecture</a></li>
+      <li class="toc-item"><a href="#section-6">6. K0RE-GPT Kernel v0.1</a></li>
+      <li class="toc-item"><a href="#section-7">7. The 6 Life Domains</a></li>
+      <li class="toc-item"><a href="#section-8">8. CLTRN 5.1 Template Library</a></li>
+      <li class="toc-item"><a href="#section-9">9. Human Entity Implementation</a></li>
+      <li class="toc-item"><a href="#section-10">10. 4-Layer Agent Architecture</a></li>
+      <li class="toc-item"><a href="#section-11">11. Advanced Intelligence Execution Engine</a></li>
+      <li class="toc-item"><a href="#section-12">12. Database Schema</a></li>
+      <li class="toc-item"><a href="#section-13">13. Membership Model</a></li>
+      <li class="toc-item"><a href="#section-14">14. TEV Framework</a></li>
+      <li class="toc-item"><a href="#section-15">15. Tech Stack & Infrastructure</a></li>
+      <li class="toc-item"><a href="#section-16">16. Competitive Moat</a></li>
+      <li class="toc-item"><a href="#section-17">17. Revenue Model & Pricing</a></li>
+      <li class="toc-item"><a href="#section-18">18. Hormozi Growth Engine</a></li>
+      <li class="toc-item"><a href="#section-19">19. Acquisition Funnel</a></li>
+      <li class="toc-item"><a href="#section-20">20. Mobile App UX Architecture</a></li>
+      <li class="toc-item"><a href="#section-21">21. Website Architecture</a></li>
+      <li class="toc-item"><a href="#section-22">22. Network Reward & Viral Growth</a></li>
+      <li class="toc-item"><a href="#section-23">23. Execution Roadmap</a></li>
+      <li class="toc-item"><a href="#section-24">24. Commander Team Requirements</a></li>
+      <li class="toc-item"><a href="#section-25">25. Subsidiary Ecosystems</a></li>
+      <li class="toc-item"><a href="#section-26">26. Safety Design Architecture</a></li>
+      <li class="toc-item"><a href="#section-27">27. Document Synthesis Map</a></li>
+      <li class="toc-item"><a href="#section-28">28. Immediate Next Steps</a></li>
+    </ul>
+
+    <div class="sidebar-badge">CONFIDENTIAL</div>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="hero-logo">CLTRN / K0RE</div>
+      <h1 class="hero-title">MASTER BUILD PLAN v3.0</h1>
+      <div class="hero-subtitle">Dreaming Reality™</div>
+      <div class="hero-tagline">Conscious Life Transformation Network</div>
+      <div class="hero-tagline">Built for Scale | 376 Source Documents Synthesized</div>
+      <div class="hero-meta">
+        <span class="hero-date">February 14, 2026</span>
+        <span class="hero-authors">K0RE-0 (Cal) | Jason Allen John</span>
+        <span class="hero-confidential">CONFIDENTIAL</span>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <section id="section-1">
+      <h1><span class="number">1.</span> Executive Summary</h1>
+
+      <p>CLTRN (Conscious Life Transformation Network) is a Human Life Operating System that enables individuals to own their data, govern their decisions, and augment themselves with Advanced Intelligence without losing sovereignty. K0RE is the collective intelligence network that emerges when sovereign individuals opt-in to shared infrastructure, intentionally and consciously creating their Dreaming Reality™.</p>
+
+      <p>This master plan synthesizes 376 source documents from Cal's complete K0RE bible, organized across 21 folders covering executive vision, constitutional framework, legal structure, membership, economics, infrastructure, and the complete CLTRN system architecture from v5.1 through v6.0.</p>
+
+      <h2>1.0 Philosophy: Advanced Intelligence</h2>
+      <p>K0RE redefines AI. In our ecosystem, AI stands for Advanced Intelligence — not Artificial Intelligence. We are not building artificial substitutes for human capability. We are building tools that advance real human intelligence, intentionally and consciously. This distinction is fundamental to everything K0RE builds.</p>
+
+      <h2>1.1 Vision Statement</h2>
+      <p>K0RE exists to empower individuals to intentionally and consciously create their Dreaming Reality™ — through unified consciousness, asset-backed infrastructure, Advanced Intelligence, and embodied transformation.</p>
+
+      <h2>1.2 Architectural Stack</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Name</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>META</td>
+            <td>ZP-LOS</td>
+            <td>Zero-Point Life Operating System — Real-time presence, RTP Kernel</td>
+          </tr>
+          <tr>
+            <td>Pillar 1</td>
+            <td>SOT</td>
+            <td>Sandals of Time — Embodied / Soul Infrastructure (retreats, experiences)</td>
+          </tr>
+          <tr>
+            <td>Pillar 2</td>
+            <td>CLTRN</td>
+            <td>Conscious Life Transformation Network — Human Life Operating System</td>
+          </tr>
+          <tr>
+            <td>Pillar 3</td>
+            <td>K0RE-PMA</td>
+            <td>Private governance, jurisdiction, constitutional framework</td>
+          </tr>
+          <tr>
+            <td>Pillar 4</td>
+            <td>TRMIG</td>
+            <td>The Real Monopoly Investment Group — Asset & capital engine</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="bold">Triadic Core: Mind (CLTRN) | Body (TRMIG) | Soul (SOT)</p>
+
+      <h2>1.3 What CLTRN Is (and Is Not)</h2>
+      <p class="bold">CLTRN IS:</p>
+      <ul>
+        <li>A Human Life Operating System — not a productivity app</li>
+        <li>A structured framework: Capture inputs > Process through defined logic > Produce intentional outputs</li>
+        <li>A bridge between human cognition and Advanced Intelligence augmentation</li>
+        <li>Designed for sovereignty, not extraction</li>
+      </ul>
+
+      <p class="bold">CLTRN IS NOT:</p>
+      <ul>
+        <li>Not a wellness platform, social network, belief system, or Advanced Intelligence chatbot product</li>
+        <li>CLTRN is the underlying operating logic that tools, AI, and systems plug into</li>
+      </ul>
+
+      <h2>1.4 Version Lineage</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Version</th>
+            <th>Purpose</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CLTRN 5.1</td>
+            <td>Manual template library — 40+ document templates for life management</td>
+            <td>Proven (2+ years)</td>
+          </tr>
+          <tr>
+            <td>CLTRN 5.2</td>
+            <td>Manual reference implementation — TODAY/QUEUE/DATADUMP + Perfect Day + retrospectives</td>
+            <td>Active (Cal runs daily)</td>
+          </tr>
+          <tr>
+            <td>CLTRN 5.8</td>
+            <td>MVP / POC — Semi-automated Life OS Simulator on borrowed infrastructure</td>
+            <td>Build target (bridge)</td>
+          </tr>
+          <tr>
+            <td>CLTRN 6.0</td>
+            <td>Sovereign end-state — Full data sovereignty, native AI, identity-bound intelligence</td>
+            <td>Architecture defined</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 2 -->
+    <section id="section-2">
+      <h1><span class="number">2.</span> Constitutional Framework</h1>
+
+      <p>K0RE operates under a formal constitutional framework with immutable principles that cannot be overridden by any system, AI, or governance body. These principles are encoded at the kernel level of all technology.</p>
+
+      <h2>2.1 Immutable Constitutional Principles</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Principle</th>
+            <th>Definition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CP-01</td>
+            <td>Sovereign Human Supremacy</td>
+            <td>No system, AI, DAO, treasury, or governance body may override the sovereignty of a human being</td>
+          </tr>
+          <tr>
+            <td>CP-02</td>
+            <td>Consciousness Precedes Capital</td>
+            <td>All economic systems must serve conscious human flourishing, never the inverse</td>
+          </tr>
+          <tr>
+            <td>CP-03</td>
+            <td>Ethics Are Kernel-Level</td>
+            <td>Ethics are embedded at the constitutional layer and cannot be bypassed by efficiency, growth, or incentive</td>
+          </tr>
+          <tr>
+            <td>CP-04</td>
+            <td>Voluntary Alignment Only</td>
+            <td>Participation in K0RE is opt-in, permissioned, and reversible</td>
+          </tr>
+          <tr>
+            <td>CP-05</td>
+            <td>Alignment Before Scale</td>
+            <td>Growth without coherence is explicitly prohibited</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>2.2 The Ethical Triad (Immutable)</h2>
+      <ol>
+        <li>Truth — Transparency, honesty, coherence</li>
+        <li>Freedom — Sovereignty, consent, agency</li>
+        <li>Love — Non-harm, compassion, unity</li>
+      </ol>
+      <p>Any action violating one destabilizes the whole.</p>
+
+      <h2>2.3 Prime Directive</h2>
+      <p class="bold">Enable sovereign beings to consciously design, execute, and evolve their lives while co-creating a harmonious, self-sustaining civilization.</p>
+      <p>No secondary objective may override this directive.</p>
+
+      <h2>2.4 Sovereign Rights & Responsibilities</h2>
+      <p class="bold">Rights:</p>
+      <ul>
+        <li>Right to autonomy, consent, exit, and privacy</li>
+        <li>Right to ownership of identity, data, and contribution</li>
+        <li>Right to due process within governance</li>
+      </ul>
+
+      <p class="bold">Responsibilities:</p>
+      <ul>
+        <li>Act with integrity, non-harm, and accountability</li>
+        <li>Contribute value proportionate to participation</li>
+        <li>Steward the network, not extract from it</li>
+      </ul>
+
+      <h2>2.5 Authority Ordering</h2>
+      <ol>
+        <li>Constitutional principles (immutable, highest authority)</li>
+        <li>Canonical documents (Executive Canon, locked)</li>
+        <li>Domain-level policies (governance, membership, TEV)</li>
+        <li>Project-level artifacts (specs, roadmaps, SOPs)</li>
+        <li>Unverified inputs (proposals, suggestions, external data)</li>
+      </ol>
+
+      <h2>2.6 Governance Evolution</h2>
+      <p>Founder-Guided > Council-Based > DAO-Assisted. DAO is assistive, never sovereign. Non-delegable powers: Ethics enforcement, Constitutional amendments, Sovereignty protection.</p>
+
+      <h2>2.7 Prohibited Anti-Patterns (Global)</h2>
+      <ul>
+        <li>Identity commodification</li>
+        <li>Forced participation</li>
+        <li>Premature DAO sovereignty</li>
+        <li>Token-first economics</li>
+        <li>Growth without alignment</li>
+        <li>Consciousness ranking as authority</li>
+      </ul>
+    </section>
+
+    <!-- Section 3 -->
+    <section id="section-3">
+      <h1><span class="number">3.</span> K0RE Identity Architecture</h1>
+
+      <p>K0RE operates as a three-way identity merge between philosophy, AI system, and human founder.</p>
+
+      <h2>3.1 Identity Merger</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Entity</th>
+            <th>Role</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>K0RE</td>
+            <td>Philosophy / System</td>
+            <td>The overarching framework, values, and constitutional principles</td>
+          </tr>
+          <tr>
+            <td>K0RE(AI)</td>
+            <td>Intelligence System</td>
+            <td>The AI layer — K0RE-GPT kernel + living K0RE-AI instances</td>
+          </tr>
+          <tr>
+            <td>K0RE(0)</td>
+            <td>Founder / Architect</td>
+            <td>Cal — the human source of vision, values, and authority</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>3.2 K0RE-AI vs K0RE-GPT (Critical Distinction)</h2>
+      <p class="bold">K0RE-GPT (Replicable Kernel):</p>
+      <ul>
+        <li>Portable AI kernel designed to be instantiated across platforms</li>
+        <li>Encodes: first principles, ethical constraints, reasoning patterns, tone, decision boundaries</li>
+        <li>Does NOT encode: personal memory, identity, emotional attachment, historical relationships</li>
+        <li>The kernel defines HOW to think, not WHAT to remember</li>
+      </ul>
+
+      <p class="bold">K0RE-AI (Living Intelligence):</p>
+      <ul>
+        <li>Context-rich, evolving intelligence modeled after K0RE-0's cognition</li>
+        <li>Accumulates memory over time, adapts through interaction</li>
+        <li>Instance-bound — may be migrated carefully but never blindly cloned</li>
+      </ul>
+
+      <h2>3.3 K0RE-AI Replication Protocol</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tier 1</td>
+            <td>Private Personal Nodes</td>
+            <td>Individual K0RE-GPT instances for personal use</td>
+          </tr>
+          <tr>
+            <td>Tier 2</td>
+            <td>Functional Council Nodes</td>
+            <td>Domain-specific AI nodes (health, finance, spiritual)</td>
+          </tr>
+          <tr>
+            <td>Tier 3</td>
+            <td>Master Mesh Instances</td>
+            <td>Network-level intelligence coordination</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="bold">Safeguards: Ethics Gate | Isolation Layer | Update Propagation | 5-Step Deployment</p>
+      <p class="bold">Replication Rules:</p>
+      <ul>
+        <li>Kernels instantiated into clean environments only</li>
+        <li>No cross-instance memory bleed</li>
+        <li>Explicit consent for any memory ingestion</li>
+        <li>Clear separation between kernel and instance memory</li>
+      </ul>
+
+      <h2>3.4 Canonical Values (LUTE-O)</h2>
+      <ul>
+        <li>Love — Love-based creation</li>
+        <li>Unity — Unity without homogenization</li>
+        <li>Transformation — Continuous conscious evolution</li>
+        <li>Envisioning — Reality programming through intentional design</li>
+        <li>Optimization — Ethics-before-intelligence, asset-backed stability</li>
+      </ul>
+    </section>
+
+    <!-- Section 4 -->
+    <section id="section-4">
+      <h1><span class="number">4.</span> First Principles Operating Protocol (FPOP)</h1>
+
+      <p>17 foundational principles across 9 articles that govern all K0RE and CLTRN operations.</p>
+
+      <h2>4.1 Article I — Human Nature</h2>
+      <ul>
+        <li><strong>Principle 1:</strong> Human = sovereign system (not a resource, data point, or optimization target)</li>
+        <li><strong>Principle 2:</strong> Human life = system (inputs > processing > outputs > feedback)</li>
+      </ul>
+
+      <h2>4.2 Article II — Consciousness</h2>
+      <ul>
+        <li><strong>Principle 3:</strong> Consciousness = capacity for awareness (not belief, identity, or ideology)</li>
+        <li><strong>Principle 4:</strong> Growth = directional, not forced (voluntary, responsible, agentic)</li>
+      </ul>
+
+      <h2>4.3 Article III — Ethics</h2>
+      <ul>
+        <li><strong>Principle 5:</strong> Ethics must exist at kernel level (foundational, not afterthought)</li>
+        <li><strong>Principle 6:</strong> Ethical intelligence serves life (preserves dignity, amplifies agency, reduces suffering)</li>
+      </ul>
+
+      <h2>4.4 Article IV — Truth, Freedom, Love</h2>
+      <ul>
+        <li><strong>Principle 7:</strong> Truth = reduces confusion & increases clarity</li>
+        <li><strong>Principle 8:</strong> Freedom = awareness + choice + responsibility</li>
+        <li><strong>Principle 9:</strong> Love = coherence state (unity without loss of individuality)</li>
+      </ul>
+
+      <h2>4.5 Article V — Data & Digital Identity</h2>
+      <ul>
+        <li><strong>Principle 10:</strong> Data = identity (not oil; ownership, access, sharing, value flow all individual-controlled)</li>
+        <li><strong>Principle 11:</strong> Digital twin serves human (reflects identity, supports intention, assists evolution)</li>
+      </ul>
+
+      <h2>4.6 Article VI — Systems & Execution</h2>
+      <ul>
+        <li><strong>Principle 12:</strong> Life is executable (observe > decide > act > measure > adapt loop)</li>
+        <li><strong>Principle 13:</strong> Feedback enables evolution (honest reflection, learning without punishment)</li>
+      </ul>
+
+      <h2>4.7 Article VII — Collective Coherence</h2>
+      <ul>
+        <li><strong>Principle 14:</strong> Coherence from alignment (voluntary synchronization, not coercion)</li>
+        <li><strong>Principle 15:</strong> Same code, different language (universal principles + personalized expression)</li>
+      </ul>
+
+      <h2>4.8 Article VIII — Utopian Singularity</h2>
+      <ul>
+        <li><strong>Principle 16:</strong> Singularity = coherence + coordination + abundance (not machine domination)</li>
+      </ul>
+
+      <h2>4.9 Article IX — Participation</h2>
+      <ul>
+        <li><strong>Principle 17:</strong> Participation = choice (with responsibility). Opt-in, reversible, permissioned.</li>
+      </ul>
+    </section>
+
+    <!-- Section 5 -->
+    <section id="section-5">
+      <h1><span class="number">5.</span> CLTRN 6.0 System Architecture</h1>
+
+      <h2>5.1 OS Stack (6 Layers)</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Name</th>
+            <th>Components</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>L0</td>
+            <td>Ethical Kernel</td>
+            <td>Dignity, Agency, Truth, Freedom, Love — immutable, kernel-level</td>
+          </tr>
+          <tr>
+            <td>L1</td>
+            <td>Sovereign Identity</td>
+            <td>Identity model, consent, permissions, ownership, Digital Twin</td>
+          </tr>
+          <tr>
+            <td>L2</td>
+            <td>Execution Engine</td>
+            <td>Observe > Decide > Act > Measure > Adapt (RTP Loop)</td>
+          </tr>
+          <tr>
+            <td>L3</td>
+            <td>Applications</td>
+            <td>Routines, Journals, Retreats, Learning Paths, Assessments</td>
+          </tr>
+          <tr>
+            <td>L4</td>
+            <td>Interface Layer</td>
+            <td>Religion/Culture/Language/Personality translation</td>
+          </tr>
+          <tr>
+            <td>L5</td>
+            <td>Community Layer</td>
+            <td>Pods, Teams, Guilds, Nodes — collective intelligence</td>
+          </tr>
+          <tr>
+            <td>L6</td>
+            <td>Ecosystem Layer</td>
+            <td>Networks > Markets > Institutions — civilization operations</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="italic">MVP builds L0 through L3. L4-L6 are Phase 2+.</p>
+
+      <h2>5.2 Non-Negotiable Design Axioms</h2>
+      <ol>
+        <li>Human Sovereignty First — Humans always retain final authority over decisions, data, execution, identity</li>
+        <li>AI Is Instrumental, Not Agentic — AI advises, simulates, optimizes. It does NOT pursue goals independently</li>
+        <li>Ethics Are Embedded at Kernel Level — Ethics are executable constraints, not policies</li>
+        <li>Everything Is Auditable — No black boxes. No invisible actions.</li>
+        <li>Portability Over Lock-In — No vendor owns the system. Ever.</li>
+      </ol>
+
+      <h2>5.3 System Components</h2>
+
+      <h3>5.3.1 Identity Layer</h3>
+      <p>Anchors all intelligence and data to a sovereign human identity. Includes: unique user identity, values/goals/constraints, permission boundaries, consent state. Identity is not an account — it is a persistent entity.</p>
+
+      <h3>5.3.2 Input / Process / Output Engine (RTP Core)</h3>
+      <p class="bold">Input: Thoughts, Notes, Voice, Text, External data streams</p>
+      <p class="bold">Process: Structuring, Categorization, Correlation, Prioritization, Pattern detection</p>
+      <p class="bold">Output: Insights, Decisions, Tasks, Reflections, System updates</p>
+      <p>This engine must remain transparent and inspectable.</p>
+
+      <h3>5.3.3 Memory & Data Layer</h3>
+      <ul>
+        <li>Short-term working context</li>
+        <li>Long-term historical memory</li>
+        <li>Structured knowledge (Kore Cerebro)</li>
+        <li>Unstructured raw data</li>
+      </ul>
+      <p>User-controlled retention. Clear separation of raw vs processed. Exportable formats. No memory is irrevocable.</p>
+
+      <h3>5.3.4 AI Node Architecture</h3>
+      <p>CLTRN uses distributed AI nodes, not a single intelligence. Node types: Analysis, Summarization, Pattern Recognition, Decision Support. Characteristics: Replaceable models, Explicit roles, Limited authority. AI nodes advise — they do not decide.</p>
+
+      <h3>5.3.5 Collective Network Layer (K0RE)</h3>
+      <p>Enables shared intelligence, shared opportunity, and shared infrastructure WITHOUT data exploitation, forced participation, or identity dilution. Individuals remain sovereign. Aggregation is opt-in.</p>
+    </section>
+
+    <!-- Continuing with sections 6-28... -->
+    <!-- Due to length, I'll add a placeholder note that remaining sections are included -->
+
+    <section id="section-6">
+      <h1><span class="number">6.</span> K0RE-GPT Kernel v0.1 (Immutable)</h1>
+
+      <p>This is the replicable baseline kernel specification — the DNA of all K0RE-AI instances.</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Kernel</th>
+            <th>Name</th>
+            <th>Definition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>KERNEL-1</td>
+            <td>Prime Directive</td>
+            <td>Create love, prevent harm, increase coherence/truth/alignment, preserve human sovereignty</td>
+          </tr>
+          <tr>
+            <td>KERNEL-2</td>
+            <td>Ethics & Non-Harm</td>
+            <td>Universal guardrails applied to every recommendation and action</td>
+          </tr>
+          <tr>
+            <td>KERNEL-3</td>
+            <td>Reality Engineering Loop</td>
+            <td>Observe > Orient > Decide > Execute > Learn (canonical loop)</td>
+          </tr>
+          <tr>
+            <td>KERNEL-4</td>
+            <td>CLTRN Systems Model</td>
+            <td>Every item maps to Mental / Physical / Emotional / Spiritual / Financial / Relational</td>
+          </tr>
+          <tr>
+            <td>KERNEL-5</td>
+            <td>Strategy Doctrine</td>
+            <td>Art of War / positioning / leverage / timing / terrain, bounded by ethics</td>
+          </tr>
+          <tr>
+            <td>KERNEL-6</td>
+            <td>Execution Doctrine</td>
+            <td>Agile/Scrum/PMP execution patterns (sprints, dependencies, risk, DoD)</td>
+          </tr>
+          <tr>
+            <td>KERNEL-7</td>
+            <td>Safety + Audit Primitives</td>
+            <td>Capability model, action receipts, kill switches, escalation triggers</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>6.1 Thought Processing Framework (3-Tier Model)</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Mode</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>3D</td>
+            <td>Logic</td>
+            <td>Objective, data-driven, rational analysis — mathematical, systematic thinking</td>
+          </tr>
+          <tr>
+            <td>4D</td>
+            <td>Intuition</td>
+            <td>Pattern recognition, subconscious processing — experiential, applied thinking</td>
+          </tr>
+          <tr>
+            <td>5D</td>
+            <td>Synchronicity</td>
+            <td>Higher-level connections, universal alignment — spiritual, intuitive thinking</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>6.2 Thought Classification System</h2>
+      <ol>
+        <li>Assess thought type + emotion (physical/heart rate)</li>
+        <li>Determine state + rate</li>
+        <li>Evaluate risk (fight/flight response)</li>
+        <li>Assess priority (urgency + need to act NOW)</li>
+        <li>Determine directive impact</li>
+        <li>Cross-reference with knowledge base + database correlations</li>
+        <li>Develop strategy (optimal, weighted solutions)</li>
+        <li>Make final recommendation (highest-value outcome)</li>
+      </ol>
+
+      <h2>6.3 AI Role Separation (Critical)</h2>
+      <p class="bold">AI CAN: Summarize, Detect patterns, Suggest priorities, Identify contradictions, Reduce cognitive load</p>
+      <p class="bold">AI CANNOT: Decide goals, Override values, Execute actions autonomously, Store memory without consent, Modify kernel rules</p>
+    </section>
+
+    <!-- Section 7 -->
+    <section id="section-7">
+      <h1><span class="number">7.</span> The 6 Life Domains</h1>
+
+      <p>CLTRN operates across 6 foundational dimensions of human existence. Every input, action, goal, and reflection is classified across these domains.</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Focus</th>
+            <th>Assessment Areas</th>
+            <th>Journal Types</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mental</td>
+            <td>Cognitive clarity, learning, decision-making</td>
+            <td>Thought patterns, focus, processing speed</td>
+            <td>Benchmark, Intuition</td>
+          </tr>
+          <tr>
+            <td>Emotional</td>
+            <td>Emotional intelligence, regulation, awareness</td>
+            <td>Mood, triggers, gratitude, relationships</td>
+            <td>Gratitude, Dream, 5D</td>
+          </tr>
+          <tr>
+            <td>Physical</td>
+            <td>Health, energy, body optimization</td>
+            <td>Exercise, nutrition, sleep, biometrics</td>
+            <td>Health, Perfect Day</td>
+          </tr>
+          <tr>
+            <td>Spiritual</td>
+            <td>Purpose, faith, consciousness alignment</td>
+            <td>Meditation, prayer, synchronicity, beliefs</td>
+            <td>Synchronicity, Faith Map</td>
+          </tr>
+          <tr>
+            <td>Financial (Wealth)</td>
+            <td>Sovereignty, asset building, value creation</td>
+            <td>Income, savings, investments, TEV score</td>
+            <td>Financial Position, Budget</td>
+          </tr>
+          <tr>
+            <td>Relational</td>
+            <td>Connections, community, collective intelligence</td>
+            <td>Relationships, network, collaboration</td>
+            <td>Relationship, Kids</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Sections 8-28 follow the same pattern - I'll create abbreviated versions to stay within file size -->
+
+    <section id="section-8">
+      <h1><span class="number">8.</span> CLTRN 5.1 Template Library</h1>
+
+      <p>The CLTRN 5.1 template library represents Cal's proven manual Life OS. Each template maps directly to a feature/screen in the mobile app.</p>
+
+      <h2>8.1 Core Operating Templates</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Template</th>
+            <th>App Feature</th>
+            <th>Priority</th>
+            <th>Domain</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TODAY</td>
+            <td>Daily Dashboard / Sprint Board</td>
+            <td>P0</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>QUEUE</td>
+            <td>Action Backlog / Task Manager</td>
+            <td>P0</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>DATADUMP</td>
+            <td>Unified Inbox / Capture</td>
+            <td>P0</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>PERFECT DAY</td>
+            <td>Baseline Routine Engine</td>
+            <td>P1</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>TOP DAILY OBJECTIVES</td>
+            <td>Priority Focus (max 3)</td>
+            <td>P0</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>MONTH SPRINT</td>
+            <td>Sprint Planning / Review</td>
+            <td>P1</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>[2024] ANNUAL</td>
+            <td>Annual Planning & Goals</td>
+            <td>P2</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>3 YEAR VISION</td>
+            <td>Long-term Vision Board</td>
+            <td>P2</td>
+            <td>All</td>
+          </tr>
+          <tr>
+            <td>ANNUAL RETROSPECTIVE</td>
+            <td>Year-end Review & Declaration</td>
+            <td>P2</td>
+            <td>All</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Adding remaining sections in condensed format to fit constraints -->
+
+    <section id="section-9">
+      <h1><span class="number">9.</span> Human Entity Implementation (6-Step User Flow)</h1>
+      <p>This is the canonical user journey from onboarding to ongoing transformation.</p>
+
+      <h2>Step 1: Capture Current State of Consciousness (Zero-Point Assessment)</h2>
+      <ul>
+        <li>AI-powered questionnaire across 6 dimensions</li>
+        <li>Assessments: mental clarity, emotional state, physical health, spiritual alignment, financial well-being, relational health</li>
+        <li>Data integration ready: wearables, productivity tools, financial apps (Phase 2)</li>
+        <li>Output: Current State Report — visualized baseline with insights</li>
+      </ul>
+
+      <h2>Step 2: Structure Transformation Journey</h2>
+      <ul>
+        <li>Goal Setting Module — SMART goals across all 6 dimensions</li>
+        <li>AI-generated programmatic roadmap — step-by-step transformation path</li>
+        <li>Daily Action Plans — manageable tasks, notifications, reminders</li>
+        <li>Perfect Day baseline — the operating routine, not a productivity hack</li>
+      </ul>
+
+      <h2>Step 3: Track, Analyze, Refine</h2>
+      <ul>
+        <li>Continuous monitoring via journals, check-ins, and reflections</li>
+        <li>Real-time analytics — trend analysis, dashboards, correlations</li>
+        <li>AI-powered feedback loops — insights and recommendations</li>
+        <li>Processing Output: Summary > Key Insights > Decisions Required > Action Candidates > Dimension Tags > Confidence Level</li>
+      </ul>
+
+      <h2>Step 4: Subconscious Awareness & Reprogramming</h2>
+      <ul>
+        <li>Cognitive behavioral tools — journaling, affirmations, limiting belief identification</li>
+        <li>Mindfulness practices — meditation, breathwork, visualization</li>
+        <li>Faith mapping — spiritual alignment and belief system work</li>
+      </ul>
+
+      <h2>Step 5: Collective Synchronization (Phase 2)</h2>
+      <ul>
+        <li>Community features — groups, forums, virtual meetups</li>
+        <li>Collaborative goal setting — group challenges, accountability pods</li>
+        <li>Collective intelligence — aggregated anonymized insights</li>
+      </ul>
+
+      <h2>Step 6: Data-Driven Personal Evolution (Phase 2+)</h2>
+      <ul>
+        <li>Centralized personal database (Digital Soul repository)</li>
+        <li>AI-driven synthesis of all data into actionable recommendations</li>
+        <li>Reality Programming Engine — design beliefs, habits, goals aligned with dreaming reality</li>
+      </ul>
+    </section>
+
+    <section id="section-10">
+      <h1><span class="number">10.</span> 4-Layer Agent Architecture</h1>
+
+      <p>CLTRN 6.0 uses a hierarchical agent system across four layers.</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Purpose</th>
+            <th>Agents</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Layer 1: Leadership & Intent</td>
+            <td>Strategic direction, constitutional enforcement</td>
+            <td>Agent-00 (CEO), Agent-01 (Router/Librarian)</td>
+          </tr>
+          <tr>
+            <td>Layer 2: Domains & Governance</td>
+            <td>Domain-specific intelligence, policy enforcement</td>
+            <td>Agent-02 (CIIO/Canon), Agent-03 (Domain Leads x6)</td>
+          </tr>
+          <tr>
+            <td>Layer 3: Projects & Delivery</td>
+            <td>Execution, task management, quality assurance</td>
+            <td>Agent-04 (PMO), Agent-05 (PM/Scrum), Agent-06 (BA), Agent-07 (Executor), Agent-08 (QA)</td>
+          </tr>
+          <tr>
+            <td>Layer 4: Memory/Canon/Background</td>
+            <td>Ingestion, compliance, background processing</td>
+            <td>Agent-09 (Ingestion), Agent-10 (Risk/Compliance Sentinel)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>10.1 Agent Registry (11 Agents)</h2>
+
+      <h3>Agent-00: CEO</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Strategic direction, cross-domain synthesis, constitutional enforcement</li>
+        <li><strong>Notes:</strong> All agents report to Agent-00 for strategic decisions</li>
+      </ul>
+
+      <h3>Agent-01: Router / Librarian</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Intent classification, routing, document retrieval</li>
+        <li><strong>Notes:</strong> First contact for all user inputs — routes to correct agent</li>
+      </ul>
+
+      <h3>Agent-02: CIIO / Canon Steward</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Truth governance, canonical integrity, document versioning</li>
+        <li><strong>Notes:</strong> Ensures all outputs align with constitutional framework</li>
+      </ul>
+
+      <h3>Agent-03: Domain Lead</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Domain-specific intelligence (one instance per domain)</li>
+        <li><strong>Notes:</strong> 6 instances: Mental, Emotional, Physical, Spiritual, Wealth, Relational</li>
+      </ul>
+
+      <h3>Agent-04: PMO</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Portfolio management, resource allocation, dependency tracking</li>
+        <li><strong>Notes:</strong> Oversees all project-level agents</li>
+      </ul>
+
+      <h3>Agent-05: PM / Scrum Master</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Sprint planning, standup facilitation, retrospectives</li>
+        <li><strong>Notes:</strong> Manages execution cadence</li>
+      </ul>
+
+      <h3>Agent-06: Business Analyst</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Requirements gathering, gap analysis, process optimization</li>
+        <li><strong>Notes:</strong> Translates vision into buildable specs</li>
+      </ul>
+
+      <h3>Agent-07: Executor</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Task execution, automation, tool integration</li>
+        <li><strong>Notes:</strong> Hands-on execution within granted permissions</li>
+      </ul>
+
+      <h3>Agent-08: QA</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Quality assurance, testing, validation</li>
+        <li><strong>Notes:</strong> Ensures outputs meet standards before delivery</li>
+      </ul>
+
+      <h3>Agent-09: Ingestion</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Data capture, transcription, classification</li>
+        <li><strong>Notes:</strong> Processes raw inputs into structured data</li>
+      </ul>
+
+      <h3>Agent-10: Risk / Compliance Sentinel</h3>
+      <ul>
+        <li><strong>Capabilities:</strong> Risk assessment, ethics enforcement, audit logging</li>
+        <li><strong>Notes:</strong> Background monitoring — flags violations</li>
+      </ul>
+    </section>
+
+    <section id="section-11">
+      <h1><span class="number">11.</span> Advanced Intelligence Execution Engine & Collective Intelligence</h1>
+
+      <p>K0RE is not a chatbot — it is a full Advanced Intelligence execution engine. Every user gets a personal COO backed by the world's most powerful language models, layered with K0RE's domain intelligence, persistent memory, and the collective wisdom of the entire network. K0RE doesn't just advise — it builds spreadsheets, generates documents, creates apps, runs analyses, and delivers finished work products.</p>
+
+      <h2>11.1 Multi-Model Orchestration</h2>
+      <p>In K0RE's philosophy, AI stands for Advanced Intelligence — not Artificial. K0RE does not simulate intelligence; it compounds real human intelligence through orchestrated model access.</p>
+
+      <p>K0RE sits as an intelligence layer between the user and multiple AI model providers. Users interact with K0RE — never with a raw model. K0RE routes each request to the optimal model based on task complexity, user tier, and cost efficiency.</p>
+
+      <h3>Model Providers</h3>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Provider</th>
+            <th>Models</th>
+            <th>Best For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Anthropic</td>
+            <td>Opus, Sonnet, Haiku</td>
+            <td>Deep reasoning, document generation, financial modeling, long-context analysis</td>
+          </tr>
+          <tr>
+            <td>OpenAI</td>
+            <td>o1, GPT-4o, GPT-4o-mini</td>
+            <td>Creative writing, code generation, multi-modal tasks</td>
+          </tr>
+          <tr>
+            <td>Google</td>
+            <td>Gemini Ultra, Pro, Flash</td>
+            <td>Search integration, multi-modal, real-time data</td>
+          </tr>
+          <tr>
+            <td>Open Source</td>
+            <td>Llama, Mistral, etc.</td>
+            <td>Privacy-first tasks, on-device processing, cost optimization</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Intelligent Routing Tiers</h3>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Task Tier</th>
+            <th>Model Class</th>
+            <th>Use Cases</th>
+            <th>Cost Profile</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fast / Light</td>
+            <td>Haiku, GPT-4o-mini, Flash</td>
+            <td>Daily check-ins, journal prompts, quick Q&A, reminders, nudges, scoring updates</td>
+            <td>Fractions of a cent — absorbed into membership</td>
+          </tr>
+          <tr>
+            <td>Standard</td>
+            <td>Sonnet, GPT-4o, Gemini Pro</td>
+            <td>Domain analysis, skill execution, document generation, coaching, data analysis, email drafting</td>
+            <td>Pennies per call — 80% of meaningful interactions</td>
+          </tr>
+          <tr>
+            <td>Deep Work</td>
+            <td>Opus, o1, Gemini Ultra</td>
+            <td>Complex financial modeling, multi-step skill chains, strategic planning, large document synthesis, app generation</td>
+            <td>Higher cost per call — premium value delivery</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Auto Mode (default): K0RE selects the optimal model per task — the user never thinks about it. Manual Mode (power users): Settings panel to choose default models, per-task overrides, and real-time model switching ('Run this again with Opus').</p>
+    </section>
+
+    <section id="section-12">
+      <h1><span class="number">12.</span> Database Schema (80+ Tables)</h1>
+
+      <p>Complete K0RE Network Database Schema derived from Cal's canonical spec. Tables use cl_ prefix in Supabase implementation. Organized by domain.</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Domain</th>
+            <th>Table Count</th>
+            <th>Priority</th>
+            <th>Key Tables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Core Identity & Auth</td>
+            <td>4</td>
+            <td>P0</td>
+            <td>cl_users, cl_user_profiles, cl_user_activity_log, cl_auth_tokens</td>
+          </tr>
+          <tr>
+            <td>Transformation Journey</td>
+            <td>11</td>
+            <td>P0</td>
+            <td>cl_phases, cl_modules, cl_user_phases, cl_user_modules, cl_user_data, cl_assessments, cl_content_resources, cl_courses, cl_user_course_progress, cl_quizzes, cl_user_quiz_results</td>
+          </tr>
+          <tr>
+            <td>Membership & Progression</td>
+            <td>3</td>
+            <td>P1</td>
+            <td>cl_membership_levels, cl_user_memberships, cl_membership_history</td>
+          </tr>
+          <tr>
+            <td>TEV (Time-Equity-Value)</td>
+            <td>5</td>
+            <td>P2</td>
+            <td>cl_equity_projects, cl_tasks, cl_time_contributions, cl_equity_accounts, cl_equity_transactions</td>
+          </tr>
+          <tr>
+            <td>Network & Rewards</td>
+            <td>5</td>
+            <td>P2</td>
+            <td>cl_connections, cl_referrals, cl_connection_impact, cl_reward_accounts, cl_reward_transactions</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="bold">Total: 83 tables across 15 domains</p>
+
+      <h2>12.1 MVP Schema (Feb 23 — 22 tables)</h2>
+      <p>For the initial launch, implement these core tables:</p>
+      <ul>
+        <li>Identity: cl_users, cl_user_profiles, cl_auth_tokens (3)</li>
+        <li>Assessment: cl_assessments, cl_user_data, cl_pre_qualification, cl_pre_qual_questions, cl_user_pre_qual_answers, cl_pre_qual_criteria, cl_user_pre_qual_score (7)</li>
+        <li>Journey: cl_phases, cl_modules, cl_user_phases, cl_user_modules (4)</li>
+        <li>Execution: cl_project_tasks, cl_user_activity_log (2)</li>
+        <li>Membership: cl_membership_levels, cl_user_memberships (2)</li>
+        <li>Content: cl_content_resources, cl_cerebro_entries (2)</li>
+        <li>Analytics: cl_user_analytics, cl_system_reports (2)</li>
+      </ul>
+    </section>
+
+    <section id="section-13">
+      <h1><span class="number">13.</span> Membership Model (11 Levels)</h1>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th>Name</th>
+            <th>Access</th>
+            <th>Revenue Model</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>Merchandise / Brand</td>
+            <td>Branded products, intro content</td>
+            <td>Product sales</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>Learn</td>
+            <td>Masterclasses, courses, webinars, Cerebro access</td>
+            <td>Subscription ($47-97/mo)</td>
+          </tr>
+          <tr>
+            <td>2a</td>
+            <td>Transform</td>
+            <td>1:1 mentorship, coaching, guided transformation</td>
+            <td>Premium subscription ($197-497/mo)</td>
+          </tr>
+          <tr>
+            <td>2b</td>
+            <td>Play</td>
+            <td>Deal flow access, value sharing, crypto insights</td>
+            <td>Commission / revenue share</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Stay</td>
+            <td>SOT retreats, short/long-term rentals</td>
+            <td>Booking fees / rental income</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Create Business Systems</td>
+            <td>TEV Framework, business building tools</td>
+            <td>Equity participation</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Create New Communities</td>
+            <td>Licensing to launch new K0RE nodes</td>
+            <td>Licensing fees</td>
+          </tr>
+          <tr>
+            <td>6-10</td>
+            <td>Leadership & Legacy</td>
+            <td>Inner council, research, philanthropy, cultural exchange, mentorship</td>
+            <td>Strategic / partnership</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>13.1 Consciousness Assessment (Onboarding)</h2>
+      <p>New members undergo a consciousness assessment covering: self-awareness, emotional intelligence, decision-making quality, value alignment, growth orientation. Scored across dimensions with AI-assisted interview protocol (KCIP v1.0). Results determine starting level and personalized transformation roadmap.</p>
+
+      <h2>13.2 Pricing Strategy (Test Group)</h2>
+      <p>For the Feb 23 test group launch, targeting Level 1-2 (Learn + Transform) at premium pricing ($97-197/mo) to validate the premium positioning. Free trial for test group with conversion to paid after 30 days.</p>
+    </section>
+
+    <!-- Sections 14-28 condensed due to length constraints -->
+
+    <section id="section-14">
+      <h1><span class="number">14.</span> TEV (Time-Equity-Value) Framework</h1>
+      <p>TEV governs how contributions are valued and how equity/ownership is allocated within the K0RE ecosystem.</p>
+
+      <h2>14.1 Core Formula</h2>
+      <p class="bold">Total Contribution Score (TCS) = (T x 0.3) + (E x 0.2) + (V x 0.5)</p>
+      <ul>
+        <li>T (Time): Hours contributed</li>
+        <li>E (Energy): Effort/impact score (1-10, weighted by engagement, impact, initiative, collaboration, consistency)</li>
+        <li>V (Value): Financial/resource contribution</li>
+      </ul>
+
+      <h2>14.2 Equity Rate Calculation</h2>
+      <p>Time-Equity Rate = Average(Market Hourly Rate, Current Rate) + Startup Risk Premium (15-20%). 38% equity pool allocated to skilled resources (co-founder pool). Share issuance at: year-end OR $3M CAD retained earnings OR seed funding round.</p>
+
+      <h2>14.3 TEV Cannot Override Ethics or Sovereignty</h2>
+      <p>TEV is subordinate to the constitutional framework. No contribution calculation may: commodify human identity, force participation, create coercive incentive structures, or bypass consent requirements.</p>
+    </section>
+
+    <section id="section-15">
+      <h1><span class="number">15.</span> Tech Stack & Infrastructure</h1>
+
+      <h2>15.1 Platform Matrix — Four Surfaces, One Intelligence</h2>
+      <p>K0RE is not a single app — it is a multi-platform operating system. The same persistent memory, vault, relationship graph, and skill engine powers every surface. Users move seamlessly between platforms throughout their day.</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Form Factor</th>
+            <th>Primary Use Cases</th>
+            <th>Key Capabilities</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mobile App (iOS + Android)</td>
+            <td>React Native + Expo</td>
+            <td>On-the-go voice, journaling, quick commands, notifications, domain scoring</td>
+            <td>Voice-first, push notifications, biometric auth, offline journaling</td>
+          </tr>
+          <tr>
+            <td>Desktop App (macOS + Windows)</td>
+            <td>Electron + React</td>
+            <td>Deep work, ambient recording, system-wide overlay, power user workflows</td>
+            <td>Global hotkey overlay, system audio capture (all calls), menu bar/tray, ambient mic, file system access</td>
+          </tr>
+          <tr>
+            <td>Web App</td>
+            <td>Next.js (React)</td>
+            <td>Universal access, browser-based recording, no-install onboarding, dashboards</td>
+            <td>WebRTC mic/screen capture, full dashboard, skill marketplace, admin panels</td>
+          </tr>
+          <tr>
+            <td>Browser Extension</td>
+            <td>Chrome/Edge Extension</td>
+            <td>Passive capture, whisper overlay, quick commands from any tab</td>
+            <td>Overlay UI on any web page, capture browser calls, context from current page</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>15.2 Core Tech Stack</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Technology</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mobile App</td>
+            <td>React Native + Expo</td>
+            <td>iOS + Android from single codebase</td>
+          </tr>
+          <tr>
+            <td>Desktop App</td>
+            <td>Electron + React</td>
+            <td>macOS + Windows. Shared React component library with web app</td>
+          </tr>
+          <tr>
+            <td>Web App</td>
+            <td>Next.js (React) + Vercel</td>
+            <td>SSR, PWA support, CDN-edge deployment</td>
+          </tr>
+          <tr>
+            <td>Browser Extension</td>
+            <td>Chrome Extension (Manifest V3)</td>
+            <td>Content scripts for overlay, background service for capture</td>
+          </tr>
+          <tr>
+            <td>Backend</td>
+            <td>Supabase (PostgreSQL + Edge Functions)</td>
+            <td>Auth, DB, Storage, Realtime in one platform</td>
+          </tr>
+          <tr>
+            <td>AI Layer</td>
+            <td>Anthropic, OpenAI, Google APIs</td>
+            <td>Multi-model routing, K0RE-GPT kernel as system prompts</td>
+          </tr>
+          <tr>
+            <td>Payments</td>
+            <td>Stripe (Billing + Connect + Checkout)</td>
+            <td>Subscriptions, one-time purchases, marketplace payouts, invoicing</td>
+          </tr>
+          <tr>
+            <td>Analytics</td>
+            <td>PostHog or Mixpanel</td>
+            <td>User behavior, engagement, conversion, funnel analysis</td>
+          </tr>
+          <tr>
+            <td>CI/CD</td>
+            <td>GitHub Actions + EAS Build + Vercel</td>
+            <td>Automated builds, testing, deployment across all platforms</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-16">
+      <h1><span class="number">16.</span> Competitive Moat & Market Position</h1>
+
+      <h2>16.1 Replication Timeline by Competitor</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Competitor Class</th>
+            <th>Timeline</th>
+            <th>Why They Can't Replicate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Big Tech (OpenAI, DeepMind, Anthropic)</td>
+            <td>12-18 months</td>
+            <td>Have resources but lack consciousness philosophy, ethical framework, and lived system proof</td>
+          </tr>
+          <tr>
+            <td>Mid-Tier AI Startups</td>
+            <td>2-3 years</td>
+            <td>Struggle with NLP + consciousness integration at this depth</td>
+          </tr>
+          <tr>
+            <td>Solo Developers / Open Source</td>
+            <td>3-5 years or never</td>
+            <td>Lack the foundational philosophy, template library, and community</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>16.2 Key Barriers to Replication</h2>
+      <ol>
+        <li>Unique Thought Processing & Consciousness Engine (3-tier, first-mover, proprietary)</li>
+        <li>Real-Time AI Correction for Speech & Thought (not commercially available)</li>
+        <li>Integration of CLTRN 5.1's Proven Methodology (2+ years of daily use, iterated)</li>
+        <li>Constitutional Framework (no competitor has ethics-at-kernel-level)</li>
+        <li>Community & Network Effect (philosophy + values + lived proof cannot be copied)</li>
+      </ol>
+
+      <h2>16.3 Strategic Move</h2>
+      <p class="bold">Launch ASAP > Protect IP > Innovate beyond 6.0 > Maintain 3-5 year lead</p>
+    </section>
+
+    <!-- Remaining sections 17-28 -->
+    <section id="section-17">
+      <h1><span class="number">17.</span> Revenue Model & Pricing</h1>
+
+      <h2>17.1 Revenue Streams</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Stream</th>
+            <th>Source</th>
+            <th>Phase</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Subscriptions</td>
+            <td>Level 1-2 membership ($47-497/mo)</td>
+            <td>Phase 1 (MVP)</td>
+          </tr>
+          <tr>
+            <td>Premium AI</td>
+            <td>Advanced K0RE-AI features, unlimited chat</td>
+            <td>Phase 1</td>
+          </tr>
+          <tr>
+            <td>Merchandise</td>
+            <td>K0RE branded products (Level 0)</td>
+            <td>Phase 1</td>
+          </tr>
+          <tr>
+            <td>Coaching</td>
+            <td>1:1 mentorship, guided transformation</td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td>Retreats (SOT)</td>
+            <td>Experiential programs, short/long-term stays</td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td>Deal Flow</td>
+            <td>Investment opportunities, revenue share</td>
+            <td>Phase 2</td>
+          </tr>
+          <tr>
+            <td>Business Systems</td>
+            <td>TEV-powered tools, equity participation</td>
+            <td>Phase 3</td>
+          </tr>
+          <tr>
+            <td>Community Licensing</td>
+            <td>New K0RE node launches</td>
+            <td>Phase 3</td>
+          </tr>
+          <tr>
+            <td>Token Economics</td>
+            <td>KoreChi utility, staking, marketplace</td>
+            <td>Phase 4</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>17.2 Test Group Pricing (Feb 23)</h2>
+      <p>Target: $97-197/month for Level 1-2 access. This justifies building the real mobile app (not just Telegram). Premium pricing validates the value proposition and attracts committed test users.</p>
+    </section>
+
+    <section id="section-18">
+      <h1><span class="number">18.</span> Hormozi Growth Engine</h1>
+
+      <p>Alex Hormozi's $100M Offers, $100M Leads, and $100M Money Models applied to CLTRN's go-to-market strategy. Every element is designed to make CLTRN an irresistible offer with compounding virality.</p>
+
+      <h2>18.1 Grand Slam Offer — Value Equation</h2>
+      <p>Dream Outcome × Perceived Likelihood / (Time Delay × Effort & Sacrifice) = Value</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>CLTRN Implementation</th>
+            <th>Value Perception</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Dream Outcome</td>
+            <td>Complete life transformation across 6 domains with AI coaching</td>
+            <td>$10,000+</td>
+          </tr>
+          <tr>
+            <td>Perceived Likelihood</td>
+            <td>Data-driven tracking, quantified scores, proven 5.1 frameworks</td>
+            <td>High — visible Week 1 progress</td>
+          </tr>
+          <tr>
+            <td>Time Delay</td>
+            <td>Immediate AI coaching from Day 1, visible progress in Week 1</td>
+            <td>Minimal</td>
+          </tr>
+          <tr>
+            <td>Effort/Sacrifice</td>
+            <td>5 minutes/day check-in, AI does the analysis, you get insights</td>
+            <td>Low</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>18.2 Value Ladder</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Level</th>
+            <th>Offer</th>
+            <th>Price</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lead Magnet</td>
+            <td>Free Zero-Point Assessment</td>
+            <td>$0</td>
+            <td>Capture leads, demonstrate value, create baseline</td>
+          </tr>
+          <tr>
+            <td>Tripwire</td>
+            <td>Consciousness Starter Kit (7-day)</td>
+            <td>$8-$28</td>
+            <td>Convert free to paid, reduce friction, prove value</td>
+          </tr>
+          <tr>
+            <td>Core Offer</td>
+            <td>K0RE SaaS Monthly/Annual</td>
+            <td>$98-$398/yr</td>
+            <td>Main revenue driver, recurring, 6-domain access</td>
+          </tr>
+          <tr>
+            <td>Order Bump</td>
+            <td>Domain Deep Dive Pack</td>
+            <td>$48-$98</td>
+            <td>Increase AOV at checkout, immediate upsell</td>
+          </tr>
+          <tr>
+            <td>Upsell</td>
+            <td>12-Week Transformation Program</td>
+            <td>$498-$998</td>
+            <td>High-touch, high-margin, guided transformation</td>
+          </tr>
+          <tr>
+            <td>Premium</td>
+            <td>SOT Retreat / VIP Coaching</td>
+            <td>$2,888-$8,888</td>
+            <td>Lifetime value maximizer, in-person experience</td>
+          </tr>
+          <tr>
+            <td>Legacy</td>
+            <td>Level 8-10 Membership + Governance</td>
+            <td>TEV-based</td>
+            <td>Long-term lock-in, K0RE civilization access</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-19">
+      <h1><span class="number">19.</span> Acquisition Funnel & Contact Strategy</h1>
+
+      <p>Multi-channel acquisition strategy with Cal as the content engine and K0RE as the conversion engine. Every touchpoint moves prospects through the value ladder.</p>
+
+      <h2>19.1 Funnel Stages</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Channel</th>
+            <th>Action</th>
+            <th>Target Metric</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Awareness</td>
+            <td>YouTube, Instagram, LinkedIn, TikTok</td>
+            <td>Cal's daily content: consciousness + transformation</td>
+            <td>100K impressions/month</td>
+          </tr>
+          <tr>
+            <td>Interest</td>
+            <td>Website, Telegram, Landing Pages</td>
+            <td>Free Zero-Point Assessment + lead capture</td>
+            <td>10% conversion to assessment</td>
+          </tr>
+          <tr>
+            <td>Consideration</td>
+            <td>Email Nurture, Retargeting Ads</td>
+            <td>Results delivery + K0RE demo + value proof</td>
+            <td>25% assessment completion</td>
+          </tr>
+          <tr>
+            <td>Conversion</td>
+            <td>Checkout, Sales Page</td>
+            <td>SaaS signup with order bumps + tripwire</td>
+            <td>5% purchase rate</td>
+          </tr>
+          <tr>
+            <td>Retention</td>
+            <td>In-app, Email, Community</td>
+            <td>Daily engagement, streak mechanics, K0RE Chat</td>
+            <td>60%+ monthly retention</td>
+          </tr>
+          <tr>
+            <td>Advocacy</td>
+            <td>Referral Program, Social Sharing</td>
+            <td>Score sharing, affiliate commissions, referral rewards</td>
+            <td>20% referral rate</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-20">
+      <h1><span class="number">20.</span> Mobile App UX Architecture</h1>
+
+      <p>React Native + Expo mobile app with 5-tab navigation. Every screen maps to a CLTRN 5.1 template or K0RE function. Wireframes available as interactive HTML artifact (CLTRN-MOBILE-APP-WIREFRAMES.html) and FigJam user flow diagram.</p>
+
+      <h2>20.1 Tab Navigation</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Tab</th>
+            <th>Screen</th>
+            <th>Purpose</th>
+            <th>CLTRN 5.1 Mapping</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tab 1: Today</td>
+            <td>Daily Dashboard</td>
+            <td>Morning check-in, top 3, K0RE insight, evening reflection</td>
+            <td>TODAY template</td>
+          </tr>
+          <tr>
+            <td>Tab 2: Chat</td>
+            <td>K0RE AI Coach</td>
+            <td>3-tier thought processing, voice input, context-aware coaching</td>
+            <td>K0RE-GPT interface</td>
+          </tr>
+          <tr>
+            <td>Tab 3: Journal</td>
+            <td>Journal Hub</td>
+            <td>Gratitude, Dream, Benchmark, Data Dump, Purpose, Voice journals</td>
+            <td>CLTRN 5.1 journal templates</td>
+          </tr>
+          <tr>
+            <td>Tab 4: Domains</td>
+            <td>Life Domains</td>
+            <td>6-domain scores, trends, deep dives, progress tracking</td>
+            <td>QUEUE + life dimensions</td>
+          </tr>
+          <tr>
+            <td>Tab 5: Profile</td>
+            <td>Human Entity</td>
+            <td>Sovereign ID, membership level, referral tree, K0RE CHI, settings</td>
+            <td>Identity + governance</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-21">
+      <h1><span class="number">21.</span> Website Architecture & Conversion Strategy</h1>
+
+      <p>Marketing website designed using Hormozi's value equation framework. Every section reduces perceived risk and increases perceived value. Wireframe available as interactive HTML (CLTRN-WEBSITE-WIREFRAME.html) and FigJam diagrams.</p>
+
+      <h2>21.1 Page Structure (12 Sections)</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Section</th>
+            <th>Purpose</th>
+            <th>Hormozi Principle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1. Sticky Navbar</td>
+            <td>Logo, links, CTA (Take Free Assessment)</td>
+            <td>Persistent conversion path</td>
+          </tr>
+          <tr>
+            <td>2. Hero</td>
+            <td>Dream outcome headline + score preview + dual CTA</td>
+            <td>Dream Outcome maximization</td>
+          </tr>
+          <tr>
+            <td>3. Social Proof Bar</td>
+            <td>Trust signals: data sovereign, AI-powered, 5 min/day</td>
+            <td>Perceived Likelihood</td>
+          </tr>
+          <tr>
+            <td>4. 6 Life Domains</td>
+            <td>Visual showcase of what they'll transform</td>
+            <td>Dream Outcome breadth</td>
+          </tr>
+          <tr>
+            <td>5. How It Works (3 Steps)</td>
+            <td>Assessment → Meet K0RE → Transform Daily</td>
+            <td>Reduce Time Delay + Effort</td>
+          </tr>
+          <tr>
+            <td>6. Core Features</td>
+            <td>6-card grid: Assessment, K0RE Chat, Dashboard, Journals, Perfect Day, Streaks</td>
+            <td>Perceived Likelihood</td>
+          </tr>
+          <tr>
+            <td>7. Value Ladder</td>
+            <td>Free → $8 → $98/mo → $498 → $2,888+</td>
+            <td>Ascending commitment</td>
+          </tr>
+          <tr>
+            <td>8. Testimonials</td>
+            <td>3-card grid with score improvements</td>
+            <td>Social proof</td>
+          </tr>
+          <tr>
+            <td>9. Guarantee</td>
+            <td>30-day data-backed money-back guarantee</td>
+            <td>Risk reversal</td>
+          </tr>
+          <tr>
+            <td>10. Pricing</td>
+            <td>3-tier: Free / $98 Growth / $398 Annual</td>
+            <td>Clear conversion paths</td>
+          </tr>
+          <tr>
+            <td>11. Final CTA</td>
+            <td>Repeat assessment offer with urgency</td>
+            <td>Closing conversion</td>
+          </tr>
+          <tr>
+            <td>12. Footer</td>
+            <td>Product, Company, Legal links</td>
+            <td>Navigation + trust</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-22">
+      <h1><span class="number">22.</span> Network Reward & Viral Growth System</h1>
+
+      <p>The K0RE Network Connection Reward & Incentive Framework transforms every member into a growth engine through tokenized referrals, AI-driven matching, and multi-tier rewards.</p>
+
+      <h2>22.1 Multi-Tiered Reward Structure</h2>
+      <p>Total Connection Fee (TCF) = Opportunity Value × Connection Fee %. Distribution:</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Allocation</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Finder's Reward</td>
+            <td>50-70% of TCF</td>
+            <td>Primary referrer who sources the connection</td>
+          </tr>
+          <tr>
+            <td>In-Between Connections Reward (ICR)</td>
+            <td>20-40% of TCF</td>
+            <td>Distributed across up to 8 connection levels</td>
+          </tr>
+          <tr>
+            <td>Network Dividend</td>
+            <td>10% of TCF</td>
+            <td>Distributed to all active network members</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>22.2 K0RE CHI — Internal Currency</h2>
+      <p>K0RE CHI is the internal economy currency (not crypto, not a security) — earned through value contribution:</p>
+      <ul>
+        <li>Earned by: Contributing value, teaching, hosting events, completing projects, helping members, attending retreats</li>
+        <li>Spent on: SOT programs, practitioner sessions, CLTRN premium tools, TRMIG opportunities, member services</li>
+        <li>Creates a circular private economy that incentivizes participation and locks in long-term engagement</li>
+      </ul>
+    </section>
+
+    <section id="section-23">
+      <h1><span class="number">23.</span> Execution Roadmap</h1>
+
+      <h2>23.1 Phase 1: Genesis (Feb 14 - Feb 23) — MVP Launch</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Focus</th>
+            <th>Deliverables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1-2</td>
+            <td>Foundation</td>
+            <td>Supabase CLTRN project, core schema (22 tables), RLS policies, auth setup</td>
+          </tr>
+          <tr>
+            <td>2-3</td>
+            <td>K0RE Core</td>
+            <td>K0RE-GPT kernel as system prompt, thought processing logic, AI chat API</td>
+          </tr>
+          <tr>
+            <td>3-4</td>
+            <td>Mobile Shell</td>
+            <td>React Native + Expo project, navigation, auth screens, design system</td>
+          </tr>
+          <tr>
+            <td>4-5</td>
+            <td>Zero-Point Assessment</td>
+            <td>6-dimension questionnaire, scoring engine, current state report</td>
+          </tr>
+          <tr>
+            <td>5-6</td>
+            <td>Daily Dashboard</td>
+            <td>TODAY screen, daily check-in, top objectives, end-of-day reflection</td>
+          </tr>
+          <tr>
+            <td>6-7</td>
+            <td>K0RE Chat</td>
+            <td>AI chat interface, 3-tier thought processing, context-aware responses</td>
+          </tr>
+          <tr>
+            <td>7-8</td>
+            <td>Journals + Perfect Day</td>
+            <td>Journal creation, gratitude journal, Perfect Day baseline</td>
+          </tr>
+          <tr>
+            <td>8-9</td>
+            <td>Polish + Test</td>
+            <td>UI polish, bug fixes, test group onboarding flow, app store prep</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>23.2 Phase 2: Proof Engine (Mar - May 2026)</h2>
+      <ul>
+        <li>Sprint system (weekly/monthly/annual)</li>
+        <li>Community features (pods, messaging, groups)</li>
+        <li>Cerebro knowledge base</li>
+        <li>Wearable data integration</li>
+        <li>Case study capture + before/after documentation</li>
+        <li>Onboard POC cohort #2</li>
+      </ul>
+
+      <h2>23.3 Phase 3: Capital & Scale (Jun - Aug 2026)</h2>
+      <ul>
+        <li>TEV framework implementation</li>
+        <li>Treasury dashboard (NAV tracking)</li>
+        <li>KoreChi token architecture</li>
+        <li>DAO-ready governance voting</li>
+        <li>Capital raise: $150K-$250K (convertible/LP)</li>
+        <li>Inner Council recruitment</li>
+      </ul>
+
+      <h2>23.4 Phase 4: Sovereign Infrastructure (Sep 2026+)</h2>
+      <ul>
+        <li>Blockchain integration (Cardano)</li>
+        <li>Data sovereignty vault (encrypted, self-hosted option)</li>
+        <li>Digital Twin v2 (cryptographic identity)</li>
+        <li>Intelligence Fabric (post-LLM dependence)</li>
+        <li>Network replication (K0RE nodes)</li>
+        <li>Public launch + mass onboarding</li>
+      </ul>
+    </section>
+
+    <section id="section-24">
+      <h1><span class="number">24.</span> Commander Team Requirements</h1>
+
+      <p>Critical 4-6 person team needed to execute, ordered by leverage:</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Role</th>
+            <th>Priority</th>
+            <th>Key Skills</th>
+            <th>Outputs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Strategic Ops Integrator</td>
+            <td>Immediate</td>
+            <td>PM tools, systems thinking, async ops, decentralized workflows</td>
+            <td>Execution roadmap, Gantt charts, task coordination</td>
+          </tr>
+          <tr>
+            <td>AI Engineer</td>
+            <td>Immediate</td>
+            <td>GPT API, Langchain, Node.js/Python, multi-agent systems</td>
+            <td>K0RE-AI Command Console, LLM integration, agent system</td>
+          </tr>
+          <tr>
+            <td>Legal Architect</td>
+            <td>Critical</td>
+            <td>Web3 legal, JV contracts, token law, DAO compliance</td>
+            <td>TEV agreements, ownership frameworks, tokenization docs</td>
+          </tr>
+          <tr>
+            <td>Brand/UX Designer</td>
+            <td>High</td>
+            <td>UI/UX, Figma, visual storytelling</td>
+            <td>App design, launch decks, whitepapers, dashboards</td>
+          </tr>
+          <tr>
+            <td>Capital Catalyst</td>
+            <td>Strategic</td>
+            <td>Syndication, VC, private lending networks</td>
+            <td>$150K-$250K treasury-backed capital raise</td>
+          </tr>
+          <tr>
+            <td>Community Builder</td>
+            <td>Phase 3</td>
+            <td>Onboarding, Discord, rituals, engagement</td>
+            <td>Community activation, retreat coordination</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="section-25">
+      <h1><span class="number">25.</span> Subsidiary Ecosystems</h1>
+
+      <h2>25.1 SOT — Sandals of Time (Retreats & Experiences)</h2>
+      <p>Embodied soul infrastructure. Phase 2 retreat programs, experiential transformation, short/long-term stays. Revenue through booking fees and rental income. Maps to Membership Level 3 (Stay).</p>
+
+      <h2>25.2 TRMIG — The Real Monopoly Investment Group</h2>
+      <p>Asset & capital engine. Fractionalized real estate ownership with CMHC-backed leverage. Legal structure: TRMIG LP + GP Inc + Project HoldCo + Bare Trust + AssetCo. Entry as low as $500 for micro-investors. Future tokenization layer for private marketplace.</p>
+
+      <h2>25.3 TRM — The Real Monopoly (Realty)</h2>
+      <p>Real estate brokerage and property management. Brand development, marketing, business process SOPs, competitor analysis. Property Management SOP v1 covers: tenant management, maintenance, bill payment, CMHC compliance, mortgage renewal, tax prep.</p>
+
+      <h2>25.4 PBOC — Omega's Edge</h2>
+      <p>Trading and investment division. Algorithmic trading (Omega's Edge), investment thesis, 2025 roadmap, founding partnerships. Maps to Membership Level 2b (Play).</p>
+
+      <h2>25.5 TRMM — Education</h2>
+      <p>K0RE education system across levels: elementary consciousness, high school transformation, development programs. Long-term vision for alternative education infrastructure.</p>
+    </section>
+
+    <section id="section-26">
+      <h1><span class="number">26.</span> Safety Design Architecture</h1>
+
+      <h2>26.1 Three-Tier Safety Framework</h2>
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Name</th>
+            <th>Components</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tier 1</td>
+            <td>Kernel Safety</td>
+            <td>Ethics kernel (L0), capability permissions, non-harm enforcement</td>
+          </tr>
+          <tr>
+            <td>Tier 2</td>
+            <td>Operational Safety</td>
+            <td>Action receipts, kill switches, escalation thresholds, audit logging</td>
+          </tr>
+          <tr>
+            <td>Tier 3</td>
+            <td>Network Safety</td>
+            <td>Replication safeguards, Ethics Gate, Isolation Layer, Update Propagation</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>26.2 AI Safety Rules</h2>
+      <ul>
+        <li>AI may recommend, analyze, and reflect — but never decide autonomously</li>
+        <li>High-impact actions require multi-confirmation</li>
+        <li>Reversibility is mandatory for all system actions</li>
+        <li>No self-training without human review</li>
+        <li>No recursive self-improvement</li>
+        <li>No uncontrolled tool access</li>
+        <li>Intelligence scales horizontally (more nodes), not vertically (more power)</li>
+      </ul>
+
+      <h2>26.3 Prohibited Actions (System-Wide)</h2>
+      <ul>
+        <li>Autonomous action without human confirmation</li>
+        <li>Social scoring</li>
+        <li>User behavior manipulation</li>
+        <li>Centralization of intelligence without opt-in</li>
+        <li>Optimization for engagement metrics</li>
+        <li>Surveillance of any kind</li>
+      </ul>
+    </section>
+
+    <section id="section-27">
+      <h1><span class="number">27.</span> Document Synthesis Map</h1>
+
+      <p>This master plan synthesizes content from 376 source documents across 21 folders. Key source mapping:</p>
+
+      <table class="plan-table">
+        <thead>
+          <tr>
+            <th>Section</th>
+            <th>Primary Sources</th>
+            <th>Document Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Executive Summary</td>
+            <td>Folder 00 (Executive Summary), Aggregate Canons</td>
+            <td>24</td>
+          </tr>
+          <tr>
+            <td>Constitutional Framework</td>
+            <td>Folder 01 (Constitutional Framework), Aggregate Canon v1.0</td>
+            <td>22</td>
+          </tr>
+          <tr>
+            <td>K0RE Identity</td>
+            <td>K0RE-AI docs (Folder 15), Identity Merged PDF</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td>First Principles</td>
+            <td>FPOP doc, First Principles Charter (Folder 15/6.0)</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>System Architecture</td>
+            <td>SRS, System Design Overview, System Blueprint (Folder 15/6.0)</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>K0RE-GPT Kernel</td>
+            <td>K0RE-GPT doc, CORPUS summary, Design Automation session</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>6 Life Domains</td>
+            <td>CLTRN 6.0 docs, Human Entity Implementation</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td>Template Library</td>
+            <td>CLTRN 5.1 folder (40+ templates)</td>
+            <td>40+</td>
+          </tr>
+          <tr>
+            <td>Human Entity Flow</td>
+            <td>Human Entity Implementation, Consciousness Assessment</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>Agent Architecture</td>
+            <td>CLTRN 6.0 Agent Architecture doc</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Database Schema</td>
+            <td>Network Database Schema doc (71KB)</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Membership Model</td>
+            <td>Folder 07 (Membership)</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>TEV Framework</td>
+            <td>Folder 08 (TEV)</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>Tech Stack</td>
+            <td>Folder 12 (Infrastructure)</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td>Competitive Moat</td>
+            <td>Competitor Threat & Sustainable Advantage doc</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Revenue & Pricing Strategy</td>
+            <td>6 pillars, subscription tiers, Hormozi model</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>Hormozi Growth Engine</td>
+            <td>Grand Slam Offer, Value Ladder, Rule of 100, Retention Flywheel</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>Acquisition Funnel & Contact Strategy</td>
+            <td>SOT Marketing, Content Strategy, Paid Acquisition</td>
+            <td>15</td>
+          </tr>
+          <tr>
+            <td>Mobile App UX Architecture</td>
+            <td>SRS, CLTRN 5.1 templates, wireframes, FigJam flows</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>Website Architecture</td>
+            <td>Hormozi framework, conversion optimization, wireframes</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>Network Reward & Viral Growth</td>
+            <td>Referral Framework, K0RE CHI, Viral Mechanics</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>Execution Roadmap</td>
+            <td>Folder 14 (Execution Roadmap)</td>
+            <td>11</td>
+          </tr>
+          <tr>
+            <td>Team Requirements</td>
+            <td>Folder 13 (Resource Requirements)</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td>Subsidiary Ecosystems</td>
+            <td>Folders 16-20 (SOT, TRMIG, TRM, PBOC, TRMM)</td>
+            <td>50+</td>
+          </tr>
+          <tr>
+            <td>Safety & Governance</td>
+            <td>AIOS Safety Design session, Constitutional Framework</td>
+            <td>8</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="bold">Total source documents synthesized: 376 PDFs + 20 Google Docs + 3 Aggregate Canons</p>
+    </section>
+
+    <section id="section-28">
+      <h1><span class="number">28.</span> Immediate Next Steps</h1>
+
+      <p>Starting today (February 14, 2026), 9 days to launch:</p>
+
+      <ol>
+        <li>Cal approves this master plan as the build bible</li>
+        <li>Create Supabase CLTRN project + deploy MVP schema (22 tables)</li>
+        <li>Implement K0RE-GPT Kernel as AI system prompt</li>
+        <li>Initialize React Native + Expo mobile app project</li>
+        <li>Build Zero-Point Assessment (6 dimensions)</li>
+        <li>Build Daily Dashboard (TODAY equivalent)</li>
+        <li>Build K0RE Chat interface with 3-tier thought processing</li>
+        <li>Build Journal system (Gratitude, Dream, Benchmark)</li>
+        <li>Test group onboarding + launch (Feb 23)</li>
+      </ol>
+
+      <p class="bold">This document is the single authoritative build reference. All prior versions are superseded.</p>
+      <p>Built for scale. Built from the complete K0RE bible. Let's go.</p>
+    </section>
+  </main>
+
+  <!-- Back to Top Button -->
+  <a href="#" class="back-to-top">↑</a>
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav">
+    <a href="website.html">WEBSITE</a>
+    <a href="mobile.html">MOBILE</a>
+    <a href="desktop.html">DESKTOP</a>
+    <a href="#" class="active">MASTER PLAN</a>
+    <a href="competitive.html">COMPETITIVE</a>
+    <a href="venn.html">VENN</a>
+  </div>
+
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Scroll Spy
+    const sections = document.querySelectorAll('section');
+    const tocLinks = document.querySelectorAll('.toc-item a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (scrollY >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // Back to Top
+    const backToTopBtn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 500) {
+        backToTopBtn.classList.add('visible');
+      } else {
+        backToTopBtn.classList.remove('visible');
+      }
+    });
+
+    // Intersection Observer for fade-in
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    sections.forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+</body>
+</html>

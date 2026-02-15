@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLTRN Mobile App — Wireframes v2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #000000;
+    --dark: #0A0A0A;
+    --charcoal: #141414;
+    --card: #1C1C1E;
+    --card-hover: #2C2C2E;
+    --gold: #D4AF37;
+    --gold-soft: rgba(212,175,55,0.15);
+    --gold-glow: rgba(212,175,55,0.06);
+    --silver: #98989D;
+    --silver-light: #C7C7CC;
+    --white: #F5F5F7;
+    --pure-white: #FFFFFF;
+    --green: #30D158;
+    --separator: rgba(255,255,255,0.06);
+    --glass: rgba(28,28,30,0.72);
+    --glass-border: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: #000000;
+    background-image: radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.03) 0%, transparent 60%);
+    background-attachment: fixed;
+    color: var(--white);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ═══ HEADER ═══ */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--separator);
+    padding: 20px 40px;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--white);
+  }
+  .header p {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--silver);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ═══ NAV ═══ */
+  .nav {
+    display: flex;
+    gap: 4px;
+    padding: 12px 20px;
+    overflow-x: auto;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: sticky;
+    top: 62px;
+    z-index: 99;
+    border-bottom: 1px solid var(--separator);
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav button {
+    background: transparent;
+    color: var(--silver);
+    border: 1px solid transparent;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: inherit;
+    letter-spacing: -0.1px;
+  }
+  .nav button:hover {
+    color: var(--white);
+    background: rgba(255,255,255,0.06);
+  }
+  .nav button.active {
+    color: var(--black);
+    background: var(--gold);
+    border-color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ═══ LAYOUT ═══ */
+  .section-label {
+    text-align: center;
+    padding: 80px 20px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    position: relative;
+  }
+  .section-label::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 12px auto 0;
+  }
+  .section-desc {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--silver);
+    line-height: 1.6;
+  }
+
+  .screens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    justify-content: center;
+    padding: 0 40px 60px;
+  }
+
+  /* ═══ SCREEN CARD (Outer) ═══ */
+  .screen-wrap {
+    width: 390px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .screen-wrap.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .screen-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 4px;
+  }
+  .screen-title h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.2px;
+  }
+  .screen-title .tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold);
+    background: var(--gold-soft);
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ═══ PHONE FRAME ═══ */
+  .phone {
+    width: 390px;
+    min-height: 844px;
+    background: var(--dark);
+    border-radius: 44px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.04),
+      0 20px 60px rgba(0,0,0,0.5),
+      0 0 120px var(--gold-glow);
+    position: relative;
+  }
+  .phone::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+    pointer-events: none;
+    border-radius: 44px 44px 0 0;
+    z-index: 5;
+  }
+
+  /* Dynamic Island */
+  .island {
+    width: 126px;
+    height: 36px;
+    background: #000;
+    border-radius: 24px;
+    margin: 12px auto 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 28px;
+    height: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white);
+    position: relative;
+    z-index: 10;
+  }
+  .status-bar .icons { display: flex; gap: 6px; font-size: 11px; }
+
+  /* App Content Area */
+  .app-content {
+    padding-bottom: 88px;
+  }
+
+  /* App Header */
+  .app-header {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .app-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--white);
+  }
+  .app-header .subtitle {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--silver);
+    margin-top: 2px;
+  }
+  .app-header .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #B8942A);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  /* Tab Bar */
+  .tab-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 28px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--separator);
+  }
+  .tab {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--silver);
+    letter-spacing: 0.2px;
+    position: relative;
+  }
+  .tab.active { color: var(--gold); }
+  .tab.active::after {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin: 4px auto 0;
+  }
+  .tab-dot {
+    width: 22px;
+    height: 22px;
+    margin: 0 auto 4px;
+    border-radius: 6px;
+    background: currentColor;
+    opacity: 0.25;
+  }
+  .tab.active .tab-dot { opacity: 0.9; }
+
+  /* ═══ UI COMPONENTS ═══ */
+  .pad { padding: 0 24px; }
+
+  .card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    border: 1px solid var(--glass-border);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(212,175,55,0.08);
+    background: var(--card-hover);
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.2px;
+    margin-bottom: 6px;
+  }
+  .card p {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--silver);
+    line-height: 1.5;
+  }
+
+  .card-glass {
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 12px;
+  }
+
+  .card-gold {
+    background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.04));
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 10px;
+  }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 16px 24px;
+    border-radius: 14px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: -0.2px;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #C5A132);
+    color: var(--black);
+  }
+  .btn-gold:hover { transform: scale(1.02); }
+  .btn-gold:active { transform: scale(0.98); }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-dark {
+    background: var(--card);
+    color: var(--white);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Score Ring (SVG) */
+  .score-ring-svg {
+    width: 160px;
+    height: 160px;
+    margin: 24px auto;
+  }
+
+  /* Score Ring (Legacy CSS) */
+  .score-ring {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 3px solid rgba(212,175,55,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 24px auto;
+    position: relative;
+    background: radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%);
+  }
+  .score-ring::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--gold);
+    border-right-color: var(--gold);
+    animation: none;
+  }
+  .score-ring .num {
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--white);
+    letter-spacing: -2px;
+  }
+  .score-ring .lbl {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--silver);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Progress */
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Domain Row */
+  .domain-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--separator);
+  }
+  .domain-row:last-child { border: none; }
+  .domain-emoji { font-size: 20px; margin-right: 14px; }
+  .domain-info { flex: 1; }
+  .domain-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: -0.1px;
+  }
+  .domain-val {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+
+  /* Streak */
+  .streak {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, var(--gold), #B8942A);
+    color: var(--black);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Chat */
+  .bubble {
+    max-width: 80%;
+    padding: 14px 18px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+  .bubble.ai {
+    background: var(--card);
+    border: 1px solid var(--glass-border);
+    color: var(--white);
+    border-bottom-left-radius: 6px;
+  }
+  .bubble.user {
+    background: var(--gold);
+    color: var(--black);
+    margin-left: auto;
+    border-bottom-right-radius: 6px;
+    font-weight: 500;
+  }
+  .bubble .mode {
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .chat-bar {
+    display: flex;
+    gap: 10px;
+    padding: 12px 24px;
+    background: rgba(10,10,10,0.9);
+    backdrop-filter: blur(20px);
+    position: absolute;
+    bottom: 88px;
+    left: 0;
+    right: 0;
+  }
+  .chat-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 12px 18px;
+    font-size: 14px;
+    color: var(--silver);
+    outline: none;
+  }
+  .chat-send {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: none;
+    color: var(--black);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* Thought Tiers */
+  .tiers {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .tier {
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border: 1px solid;
+  }
+  .tier-3d { border-color: rgba(48,209,88,0.3); color: var(--green); background: rgba(48,209,88,0.08); }
+  .tier-4d { border-color: rgba(10,132,255,0.3); color: #0A84FF; background: rgba(10,132,255,0.08); }
+  .tier-5d { border-color: rgba(191,90,242,0.3); color: #BF5AF2; background: rgba(191,90,242,0.08); }
+
+  /* Journal Card */
+  .journal-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: var(--card);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    border: 1px solid var(--glass-border);
+  }
+  .journal-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    background: rgba(255,255,255,0.04);
+  }
+  .journal-name { font-size: 15px; font-weight: 500; color: var(--white); }
+  .journal-desc { font-size: 12px; color: var(--silver); margin-top: 2px; }
+  .journal-chevron { color: var(--silver); font-size: 16px; margin-left: auto; }
+
+  /* Scale Buttons */
+  .scale-row {
+    display: flex;
+    gap: 8px;
+  }
+  .scale-btn {
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--silver);
+    cursor: pointer;
+    text-align: center;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .scale-btn.sel {
+    border-color: var(--gold);
+    background: var(--gold-soft);
+    color: var(--gold);
+  }
+
+  /* Onboarding */
+  .onboard {
+    text-align: center;
+    padding: 60px 32px 40px;
+  }
+  .onboard-ring {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #B8942A);
+    margin: 0 auto 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: var(--black);
+    font-weight: 300;
+    box-shadow: 0 8px 32px rgba(212,175,55,0.3);
+    animation: breathe 3s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 8px 32px rgba(212,175,55,0.3); }
+    50% { box-shadow: 0 8px 48px rgba(212,175,55,0.5); }
+  }
+  .onboard h3 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+    color: var(--white);
+  }
+  .onboard p {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--silver);
+    line-height: 1.6;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 28px;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+  .dot.on {
+    background: var(--gold);
+    width: 24px;
+    border-radius: 3px;
+  }
+
+  /* Assessment Q */
+  .q-card {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    border: 1px solid var(--glass-border);
+  }
+  .q-num {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .q-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1.4;
+    letter-spacing: -0.2px;
+    margin-bottom: 24px;
+  }
+
+  /* Profile Header */
+  .profile-hero {
+    text-align: center;
+    padding: 20px 24px 28px;
+    background: linear-gradient(180deg, rgba(212,175,55,0.08) 0%, transparent 100%);
+  }
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #B8942A);
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--black);
+    box-shadow: 0 8px 32px rgba(212,175,55,0.25);
+  }
+  .profile-name {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .profile-sub {
+    font-size: 13px;
+    color: var(--silver);
+    margin-top: 4px;
+  }
+  .profile-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 20px;
+  }
+  .stat-num {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--silver);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--separator);
+    margin: 32px 0;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--silver);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    line-height: 1.8;
+  }
+  .footer strong { color: var(--white); font-weight: 500; }
+
+  /* Animation: Pulse */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Animation: Slide In (Progress bar) */
+  @keyframes slideIn {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  /* Animation: Spin (Loading spinner) */
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Animation: Pulse Ring (Voice waveform) */
+  @keyframes pulse-ring {
+    0%, 100% { r: attr(r); opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>CLTRN Mobile App — Wireframes v2.0</h1>
+  <p>K0RE / CLTRN 6.0 &nbsp;·&nbsp; February 2026</p>
+</div>
+
+<div class="nav">
+  <button class="active" onclick="go('onboarding')">Onboarding</button>
+  <button onclick="go('assessment')">Assessment</button>
+  <button onclick="go('dashboard')">Dashboard</button>
+  <button onclick="go('chat')">K0RE Chat</button>
+  <button onclick="go('journals')">Journals</button>
+  <button onclick="go('perfectday')">Perfect Day</button>
+  <button onclick="go('domains')">Domains</button>
+  <button onclick="go('community')">Community</button>
+  <button onclick="go('profile')">Profile</button>
+  <button onclick="go('skills')">Skills</button>
+  <button onclick="go('execution')">Execution</button>
+  <button onclick="go('vault')">Vault</button>
+  <button onclick="go('voice')">Voice</button>
+  <button onclick="go('relationships')">Relationships</button>
+  <button onclick="go('ecosystem')">Ecosystem</button>
+</div>
+
+<!-- ═══ ONBOARDING ═══ -->
+<div class="section-label" id="onboarding">01 — Onboarding</div>
+<div class="section-desc">Value-first onboarding. No account creation until after the free Zero-Point Assessment. Deliver value before commitment.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Welcome</h3><span class="tag">Entry</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="onboard">
+          <div class="onboard-ring">K</div>
+          <h3>Welcome to K0RE</h3>
+          <p>Dreaming Reality™<br><span style="font-size:13px; color:var(--silver)">Advanced Intelligence. Not Artificial.</span></p>
+          <p style="margin-top:12px">Your Conscious Life Operating System. Transform across 6 life domains with Advanced Intelligence that actually knows you.</p>
+          <div class="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+        <div class="pad" style="margin-top:20px">
+          <button class="btn btn-gold">Start Your Transformation</button>
+          <p style="text-align:center; margin-top:16px; font-size:13px; color:var(--silver)">Already a member? <span style="color:var(--gold); font-weight:500">Sign In</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Identity Setup</h3><span class="tag">Step 2</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>9:41</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div><span style="font-size:14px; color:var(--silver)">← Back</span><h2 style="font-size:22px; margin-top:4px">Your Identity</h2></div>
+        </div>
+        <div class="pad">
+          <p style="font-size:14px; color:var(--silver); margin-bottom:24px; font-weight:300">The beginning of your sovereign digital identity. Everything here belongs to you.</p>
+          <div class="card">
+            <h3>Display Name</h3>
+            <div style="border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:14px 18px; margin-top:8px; font-size:14px; color:var(--silver)">Your name or alias...</div>
+          </div>
+          <div class="card">
+            <h3>What brings you here?</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px">
+              <span style="padding:8px 18px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); font-size:13px; color:var(--silver)">Personal Growth</span>
+              <span style="padding:8px 18px; border-radius:100px; border:1px solid var(--gold); background:var(--gold-soft); color:var(--gold); font-size:13px; font-weight:500">Mental Clarity</span>
+              <span style="padding:8px 18px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); font-size:13px; color:var(--silver)">Financial Freedom</span>
+              <span style="padding:8px 18px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); font-size:13px; color:var(--silver)">Spiritual Growth</span>
+              <span style="padding:8px 18px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); font-size:13px; color:var(--silver)">Physical Health</span>
+              <span style="padding:8px 18px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); font-size:13px; color:var(--silver)">Relationships</span>
+            </div>
+          </div>
+          <button class="btn btn-gold" style="margin-top:16px">Continue to Assessment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ASSESSMENT ═══ -->
+<div class="section-label" id="assessment">02 — Zero-Point Assessment</div>
+<div class="section-desc">The lead magnet and product hook. 30 questions, immediate results with shareable score card. Free to take — paywall comes after value.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Assessment</h3><span class="tag">Lead Magnet</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>9:43</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div><h2 style="font-size:20px">Zero-Point</h2></div>
+          <span style="font-size:14px; color:var(--silver); font-weight:500">12/30</span>
+        </div>
+        <div class="pad">
+          <div class="progress-track" style="margin-bottom:4px"><div class="progress-fill" style="width:40%; background:var(--gold)"></div></div>
+          <span style="font-size:11px; color:var(--gold); font-weight:600; letter-spacing:1px">MENTAL DOMAIN</span>
+        </div>
+        <div class="pad" style="margin-top:16px">
+          <div class="q-card">
+            <div class="q-num">Question 12 of 30</div>
+            <div class="q-text">How often do you feel mentally overwhelmed by your responsibilities?</div>
+            <div class="scale-row">
+              <div class="scale-btn">1</div>
+              <div class="scale-btn">2</div>
+              <div class="scale-btn sel">3</div>
+              <div class="scale-btn">4</div>
+              <div class="scale-btn">5</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:11px; color:var(--silver)">
+              <span>Never</span><span>Always</span>
+            </div>
+          </div>
+          <button class="btn btn-gold">Next Question →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Score Card</h3><span class="tag">Viral Share</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>9:48</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header"><div><h2 style="font-size:20px">Your Zero-Point</h2></div></div>
+        <div class="pad">
+          <div class="score-ring-svg" style="width:160px; height:160px; margin:24px auto">
+            <svg viewBox="0 0 120 120" style="width:100%; height:100%">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--gold)" stroke-width="3"
+                stroke-dasharray="327" stroke-dashoffset="108" stroke-linecap="round"
+                transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"/>
+              <text x="60" y="55" text-anchor="middle" fill="var(--white)" font-size="36" font-weight="300" font-family="Inter" letter-spacing="-2">67</text>
+              <text x="60" y="72" text-anchor="middle" fill="var(--silver)" font-size="8" font-weight="600" font-family="Inter" letter-spacing="2" text-transform="uppercase">ZERO-POINT</text>
+            </svg>
+          </div>
+          <p style="text-align:center; font-size:13px; color:var(--silver); margin-bottom:20px">Your current state across 6 life domains</p>
+
+          <div class="domain-row"><span class="domain-emoji">🧠</span><div class="domain-info"><div class="domain-name">Mental</div><div class="progress-track"><div class="progress-fill" style="width:72%; background:var(--green)"></div></div></div><div class="domain-val">72</div></div>
+          <div class="domain-row"><span class="domain-emoji">❤️</span><div class="domain-info"><div class="domain-name">Emotional</div><div class="progress-track"><div class="progress-fill" style="width:58%; background:var(--gold)"></div></div></div><div class="domain-val">58</div></div>
+          <div class="domain-row"><span class="domain-emoji">💪</span><div class="domain-info"><div class="domain-name">Physical</div><div class="progress-track"><div class="progress-fill" style="width:81%; background:#0A84FF"></div></div></div><div class="domain-val">81</div></div>
+          <div class="domain-row"><span class="domain-emoji">✨</span><div class="domain-info"><div class="domain-name">Spiritual</div><div class="progress-track"><div class="progress-fill" style="width:45%; background:#BF5AF2"></div></div></div><div class="domain-val">45</div></div>
+          <div class="domain-row"><span class="domain-emoji">💰</span><div class="domain-info"><div class="domain-name">Financial</div><div class="progress-track"><div class="progress-fill" style="width:65%; background:var(--gold)"></div></div></div><div class="domain-val">65</div></div>
+          <div class="domain-row"><span class="domain-emoji">🤝</span><div class="domain-info"><div class="domain-name">Relational</div><div class="progress-track"><div class="progress-fill" style="width:77%; background:#64D2FF"></div></div></div><div class="domain-val">77</div></div>
+
+          <div style="display:flex; gap:10px; margin-top:20px">
+            <button class="btn btn-gold" style="flex:1">Share Score</button>
+            <button class="btn btn-dark" style="flex:1">Start Journey</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div class="section-label" id="dashboard">03 — Daily Dashboard</div>
+<div class="section-desc">The daily driver. Morning check-in, top objectives, K0RE insights, evening reflection. Streak counter drives retention.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Today</h3><span class="tag">Daily Driver</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>7:30</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div>
+            <div style="font-size:13px; color:var(--silver); font-weight:400">Good morning, Cal</div>
+            <h2 style="font-size:24px">Friday, Feb 14</h2>
+          </div>
+          <div class="avatar">K0</div>
+        </div>
+        <div class="pad">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+            <div class="streak">🔥 14-day streak</div>
+            <span style="font-size:13px; color:var(--silver)">Score: <span style="font-weight:600; color:var(--white)">72</span> <span style="color:var(--green)">+5</span></span>
+          </div>
+
+          <div class="card-gold">
+            <h3 style="font-size:15px; font-weight:600; color:var(--gold); margin-bottom:6px">☀️ Morning Check-In</h3>
+            <p style="font-size:13px; color:var(--silver-light)">Rate your energy, mood, and clarity to start the day.</p>
+            <button class="btn btn-gold" style="margin-top:12px; padding:12px; font-size:14px">Start Check-In</button>
+          </div>
+
+          <div class="card">
+            <h3>🎯 Today's Top 3</h3>
+            <div style="padding:10px 0; border-bottom:1px solid var(--separator); display:flex; align-items:center; gap:12px">
+              <div style="width:22px; height:22px; border-radius:50%; border:1.5px solid rgba(212,175,55,0.4)"></div>
+              <span style="font-size:14px; color:var(--white); font-weight:400">Complete master plan review with Jason</span>
+            </div>
+            <div style="padding:10px 0; border-bottom:1px solid var(--separator); display:flex; align-items:center; gap:12px">
+              <div style="width:22px; height:22px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; color:var(--black); font-size:12px; font-weight:700">✓</div>
+              <span style="font-size:14px; text-decoration:line-through; color:var(--silver)">30-min meditation session</span>
+            </div>
+            <div style="padding:10px 0; display:flex; align-items:center; gap:12px">
+              <div style="width:22px; height:22px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.1)"></div>
+              <span style="font-size:14px; color:var(--white); font-weight:400">Review TRMIG investor model</span>
+            </div>
+          </div>
+
+          <div class="card" style="background:linear-gradient(135deg, rgba(212,175,55,0.06), transparent); border-color:rgba(212,175,55,0.12)">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px">
+              <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--gold), #B8942A); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:var(--black)">K</div>
+              <h3 style="margin:0; font-size:14px; color:var(--gold)">K0RE Insight</h3>
+            </div>
+            <p style="font-size:13px; font-weight:300; color:var(--silver-light); line-height:1.6">"Your mental clarity scores improved 18% this week. Morning meditation correlates strongly with this gain. Keep this pattern."</p>
+          </div>
+
+          <div class="card">
+            <h3>🌙 Evening Reflection</h3>
+            <p>Available after 7:00 PM</p>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab active"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ K0RE CHAT ═══ -->
+<div class="section-label" id="chat">04 — K0RE Chat</div>
+<div class="section-desc">3-tier thought processing. Context-aware AI that knows your scores, journals, and goals. The primary engagement loop.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>K0RE Chat</h3><span class="tag">Core</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>12:15</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div style="display:flex; align-items:center; gap:12px">
+            <div class="avatar" style="width:36px; height:36px; font-size:13px">K</div>
+            <div>
+              <h2 style="font-size:18px">K0RE</h2>
+              <div style="font-size:11px; color:var(--green)">● Active</div>
+            </div>
+          </div>
+          <span style="font-size:18px; color:var(--silver)">⋯</span>
+        </div>
+        <div class="pad" style="padding-bottom:140px">
+          <div class="tiers">
+            <div class="tier tier-3d">3D Logic</div>
+            <div class="tier tier-4d">4D Intuition</div>
+            <div class="tier tier-5d">5D Sync</div>
+          </div>
+
+          <div class="bubble ai">Good afternoon, Cal. Your mental clarity is at 78 today — your best this week. What would you like to explore?</div>
+          <div class="bubble user">I'm feeling stuck on the business strategy. I know what I need to do but can't start.</div>
+          <div class="bubble ai">
+            <div class="mode" style="color:#0A84FF">🔮 4D Intuition</div>
+            This pattern appeared 3 times this month — always before a breakthrough. Your journal shows when you feel "stuck," you're processing at a deeper level. Last time, 48 hours later you had your best creative week.
+          </div>
+          <div class="bubble user">That makes sense. What should I focus on?</div>
+          <div class="bubble ai">
+            <div class="mode" style="color:var(--green)">📊 3D Logic</div>
+            Based on your energy pattern, tackle the TRMIG model review now — your analytical performance peaks between 12-2 PM. Save creative work for tomorrow morning.
+          </div>
+        </div>
+
+        <div class="chat-bar">
+          <div style="width:40px; height:40px; border-radius:50%; border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; background:var(--card)">🎤</div>
+          <input class="chat-input" placeholder="Ask K0RE anything..." disabled>
+          <div class="chat-send">↑</div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab active"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ JOURNALS ═══ -->
+<div class="section-label" id="journals">05 — Journals</div>
+<div class="section-desc">Maps to CLTRN 5.1 template library. Each journal feeds a life domain. Voice journaling with AI transcription.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Journal Hub</h3><span class="tag">Templates</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>9:00</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header"><div><h2>Journals</h2></div><span style="font-size:14px; color:var(--gold); font-weight:500">+ New</span></div>
+        <div class="pad">
+          <div class="journal-item"><div class="journal-icon">🙏</div><div><div class="journal-name">Gratitude Journal</div><div class="journal-desc">Daily gratitude — 3 things</div></div><div class="journal-chevron">›</div></div>
+          <div class="journal-item"><div class="journal-icon">🌙</div><div><div class="journal-name">Dream Journal</div><div class="journal-desc">Record and analyze patterns</div></div><div class="journal-chevron">›</div></div>
+          <div class="journal-item"><div class="journal-icon">📊</div><div><div class="journal-name">Benchmark Journal</div><div class="journal-desc">Financial & career milestones</div></div><div class="journal-chevron">›</div></div>
+          <div class="journal-item"><div class="journal-icon">💭</div><div><div class="journal-name">Data Dump</div><div class="journal-desc">Stream of consciousness</div></div><div class="journal-chevron">›</div></div>
+          <div class="journal-item"><div class="journal-icon">🎯</div><div><div class="journal-name">Purpose Journal</div><div class="journal-desc">Vision, mission, legacy</div></div><div class="journal-chevron">›</div></div>
+          <div class="journal-item"><div class="journal-icon">🎤</div><div><div class="journal-name">Voice Journal</div><div class="journal-desc">Speak — AI transcribes + analyzes</div></div><div class="journal-chevron">›</div></div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab active"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PERFECT DAY ═══ -->
+<div class="section-label" id="perfectday">06 — Perfect Day</div>
+<div class="section-desc">Users define their ideal day. K0RE uses this as the alignment target, creating gap awareness that drives engagement.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Perfect Day Builder</h3><span class="tag">Goals</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>8:00</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div><span style="font-size:14px; color:var(--silver)">← Back</span><h2 style="font-size:20px; margin-top:4px">My Perfect Day</h2></div>
+          <span style="font-size:14px; color:var(--gold); font-weight:500">Save</span>
+        </div>
+        <div class="pad">
+          <p style="font-size:14px; color:var(--silver); margin-bottom:20px; font-weight:300">Design your ideal day. K0RE helps you get closer every day.</p>
+
+          <div class="card" style="border-left:2px solid var(--gold)">
+            <div style="display:flex; justify-content:space-between"><h3>🌅 5:30 AM — Morning Ritual</h3><span style="font-size:12px; color:var(--silver)">Edit</span></div>
+            <p>Wake naturally. 10-min meditation. Cold shower. Gratitude journal.</p>
+          </div>
+          <div class="card" style="border-left:2px solid var(--green)">
+            <div style="display:flex; justify-content:space-between"><h3>💪 6:30 AM — Movement</h3><span style="font-size:12px; color:var(--silver)">Edit</span></div>
+            <p>45-min workout. Strength 3x/week, yoga 2x, walk 2x.</p>
+          </div>
+          <div class="card" style="border-left:2px solid #0A84FF">
+            <div style="display:flex; justify-content:space-between"><h3>🧠 8:00 AM — Deep Work</h3><span style="font-size:12px; color:var(--silver)">Edit</span></div>
+            <p>3 hours focused building. K0RE + CLTRN development.</p>
+          </div>
+          <div class="card" style="border-left:2px solid var(--gold)">
+            <div style="display:flex; justify-content:space-between"><h3>💰 12:00 PM — Business</h3><span style="font-size:12px; color:var(--silver)">Edit</span></div>
+            <p>Meetings, deals, investor calls. Arterial outreach.</p>
+          </div>
+          <div class="card" style="border-left:2px solid #BF5AF2">
+            <div style="display:flex; justify-content:space-between"><h3>🌙 9:00 PM — Wind-Down</h3><span style="font-size:12px; color:var(--silver)">Edit</span></div>
+            <p>Evening reflection. K0RE review. Tomorrow's top 3.</p>
+          </div>
+          <button class="btn btn-outline" style="margin-top:8px; padding:14px; font-size:14px">+ Add Time Block</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DOMAINS ═══ -->
+<div class="section-label" id="domains">07 — Life Domains</div>
+<div class="section-desc">Each domain has trend data, assessments, journal entries, and K0RE recommendations. Progressive unlock with membership levels.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Domain Overview</h3><span class="tag">6 Domains</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>10:00</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header"><div><h2>Life Domains</h2></div></div>
+        <div class="pad">
+          <div style="text-align:center; margin-bottom:20px">
+            <div class="score-ring-svg" style="width:120px; height:120px">
+              <svg viewBox="0 0 120 120" style="width:100%; height:100%">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--gold)" stroke-width="3"
+                  stroke-dasharray="327" stroke-dashoffset="91" stroke-linecap="round"
+                  transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1)"/>
+                <text x="60" y="55" text-anchor="middle" fill="var(--white)" font-size="30" font-weight="300" font-family="Inter" letter-spacing="-2">72</text>
+                <text x="60" y="72" text-anchor="middle" fill="var(--silver)" font-size="7" font-weight="600" font-family="Inter" letter-spacing="2" text-transform="uppercase">Overall</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:14px; cursor:pointer">
+            <span style="font-size:24px">🧠</span>
+            <div style="flex:1">
+              <div style="display:flex; justify-content:space-between"><span style="font-weight:500; font-size:14px">Mental</span><span style="font-weight:300; font-size:18px">78</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:78%; background:var(--green)"></div></div>
+              <div style="font-size:11px; color:var(--green); margin-top:3px">↑ +6 this week</div>
+            </div>
+          </div>
+          <div class="card" style="display:flex; align-items:center; gap:14px; cursor:pointer">
+            <span style="font-size:24px">❤️</span>
+            <div style="flex:1">
+              <div style="display:flex; justify-content:space-between"><span style="font-weight:500; font-size:14px">Emotional</span><span style="font-weight:300; font-size:18px">62</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:62%; background:var(--gold)"></div></div>
+              <div style="font-size:11px; color:var(--gold); margin-top:3px">↓ -2 this week</div>
+            </div>
+          </div>
+          <div class="card" style="display:flex; align-items:center; gap:14px; cursor:pointer">
+            <span style="font-size:24px">💪</span>
+            <div style="flex:1">
+              <div style="display:flex; justify-content:space-between"><span style="font-weight:500; font-size:14px">Physical</span><span style="font-weight:300; font-size:18px">85</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:85%; background:#0A84FF"></div></div>
+              <div style="font-size:11px; color:var(--green); margin-top:3px">↑ +4 this week</div>
+            </div>
+          </div>
+          <div class="card" style="display:flex; align-items:center; gap:14px; cursor:pointer">
+            <span style="font-size:24px">✨</span>
+            <div style="flex:1">
+              <div style="display:flex; justify-content:space-between"><span style="font-weight:500; font-size:14px">Spiritual</span><span style="font-weight:300; font-size:18px">52</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:52%; background:#BF5AF2"></div></div>
+              <div style="font-size:11px; color:var(--silver); margin-top:3px">— No change</div>
+            </div>
+          </div>
+          <div class="card" style="display:flex; align-items:center; gap:14px; cursor:pointer">
+            <span style="font-size:24px">💰</span>
+            <div style="flex:1">
+              <div style="display:flex; justify-content:space-between"><span style="font-weight:500; font-size:14px">Financial</span><span style="font-weight:300; font-size:18px">71</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:71%; background:var(--gold)"></div></div>
+              <div style="font-size:11px; color:var(--green); margin-top:3px">↑ +8 this week</div>
+            </div>
+          </div>
+          <div class="card" style="display:flex; align-items:center; gap:14px; cursor:pointer">
+            <span style="font-size:24px">🤝</span>
+            <div style="flex:1">
+              <div style="display:flex; justify-content:space-between"><span style="font-weight:500; font-size:14px">Relational</span><span style="font-weight:300; font-size:18px">77</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:77%; background:#64D2FF"></div></div>
+              <div style="font-size:11px; color:var(--green); margin-top:3px">↑ +3 this week</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab active"><div class="tab-dot"></div>Domains</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMMUNITY ═══ -->
+<div class="section-label" id="community">08 — Community</div>
+<div class="section-desc">Phase 3. Pods, challenges, leaderboards. Viral mechanics drive growth. Hormozi retention flywheel.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Community Hub</h3><span class="tag">Phase 3</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>14:00</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header"><div><h2>Community</h2></div><span style="font-size:16px; color:var(--silver)">🔔</span></div>
+        <div class="pad">
+          <div class="card-glass">
+            <h3 style="color:var(--gold); font-size:15px; margin-bottom:8px">🔥 Active Challenge</h3>
+            <p style="color:var(--silver-light); font-size:14px">21-Day Consciousness Sprint — Day 8</p>
+            <div class="progress-track" style="margin:10px 0 6px"><div class="progress-fill" style="width:38%; background:var(--gold)"></div></div>
+            <p style="color:var(--silver); font-size:12px">147 participants · 12 in your pod</p>
+          </div>
+
+          <div class="card">
+            <h3>Your Pod: "Sovereign Builders"</h3>
+            <div style="display:flex; margin:10px 0">
+              <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--gold),#B8942A); border:2px solid var(--dark); display:flex; align-items:center; justify-content:center; color:var(--black); font-size:11px; font-weight:700">K0</div>
+              <div style="width:32px; height:32px; border-radius:50%; background:var(--green); border:2px solid var(--dark); margin-left:-8px; display:flex; align-items:center; justify-content:center; color:var(--black); font-size:11px; font-weight:700">JA</div>
+              <div style="width:32px; height:32px; border-radius:50%; background:#0A84FF; border:2px solid var(--dark); margin-left:-8px; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:700">MR</div>
+              <div style="width:32px; height:32px; border-radius:50%; background:var(--card); border:2px solid var(--dark); margin-left:-8px; display:flex; align-items:center; justify-content:center; color:var(--silver); font-size:11px; font-weight:600">+9</div>
+            </div>
+            <p>Pod average: <strong style="color:var(--white)">74</strong> · Your rank: <strong style="color:var(--gold)">#3</strong></p>
+          </div>
+
+          <div class="card-gold">
+            <h3 style="color:var(--gold); margin-bottom:6px">🏆 Invite & Earn</h3>
+            <p style="color:var(--silver-light); font-size:13px">Invite friends to the Zero-Point Assessment. Earn K0RE CHI for every referral.</p>
+            <div style="display:flex; gap:10px; margin-top:12px">
+              <button class="btn btn-gold" style="flex:1; padding:12px; font-size:13px">Share Invite</button>
+              <button class="btn btn-dark" style="flex:1; padding:12px; font-size:13px">My Referrals (3)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROFILE ═══ -->
+<div class="section-label" id="profile">09 — Profile</div>
+<div class="section-desc">Sovereign digital identity. Complete data ownership. Export or delete at any time.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Human Entity</h3><span class="tag">Sovereign ID</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>11:00</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="profile-hero">
+          <div class="profile-avatar">K0</div>
+          <div class="profile-name">K0RE-0 (Cal)</div>
+          <div class="profile-sub">Level 4: Grow · Member since Jan 2026</div>
+          <div class="profile-stats">
+            <div><div class="stat-num">72</div><div class="stat-lbl">Score</div></div>
+            <div><div class="stat-num">14</div><div class="stat-lbl">Streak</div></div>
+            <div><div class="stat-num">3</div><div class="stat-lbl">Referrals</div></div>
+            <div><div class="stat-num">847</div><div class="stat-lbl">CHI</div></div>
+          </div>
+        </div>
+        <div class="pad">
+          <div class="card"><h3>Membership</h3><p>Level 4: Grow — <span style="color:var(--gold); font-weight:500">Upgrade to Level 5</span></p></div>
+          <div class="card">
+            <h3>Entity Data</h3>
+            <p>Export or delete your complete digital identity. You own all your data.</p>
+            <div style="display:flex; gap:8px; margin-top:10px">
+              <button class="btn btn-dark" style="flex:1; padding:10px; font-size:13px">Export</button>
+              <button class="btn btn-dark" style="flex:1; padding:10px; font-size:13px">Privacy</button>
+            </div>
+          </div>
+          <div class="card"><h3>Referral Tree</h3><p>3 direct · 847 CHI earned · <span style="color:var(--gold); font-weight:500">View Network</span></p></div>
+          <div class="card"><h3>Settings</h3><p>Notifications · Connected Devices · AI Preferences · Subscription</p></div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab active"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SKILL BROWSER ═══ -->
+<div class="section-label" id="skills">10 — Skill Browser</div>
+<div class="section-desc">App-store-like interface for installable AI skill packs. Categories, installed skills, recommendations, and premium expert packs.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Skill Browser</h3><span class="tag">AI Toolkit</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>10:15</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div><h2 style="font-size:22px">Skills</h2></div>
+          <span style="font-size:18px; cursor:pointer">🔍</span>
+        </div>
+        <div class="pad" style="padding-bottom:8px">
+          <div style="display:flex; gap:6px; overflow-x:auto; margin-bottom:20px; padding-bottom:4px">
+            <span style="padding:8px 16px; border-radius:100px; background:var(--gold); color:var(--black); font-size:12px; font-weight:600; white-space:nowrap">All</span>
+            <span style="padding:8px 16px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); color:var(--silver); font-size:12px; white-space:nowrap">Wealth</span>
+            <span style="padding:8px 16px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); color:var(--silver); font-size:12px; white-space:nowrap">Health</span>
+            <span style="padding:8px 16px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); color:var(--silver); font-size:12px; white-space:nowrap">Relationships</span>
+            <span style="padding:8px 16px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); color:var(--silver); font-size:12px; white-space:nowrap">Career</span>
+            <span style="padding:8px 16px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); color:var(--silver); font-size:12px; white-space:nowrap">Creative</span>
+          </div>
+
+          <h3 style="font-size:13px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">✓ Installed Skills</h3>
+          <div class="card" style="display:flex; align-items:center; gap:12px">
+            <div style="width:44px; height:44px; border-radius:12px; background:linear-gradient(135deg,var(--gold),#B8942A); display:flex; align-items:center; justify-content:center; font-size:18px">📊</div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:14px; color:var(--white)">Mortgage Deal Analyzer</div>
+              <div style="font-size:11px; color:var(--silver); margin-top:2px">Automated deal scoring</div>
+            </div>
+            <span style="color:var(--gold); font-size:16px">✓</span>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(48,209,88,0.15); display:flex; align-items:center; justify-content:center; font-size:18px">💹</div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:14px; color:var(--white)">Financial Modeling Pro</div>
+              <div style="font-size:11px; color:var(--silver); margin-top:2px">3-statement analysis engine</div>
+            </div>
+            <span style="color:var(--gold); font-size:16px">✓</span>
+          </div>
+
+          <h3 style="font-size:13px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; margin-top:20px">🎯 Recommended For You</h3>
+          <div class="card">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px">
+              <span style="font-size:18px">🏘️</span>
+              <div style="flex:1">
+                <div style="font-weight:600; color:var(--white)">Property Assessment</div>
+                <div style="font-size:11px; color:var(--silver); margin-top:2px">Valuation & comp analysis</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; justify-content:space-between">
+              <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--silver)">⭐ 4.8 (324)</div>
+              <button class="btn btn-gold" style="padding:8px 16px; font-size:12px; width:auto">Install</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px">
+              <span style="font-size:18px">💰</span>
+              <div style="flex:1">
+                <div style="font-weight:600; color:var(--white)">Cash Flow Mastery</div>
+                <div style="font-size:11px; color:var(--silver); margin-top:2px">Multi-year projections</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; justify-content:space-between">
+              <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--silver)">⭐ 4.9 (512)</div>
+              <button class="btn btn-gold" style="padding:8px 16px; font-size:12px; width:auto">Install</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px">
+              <span style="font-size:18px">🎯</span>
+              <div style="flex:1">
+                <div style="font-weight:600; color:var(--white)">Investment Decision Framework</div>
+                <div style="font-size:11px; color:var(--silver); margin-top:2px">Multi-criteria scoring</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; justify-content:space-between">
+              <div style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--silver)">⭐ 4.7 (289)</div>
+              <button class="btn btn-gold" style="padding:8px 16px; font-size:12px; width:auto">Install</button>
+            </div>
+          </div>
+
+          <h3 style="font-size:13px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; margin-top:20px">👑 Expert Packs</h3>
+          <div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(212,175,55,0.04)); border:2px solid rgba(212,175,55,0.3); border-radius:16px; padding:18px 20px; margin-bottom:10px">
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px">
+              <div>
+                <div style="font-weight:600; color:var(--gold); font-size:14px">Commander Tier Pack</div>
+                <div style="font-size:11px; color:var(--silver-light); margin-top:2px">Advanced AI execution suite</div>
+              </div>
+              <span style="font-size:18px">🔒</span>
+            </div>
+            <div style="display:flex; gap:8px">
+              <button class="btn btn-gold" style="padding:10px 16px; font-size:12px; width:auto">Unlock</button>
+              <button class="btn btn-dark" style="padding:10px 16px; font-size:12px; width:auto">Learn More</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab active"><div class="tab-dot"></div>Skills</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EXECUTION MODE ═══ -->
+<div class="section-label" id="execution">11 — Advanced Intelligence Execution Mode</div>
+<div class="section-desc">Real-time Advanced Intelligence execution interface. K0RE chains skills together to build deliverables. Voice prompts, skill visualization, output streaming.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>AI Execution</h3><span class="tag">Engine</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>14:32</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div style="display:flex; align-items:center; gap:10px">
+            <div class="avatar" style="width:32px; height:32px; font-size:11px">K</div>
+            <div>
+              <h2 style="font-size:16px">K0RE AI</h2>
+              <div style="display:flex; align-items:center; gap:4px; font-size:9px; color:var(--gold); font-weight:600; letter-spacing:0.5px">● Advanced Intelligence</div>
+            </div>
+          </div>
+        </div>
+        <div class="pad" style="padding-bottom:140px">
+          <div class="bubble user">Build me a cash flow analysis for 123 Main St — 3 scenarios, 5-year hold</div>
+
+          <div class="bubble ai" style="background:var(--card); border:1px solid rgba(212,175,55,0.2)">
+            <div style="display:flex; align-items:center; gap:6px; margin-bottom:10px">
+              <span style="width:6px; height:6px; border-radius:50%; background:var(--gold); animation:pulse 1.5s infinite"></span>
+              <span style="font-size:13px; font-weight:500; color:var(--gold)">Chaining 3 skills...</span>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.3); border-radius:12px; padding:12px; margin:10px 0; border:1px solid rgba(212,175,55,0.15)">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px">
+                <span style="font-size:14px">🏘️</span>
+                <div style="flex:1">
+                  <div style="font-size:12px; font-weight:600; color:var(--white)">Property Assessment</div>
+                  <div style="height:3px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:4px">
+                    <div style="height:3px; background:var(--gold); border-radius:2px; width:100%; animation:slideIn 1s"></div>
+                  </div>
+                </div>
+                <span style="font-size:12px; color:var(--green)">✓</span>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:4px; margin:0 0 10px 22px; font-size:9px; color:var(--silver)">→</div>
+
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px">
+                <span style="font-size:14px">💹</span>
+                <div style="flex:1">
+                  <div style="font-size:12px; font-weight:600; color:var(--white)">Financial Model</div>
+                  <div style="height:3px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:4px">
+                    <div style="height:3px; background:var(--gold); border-radius:2px; width:65%; animation:slideIn 1.3s"></div>
+                  </div>
+                </div>
+                <div style="width:16px; height:16px; border:2px solid var(--gold); border-radius:50%; border-top-color:transparent; animation:spin 1s linear infinite"></div>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:4px; margin:0 0 10px 22px; font-size:9px; color:var(--silver)">→</div>
+
+              <div style="display:flex; align-items:center; gap:8px">
+                <span style="font-size:14px">📄</span>
+                <div style="flex:1">
+                  <div style="font-size:12px; font-weight:600; color:var(--white)">Deal Memo</div>
+                  <div style="height:3px; background:rgba(255,255,255,0.1); border-radius:2px; margin-top:4px">
+                    <div style="height:3px; background:rgba(212,175,55,0.3); border-radius:2px; width:20%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:var(--card-hover); border-radius:12px; padding:12px; margin-top:10px; border:1px solid var(--glass-border); display:flex; align-items:center; gap:10px; cursor:pointer">
+              <span style="font-size:18px">📊</span>
+              <div style="flex:1">
+                <div style="font-size:12px; font-weight:600; color:var(--white)">Cash_Flow_123Main.xlsx</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">Excel spreadsheet · 3 scenarios</div>
+              </div>
+              <button class="btn btn-gold" style="padding:6px 12px; font-size:11px; width:auto">Open</button>
+            </div>
+
+            <div style="background:var(--card-hover); border-radius:12px; padding:12px; margin-top:8px; border:1px solid var(--glass-border); display:flex; align-items:center; gap:10px; cursor:pointer">
+              <span style="font-size:18px">📑</span>
+              <div style="flex:1">
+                <div style="font-size:12px; font-weight:600; color:var(--white)">Deal_Memo_123Main.pdf</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">PDF document · Ready to share</div>
+              </div>
+              <button class="btn btn-gold" style="padding:6px 12px; font-size:11px; width:auto">Open</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-bar">
+          <div style="width:40px; height:40px; border-radius:50%; border:1px solid var(--glass-border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; background:var(--card)">🎤</div>
+          <input class="chat-input" placeholder="Ask K0RE anything...">
+          <div class="chat-send">↑</div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab active"><div class="tab-dot"></div>Execute</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VAULT & MEMORY ═══ -->
+<div class="section-label" id="vault">12 — Output Vault & Memory</div>
+<div class="section-desc">Persistent memory and AI output archive. K0RE remembers patterns from 6 months of inputs. Searchable vault of all deliverables.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Vault & Memory</h3><span class="tag">Archive</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>15:45</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div><h2 style="font-size:22px">Vault</h2></div>
+          <span style="font-size:18px; cursor:pointer">⚙️</span>
+        </div>
+        <div class="pad">
+          <div style="background:linear-gradient(135deg,rgba(212,175,55,0.08),transparent); border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:16px; margin-bottom:20px; display:flex; align-items:center; gap:12px">
+            <span style="font-size:28px">🧠</span>
+            <div style="flex:1">
+              <div style="font-weight:600; color:var(--white); font-size:13px">K0RE Memory: 6 months active</div>
+              <div style="font-size:11px; color:var(--silver-light); margin-top:6px; line-height:1.5">
+                <div>• 1,247 journal entries analyzed</div>
+                <div>• 89 patterns detected</div>
+                <div>• 156 deliverables created</div>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="font-size:13px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">📁 Recent Outputs</h3>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; cursor:pointer">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(0,200,124,0.15); display:flex; align-items:center; justify-content:center; font-size:18px">📊</div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">Q1 Budget Model.xlsx</div>
+              <div style="font-size:10px; color:var(--silver); margin-top:3px">Jan 15 · 485 KB</div>
+            </div>
+            <span style="color:var(--silver); font-size:14px">›</span>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; cursor:pointer">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(212,175,55,0.15); display:flex; align-items:center; justify-content:center; font-size:18px">📑</div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">Deal Memo — 456 Oak Ave.pdf</div>
+              <div style="font-size:10px; color:var(--silver); margin-top:3px">Jan 22 · 2.1 MB</div>
+            </div>
+            <span style="color:var(--silver); font-size:14px">›</span>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; cursor:pointer">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-size:18px">📝</div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">Weekly Priorities.md</div>
+              <div style="font-size:10px; color:var(--silver); margin-top:3px">Feb 10 · 12 KB</div>
+            </div>
+            <span style="color:var(--silver); font-size:14px">›</span>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; cursor:pointer">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(0,200,124,0.15); display:flex; align-items:center; justify-content:center; font-size:18px">📊</div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">Investment Portfolio Review.xlsx</div>
+              <div style="font-size:10px; color:var(--silver); margin-top:3px">Feb 12 · 1.8 MB</div>
+            </div>
+            <span style="color:var(--silver); font-size:14px">›</span>
+          </div>
+
+          <h3 style="font-size:13px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; margin-top:20px">✨ Pattern Insights</h3>
+
+          <div class="card-glass">
+            <div style="display:flex; gap:10px">
+              <span style="font-size:20px; flex-shrink:0">📈</span>
+              <div>
+                <div style="font-size:13px; font-weight:500; color:var(--white); line-height:1.5">Your Wealth domain peaks when Health is above 70. Current Health: 68 — consider prioritizing exercise this week.</div>
+                <div style="margin-top:8px; font-size:11px; color:var(--silver)">Detected from 156 entries · Confidence: 94%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab active"><div class="tab-dot"></div>Vault</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VOICE & CONVERSATIONS ═══ -->
+<div class="section-label" id="voice">13 — Voice & Conversations</div>
+<div class="section-desc">Voice interface with AI-powered meeting intelligence. Real-time transcription, meeting coaching, and post-call summaries with action item tracking.</div>
+<div class="screens">
+  <!-- Voice Mode Screen -->
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Voice Mode</h3><span class="tag">Interface</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>15:32</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div style="display:flex; align-items:center; gap:8px">
+            <span style="font-size:18px">🎤</span>
+            <h2 style="font-size:16px">K0RE Voice</h2>
+          </div>
+        </div>
+        <div class="pad" style="display:flex; flex-direction:column; align-items:center; padding-bottom:140px">
+          <!-- Waveform Visualization -->
+          <div style="width:200px; height:200px; margin:40px auto; position:relative; display:flex; align-items:center; justify-content:center">
+            <svg viewBox="0 0 200 200" style="width:100%; height:100%">
+              <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="2" style="animation:pulse-ring 1.5s ease-in-out infinite"/>
+              <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(212,175,55,0.3)" stroke-width="2" style="animation:pulse-ring 1.5s ease-in-out infinite 0.3s"/>
+              <circle cx="100" cy="100" r="40" fill="none" stroke="var(--gold)" stroke-width="2" style="animation:pulse-ring 1.5s ease-in-out infinite 0.6s"/>
+              <circle cx="100" cy="100" r="20" fill="var(--gold)"/>
+            </svg>
+          </div>
+
+          <div style="font-size:16px; font-weight:500; color:var(--white); margin-bottom:40px">Listening...</div>
+
+          <!-- Voice Persona Selector -->
+          <div style="width:100%; margin-bottom:40px">
+            <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Persona</div>
+            <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap">
+              <div style="background:rgba(212,175,55,0.3); border:1px solid var(--gold); color:var(--gold); padding:8px 18px; border-radius:20px; font-size:12px; font-weight:500">Operator</div>
+              <div style="background:var(--card); border:1px solid var(--glass-border); color:var(--silver); padding:8px 18px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer">Mentor</div>
+              <div style="background:var(--card); border:1px solid var(--glass-border); color:var(--silver); padding:8px 18px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer">Strategist</div>
+              <div style="background:var(--card); border:1px solid var(--glass-border); color:var(--silver); padding:8px 18px; border-radius:20px; font-size:12px; font-weight:500; cursor:pointer">Guide</div>
+            </div>
+          </div>
+
+          <!-- Mode Toggle -->
+          <div style="display:flex; gap:12px; margin-bottom:40px; width:100%; max-width:240px">
+            <div style="flex:1; padding:12px; text-align:center; background:rgba(212,175,55,0.15); border:1px solid var(--gold); border-radius:12px; color:var(--gold); font-size:13px; font-weight:600; cursor:pointer">Command</div>
+            <div style="flex:1; padding:12px; text-align:center; background:var(--card); border:1px solid var(--glass-border); border-radius:12px; color:var(--silver); font-size:13px; font-weight:600; cursor:pointer">Conversation</div>
+          </div>
+
+          <!-- Recent Interactions -->
+          <div style="width:100%; max-width:280px">
+            <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Recent</div>
+
+            <div class="card" style="display:flex; align-items:center; gap:12px; margin-bottom:8px">
+              <div style="flex:1">
+                <div style="font-weight:600; font-size:13px; color:var(--white)">Morning Brief</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">2 min ago</div>
+              </div>
+              <span style="color:var(--green); font-size:14px">✓</span>
+            </div>
+
+            <div class="card" style="display:flex; align-items:center; gap:12px; margin-bottom:8px">
+              <div style="flex:1">
+                <div style="font-weight:600; font-size:13px; color:var(--white)">Deal Analysis: 45 Elm St</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">1 hr ago</div>
+              </div>
+              <span style="color:var(--silver); font-size:12px">›</span>
+            </div>
+
+            <div class="card" style="display:flex; align-items:center; gap:12px">
+              <div style="flex:1">
+                <div style="font-weight:600; font-size:13px; color:var(--white)">Journal Entry</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">3 hrs ago</div>
+              </div>
+              <span style="color:var(--silver); font-size:12px">›</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab active"><div class="tab-dot"></div>Voice</div>
+          <div class="tab"><div class="tab-dot"></div>Meetings</div>
+          <div class="tab"><div class="tab-dot"></div>Transcripts</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Meeting Recording Screen -->
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Live Recording</h3><span class="tag">Meeting</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>14:23</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div style="display:flex; align-items:center; gap:8px">
+            <span style="width:8px; height:8px; background:#FF4444; border-radius:50%; animation:pulse 1s infinite"></span>
+            <h2 style="font-size:16px">Live Recording</h2>
+          </div>
+        </div>
+        <div class="pad" style="padding-bottom:140px">
+          <!-- Meeting Info Card -->
+          <div class="card-glass" style="margin-bottom:20px; display:flex; align-items:center; gap:12px">
+            <div style="width:40px; height:40px; border-radius:12px; background:rgba(212,175,55,0.15); display:flex; align-items:center; justify-content:center; font-size:16px">🤝</div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:14px; color:var(--white)">Investor Call</div>
+              <div style="font-size:12px; color:var(--silver); margin-top:2px">Michael Chen</div>
+            </div>
+            <div style="text-align:right; font-weight:600; font-size:14px; color:var(--gold)">14:32</div>
+          </div>
+
+          <!-- Live Transcript -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Transcript</div>
+          <div style="background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); border-radius:16px; padding:16px; margin-bottom:20px; max-height:240px; overflow-y:auto; font-size:13px; line-height:1.6; color:var(--silver)">
+            <div style="margin-bottom:12px">
+              <span style="color:var(--gold); font-weight:600">Michael:</span> The IRR projections look solid but I'm concerned about the exit timeline...
+            </div>
+            <div style="margin-bottom:12px">
+              <span style="color:var(--white); font-weight:600">You:</span> That's a fair point. Let me walk you through the three scenarios we modeled.
+            </div>
+            <div style="color:var(--silver); opacity:0.7">
+              <span style="color:var(--gold); font-weight:600">Michael:</span> I appreciate that. Show me those models.
+            </div>
+          </div>
+
+          <!-- K0RE Whisper Coaching -->
+          <div class="card-glass" style="border-left:3px solid var(--gold); display:flex; gap:12px">
+            <div style="flex:1">
+              <div style="font-size:10px; font-weight:700; color:var(--gold); letter-spacing:1px; text-transform:uppercase; margin-bottom:6px">K0RE Whisper</div>
+              <div style="font-size:12px; color:var(--silver); line-height:1.5">He's mentioned timeline concerns twice. Consider presenting the 3-year exit option first.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meeting Tabs -->
+        <div style="position:absolute; bottom:88px; left:0; right:0; display:flex; border-top:1px solid var(--separator); background:rgba(10,10,10,0.9); backdrop-filter:blur(20px)">
+          <div style="flex:1; padding:12px; text-align:center; font-size:12px; color:var(--gold); font-weight:600; border-bottom:2px solid var(--gold); cursor:pointer">Transcript</div>
+          <div style="flex:1; padding:12px; text-align:center; font-size:12px; color:var(--silver); font-weight:600; cursor:pointer">Actions</div>
+          <div style="flex:1; padding:12px; text-align:center; font-size:12px; color:var(--silver); font-weight:600; cursor:pointer">Whisper</div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Voice</div>
+          <div class="tab active"><div class="tab-dot"></div>Meeting</div>
+          <div class="tab"><div class="tab-dot"></div>Transcripts</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post-Meeting Summary Screen -->
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Meeting Summary</h3><span class="tag">Analysis</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>14:58</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <h2 style="font-size:16px">Meeting Summary</h2>
+        </div>
+        <div class="pad" style="padding-bottom:140px">
+          <!-- Meeting Card -->
+          <div class="card-glass" style="margin-bottom:20px">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px">
+              <span style="font-size:16px">🤝</span>
+              <div>
+                <div style="font-weight:600; font-size:14px; color:var(--white)">Investor Call</div>
+                <div style="font-size:11px; color:var(--silver)">Michael Chen · 23 min</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px">Summary</div>
+          <div style="background:var(--card); border:1px solid var(--glass-border); border-radius:16px; padding:14px; margin-bottom:20px; font-size:13px; color:var(--silver); line-height:1.6">
+            Discussed IRR projections for 123 Main St property. Michael expressed concern about 5-year exit timeline. Presented three alternative scenarios (3-year, 5-year, and 7-year holds). Agreed to move forward pending financial review of Phase 2 timeline.
+          </div>
+
+          <!-- Action Items -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Action Items</div>
+          <div class="card" style="margin-bottom:8px; padding:12px 14px">
+            <div style="display:flex; align-items:flex-start; gap:10px">
+              <input type="checkbox" style="margin-top:2px; cursor:pointer" checked>
+              <div style="flex:1">
+                <div style="font-weight:500; font-size:13px; color:var(--white)">Send updated IRR model (3 scenarios)</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">Assigned to You</div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:8px; padding:12px 14px">
+            <div style="display:flex; align-items:flex-start; gap:10px">
+              <input type="checkbox" style="margin-top:2px; cursor:pointer">
+              <div style="flex:1">
+                <div style="font-weight:500; font-size:13px; color:var(--white)">Review Phase 2 timeline</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">Assigned to You</div>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:20px; padding:12px 14px">
+            <div style="display:flex; align-items:flex-start; gap:10px">
+              <input type="checkbox" style="margin-top:2px; cursor:pointer">
+              <div style="flex:1">
+                <div style="font-weight:500; font-size:13px; color:var(--white)">Schedule follow-up for next Thursday</div>
+                <div style="font-size:10px; color:var(--silver); margin-top:2px">Assigned to Michael</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Decisions Made -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Decisions Made</div>
+          <div class="card" style="margin-bottom:8px">
+            <div style="font-weight:500; font-size:13px; color:var(--white); margin-bottom:4px">70/30 GP-LP split agreed</div>
+            <div style="font-size:10px; color:var(--silver)">Structure finalized</div>
+          </div>
+          <div class="card" style="margin-bottom:20px">
+            <div style="font-weight:500; font-size:13px; color:var(--white); margin-bottom:4px">Moving to Phase 2 pending review</div>
+            <div style="font-size:10px; color:var(--silver)">Conditional on financial approval</div>
+          </div>
+
+          <!-- Skill Chain Triggered -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Skill Chain Triggered</div>
+          <div class="card-glass" style="display:flex; align-items:center; gap:12px; padding:14px">
+            <div style="font-size:12px; font-weight:500; color:var(--white)">Financial Model</div>
+            <div style="width:6px; height:6px; border-radius:50%; background:var(--gold)"></div>
+            <div style="font-size:12px; font-weight:500; color:var(--white)">Deal Memo</div>
+            <div style="width:6px; height:6px; border-radius:50%; background:var(--gold)"></div>
+            <div style="font-size:12px; font-weight:500; color:var(--white)">Follow-up Email</div>
+          </div>
+
+          <button class="btn btn-gold" style="width:100%; margin-top:20px; padding:12px">View Full Transcript</button>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Voice</div>
+          <div class="tab active"><div class="tab-dot"></div>Summary</div>
+          <div class="tab"><div class="tab-dot"></div>Transcripts</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RELATIONSHIP INTELLIGENCE ═══ -->
+<div class="section-label" id="relationships">14 — Relationship Intelligence</div>
+<div class="section-desc">Smart relationship tracking. Health scoring, commitment tracking, communication history, and intelligent follow-up reminders based on relationship patterns.</div>
+<div class="screens">
+  <!-- Relationships Dashboard -->
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Relationships</h3><span class="tag">Network</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>16:15</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <h2 style="font-size:18px">Relationships</h2>
+          <span style="font-size:18px; cursor:pointer">🔍</span>
+        </div>
+        <div class="pad" style="padding-bottom:140px">
+          <!-- Recent Contacts -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Recent Contacts</div>
+          <div style="display:flex; gap:12px; overflow-x:auto; margin-bottom:28px; padding-bottom:8px">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; cursor:pointer">
+              <div style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, #4A90E2, #357ABD); display:flex; align-items:center; justify-content:center; font-size:20px">🤖</div>
+              <div style="font-size:10px; color:var(--silver); text-align:center; width:56px">Michael</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; cursor:pointer">
+              <div style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, #E24A4A, #BD3535); display:flex; align-items:center; justify-content:center; font-size:20px">👩</div>
+              <div style="font-size:10px; color:var(--silver); text-align:center; width:56px">Sarah</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; cursor:pointer">
+              <div style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, #4AE24A, #35BD35); display:flex; align-items:center; justify-content:center; font-size:20px">🧑</div>
+              <div style="font-size:10px; color:var(--silver); text-align:center; width:56px">David</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0; cursor:pointer">
+              <div style="width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, #E2A44A, #BD8535); display:flex; align-items:center; justify-content:center; font-size:20px">👱</div>
+              <div style="font-size:10px; color:var(--silver); text-align:center; width:56px">Lisa</div>
+            </div>
+          </div>
+
+          <!-- Relationship Health Cards -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">Relationship Health</div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; margin-bottom:10px; cursor:pointer">
+            <div style="width:12px; height:12px; border-radius:50%; background:#30D158"></div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">Michael Chen</div>
+              <div style="font-size:11px; color:var(--silver); margin-top:2px">Investor · Strong</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px; color:var(--silver)">2 hrs ago</div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; margin-bottom:10px; cursor:pointer">
+            <div style="width:12px; height:12px; border-radius:50%; background:#FFD60A"></div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">Sarah Williams</div>
+              <div style="font-size:11px; color:var(--silver); margin-top:2px">Borrower · Needs Attention</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px; color:var(--silver)">12 days ago</div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; margin-bottom:10px; cursor:pointer">
+            <div style="width:12px; height:12px; border-radius:50%; background:#30D158"></div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">David Park</div>
+              <div style="font-size:11px; color:var(--silver); margin-top:2px">Partner · Strong</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px; color:var(--silver)">Yesterday</div>
+            </div>
+          </div>
+
+          <div class="card" style="display:flex; align-items:center; gap:12px; cursor:pointer">
+            <div style="width:12px; height:12px; border-radius:50%; background:#FF4444"></div>
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:13px; color:var(--white)">Lisa Torres</div>
+              <div style="font-size:11px; color:var(--silver); margin-top:2px">Lead · Cooling</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10px; color:var(--silver)">34 days ago</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab active"><div class="tab-dot"></div>Relationships</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Detail -->
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Contact Detail</h3><span class="tag">Profile</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>16:18</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header" style="display:flex; align-items:center; gap:12px">
+          <span style="font-size:18px; cursor:pointer">‹</span>
+          <h2 style="font-size:18px; flex:1">Michael Chen</h2>
+        </div>
+        <div class="pad" style="padding-bottom:140px">
+          <!-- Profile Card -->
+          <div class="card-glass" style="text-align:center; padding:20px 16px; margin-bottom:20px">
+            <div style="font-size:32px; margin-bottom:12px">🤖</div>
+            <h3 style="font-size:16px; font-weight:600; color:var(--white); margin-bottom:4px">Michael Chen</h3>
+            <div style="font-size:12px; color:var(--silver)">Angel Investor</div>
+            <div style="font-size:11px; color:var(--silver); margin-top:2px">Chen Capital</div>
+
+            <!-- Relationship Score Ring -->
+            <div style="width:120px; height:120px; margin:20px auto 0; position:relative">
+              <svg viewBox="0 0 120 120" style="width:100%; height:100%; transform:rotate(-90deg)">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(212,175,55,0.2)" stroke-width="3"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--gold)" stroke-width="3" stroke-dasharray="272.3 339.3" stroke-linecap="round"/>
+              </svg>
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column">
+                <div style="font-size:28px; font-weight:300; color:var(--white)">87</div>
+                <div style="font-size:9px; color:var(--silver); margin-top:2px; text-transform:uppercase; letter-spacing:1px">Score</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Commitment Tracker -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">You Owe</div>
+          <div class="card" style="margin-bottom:8px; padding:12px; border-left:3px solid #FF4444">
+            <div style="font-weight:500; font-size:13px; color:var(--white)">Updated IRR projections</div>
+            <div style="font-size:10px; color:#FF4444; margin-top:4px">Overdue</div>
+          </div>
+          <div class="card" style="margin-bottom:20px; padding:12px; border-left:3px solid #FFD60A">
+            <div style="font-weight:500; font-size:13px; color:var(--white)">Phase 2 timeline</div>
+            <div style="font-size:10px; color:#FFD60A; margin-top:4px">Due Friday</div>
+          </div>
+
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px">They Owe</div>
+          <div class="card" style="padding:12px; border-left:3px solid rgba(212,175,55,0.5)">
+            <div style="font-weight:500; font-size:13px; color:var(--white)">Term sheet review</div>
+            <div style="font-size:10px; color:var(--silver); margin-top:4px">Pending</div>
+          </div>
+
+          <!-- Conversation History -->
+          <div style="font-size:11px; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; margin-top:20px">Conversation History</div>
+          <div class="card" style="margin-bottom:8px; cursor:pointer">
+            <div style="font-size:10px; color:var(--silver); margin-bottom:4px">Feb 14</div>
+            <div style="font-weight:500; font-size:12px; color:var(--white)">Investor Call · 23 min</div>
+            <div style="font-size:11px; color:var(--silver); margin-top:4px">Discussed 70/30 split</div>
+          </div>
+          <div class="card" style="margin-bottom:8px; cursor:pointer">
+            <div style="font-size:10px; color:var(--silver); margin-bottom:4px">Feb 7</div>
+            <div style="font-weight:500; font-size:12px; color:var(--white)">Property Tour · 45 min</div>
+            <div style="font-size:11px; color:var(--silver); margin-top:4px">Viewed 123 Main St</div>
+          </div>
+          <div class="card" style="cursor:pointer">
+            <div style="font-size:10px; color:var(--silver); margin-bottom:4px">Jan 28</div>
+            <div style="font-weight:500; font-size:12px; color:var(--white)">Intro Call · 12 min</div>
+            <div style="font-size:11px; color:var(--silver); margin-top:4px">Initial pitch</div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab active"><div class="tab-dot"></div>Relationships</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ECOSYSTEM VENN ═══ -->
+<div class="section-label" id="ecosystem">15 — Ecosystem Venn</div>
+<div class="section-desc">Interactive Venn diagram showing the intersection of Mind, Body, and Soul. Users can explore each domain and see how they interconnect within the K0RE ecosystem.</div>
+<div class="screens">
+  <div class="screen-wrap">
+    <div class="screen-title"><h3>Ecosystem Venn</h3><span class="tag">Visualization</span></div>
+    <div class="phone">
+      <div class="island"></div>
+      <div class="status-bar"><span>14:22</span><span class="icons">5G ▮▮▮</span></div>
+      <div class="app-content">
+        <div class="app-header">
+          <div><h2 style="font-size:20px">K0RE Ecosystem</h2></div>
+          <span style="font-size:14px; color:var(--silver); font-weight:500">Dreaming Reality™</span>
+        </div>
+        <div class="pad" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:500px">
+          <p style="text-align:center; font-size:13px; color:var(--silver); margin-bottom:24px; font-weight:300">Tap any circle to explore the intersection</p>
+
+          <!-- Venn Diagram SVG -->
+          <svg viewBox="0 0 320 300" style="width:280px; height:260px; margin-bottom:20px">
+            <!-- Background circles -->
+            <circle cx="85" cy="120" r="70" fill="rgba(212,175,55,0.08)" stroke="var(--gold)" stroke-width="2" style="cursor:pointer; transition:all 0.3s"/>
+            <circle cx="160" cy="150" r="70" fill="rgba(30,213,88,0.08)" stroke="var(--green)" stroke-width="2" style="cursor:pointer; transition:all 0.3s"/>
+            <circle cx="235" cy="120" r="70" fill="rgba(191,90,242,0.08)" stroke="#BF5AF2" stroke-width="2" style="cursor:pointer; transition:all 0.3s"/>
+
+            <!-- Labels -->
+            <text x="55" y="85" text-anchor="middle" font-size="14" font-weight="600" fill="var(--gold)" font-family="Inter">Mind</text>
+            <text x="160" y="210" text-anchor="middle" font-size="14" font-weight="600" fill="var(--green)" font-family="Inter">Body</text>
+            <text x="265" y="85" text-anchor="middle" font-size="14" font-weight="600" fill="#BF5AF2" font-family="Inter">Soul</text>
+
+            <!-- Center intersection label -->
+            <text x="160" y="150" text-anchor="middle" font-size="12" font-weight="700" fill="var(--gold)" font-family="Inter">CORE</text>
+          </svg>
+
+          <!-- Description Cards -->
+          <div class="card" style="margin-bottom:12px; padding:14px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.2); cursor:pointer">
+            <div style="display:flex; align-items:center; gap:8px">
+              <span style="font-size:14px; color:var(--gold); font-weight:600">🧠 Mind</span>
+              <span style="font-size:12px; color:var(--silver)">Clarity, Focus, Growth</span>
+            </div>
+          </div>
+
+          <div class="card" style="margin-bottom:12px; padding:14px; background:rgba(48,209,152,0.06); border:1px solid rgba(48,209,152,0.2); cursor:pointer">
+            <div style="display:flex; align-items:center; gap:8px">
+              <span style="font-size:14px; color:var(--green); font-weight:600">💪 Body</span>
+              <span style="font-size:12px; color:var(--silver)">Health, Energy, Vitality</span>
+            </div>
+          </div>
+
+          <div class="card" style="padding:14px; background:rgba(191,90,242,0.06); border:1px solid rgba(191,90,242,0.2); cursor:pointer">
+            <div style="display:flex; align-items:center; gap:8px">
+              <span style="font-size:14px; color:#BF5AF2; font-weight:600">✨ Soul</span>
+              <span style="font-size:12px; color:var(--silver)">Purpose, Connection, Peace</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-bar">
+          <div class="tab"><div class="tab-dot"></div>Today</div>
+          <div class="tab"><div class="tab-dot"></div>Chat</div>
+          <div class="tab"><div class="tab-dot"></div>Journal</div>
+          <div class="tab"><div class="tab-dot"></div>Domains</div>
+          <div class="tab active"><div class="tab-dot"></div>Ecosystem</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label" id="onboarding">16 — The First Dream</div>
+<div class="section-desc">Voice-guided onboarding. 7 minutes to build your Dreaming Reality™ foundation.</div>
+<div class="phone-row" style="justify-content:center">
+  <div class="phone-frame">
+    <div class="status-bar"><span>9:41</span><span>K0RE</span><span>●●● ■ ▐</span></div>
+    <div class="screen-title"><h3>The First Dream</h3><span class="tag">Onboarding</span></div>
+    <div style="padding:20px; text-align:center">
+      <div style="width:120px; height:120px; border-radius:50%; border:3px solid var(--gold); margin:20px auto; display:flex; align-items:center; justify-content:center;">
+        <div style="font-size:36px">🎙</div>
+      </div>
+      <p style="font-size:16px; font-weight:500; margin:16px 0 8px">Welcome to K0RE</p>
+      <p style="font-size:12px; color:var(--silver); margin-bottom:24px">"If you could wake up tomorrow and everything was exactly as you dreamed it — what does that day look like?"</p>
+      <div style="background:var(--card-bg); border:1px solid rgba(212,175,55,0.15); border-radius:12px; padding:16px; margin-bottom:12px; text-align:left">
+        <div style="font-size:11px; color:var(--gold); margin-bottom:4px">STEP 2 OF 5</div>
+        <div style="font-size:13px; font-weight:500">The Question</div>
+        <div style="font-size:11px; color:var(--silver); margin-top:4px">Speak or type your dream day</div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:16px">
+        <div style="flex:1; height:4px; background:var(--gold); border-radius:2px"></div>
+        <div style="flex:1; height:4px; background:var(--gold); border-radius:2px"></div>
+        <div style="flex:1; height:4px; background:rgba(212,175,55,0.3); border-radius:2px"></div>
+        <div style="flex:1; height:4px; background:rgba(212,175,55,0.3); border-radius:2px"></div>
+        <div style="flex:1; height:4px; background:rgba(212,175,55,0.3); border-radius:2px"></div>
+      </div>
+      <div style="background:var(--gold); color:#000; border-radius:12px; padding:14px; margin-top:20px; font-weight:600; font-size:14px">Continue</div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label" id="referral">17 — Referrals & Earnings</div>
+<div class="section-desc">Share the dream. Earn recurring commissions via Stripe Connect.</div>
+<div class="phone-row" style="justify-content:center">
+  <div class="phone-frame">
+    <div class="status-bar"><span>9:41</span><span>K0RE</span><span>●●● ■ ▐</span></div>
+    <div class="screen-title"><h3>Dream Network</h3><span class="tag">Referrals</span></div>
+    <div style="padding:20px">
+      <div style="text-align:center; margin-bottom:20px">
+        <div style="font-size:36px; font-weight:700; color:var(--gold)">$247</div>
+        <div style="font-size:11px; color:var(--silver)">Earned this month</div>
+      </div>
+      <div style="background:var(--card-bg); border:1px solid rgba(212,175,55,0.15); border-radius:12px; padding:16px; margin-bottom:12px">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+          <span style="font-size:13px; font-weight:500">Your Referral Link</span>
+          <span style="font-size:11px; color:var(--gold)">Copy</span>
+        </div>
+        <div style="background:#0A0A0A; border-radius:8px; padding:10px; font-size:11px; color:var(--silver); font-family:monospace">kore.ai/dream/cal-078</div>
+      </div>
+      <div style="background:var(--card-bg); border:1px solid rgba(212,175,55,0.15); border-radius:12px; padding:16px; margin-bottom:12px">
+        <div style="font-size:11px; color:var(--gold); margin-bottom:8px">YOUR TIER: COMMANDER</div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px"><span>Commission Rate</span><span style="color:var(--gold); font-weight:600">18%</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:6px"><span>Active Referrals</span><span style="font-weight:500">14</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px"><span>Lifetime Earned</span><span style="font-weight:500">$1,842</span></div>
+      </div>
+      <div style="background:var(--card-bg); border:1px solid rgba(212,175,55,0.15); border-radius:12px; padding:16px">
+        <div style="font-size:11px; color:var(--silver); margin-bottom:8px">RECENT REFERRALS</div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05)"><span>Marcus T.</span><span style="color:#30D158">Active · $35.64/mo</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05)"><span>Sarah K.</span><span style="color:#30D158">Active · $14.04/mo</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; padding:8px 0"><span>Dev P.</span><span style="color:#30D158">Active · $14.04/mo</span></div>
+      </div>
+      <div style="text-align:center; margin-top:16px; font-size:11px; color:#6B6B70">Payouts via Stripe Connect · Monthly</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <strong>CLTRN Mobile App Wireframes v2.0</strong><br>
+  K0RE / CLTRN 6.0 · Dreaming Reality™ · 17 Screens · React Native + Expo<br>
+  <span style="color:var(--gold)">CONFIDENTIAL</span> — K0RE-0 (Cal) & Jason Allen John
+</div>
+
+<script>
+function go(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// Scroll-reveal animations for all screen-wrap elements
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.screen-wrap').forEach(el => obs.observe(el));
+
+// Staggered reveal for screens in the same section
+document.querySelectorAll('.screens').forEach(container => {
+  const items = container.querySelectorAll('.screen-wrap');
+  items.forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.15}s`;
+  });
+});
+</script>
+</body>
+</html>

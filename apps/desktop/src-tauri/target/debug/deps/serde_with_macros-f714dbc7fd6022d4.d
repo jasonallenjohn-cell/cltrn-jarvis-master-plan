@@ -1,0 +1,8 @@
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/serde_with_macros-f714dbc7fd6022d4.d: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/apply.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/lazy_bool.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/utils.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libserde_with_macros-f714dbc7fd6022d4.dylib: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/apply.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/lazy_bool.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/utils.rs
+
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/lib.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/apply.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/lazy_bool.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_with_macros-3.16.1/src/utils.rs:

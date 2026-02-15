@@ -1,0 +1,9 @@
+{
+    "imports": {
+        "openai": "https://esm.sh/openai@4.28.0",
+        "zod": "https://deno.land/x/zod@v3.22.4/mod.ts",
+        "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2",
+        "@kore/core": "./_shared/core_lib/index.ts",
+        "stripe": "https://esm.sh/stripe@14.14.0?target=deno"
+    }
+}

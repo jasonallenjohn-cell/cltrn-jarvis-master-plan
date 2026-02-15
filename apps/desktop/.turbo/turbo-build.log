@@ -1,0 +1,13 @@
+
+> @kore/desktop@0.0.0 build
+> tsc && vite build
+
+vite v4.5.14 building for production...
+transforming...
+✓ 31 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.38 kB │ gzip:  0.28 kB
+dist/assets/index-4fcbd5fa.css    0.13 kB │ gzip:  0.12 kB
+dist/assets/index-71c32230.js   143.07 kB │ gzip: 46.03 kB
+✓ built in 1.99s

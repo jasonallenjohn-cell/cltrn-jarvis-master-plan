@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K0RE &rarr; Antigravity | Migration & Implementation Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --gold: #C9A84C;
+  --gold-dim: rgba(201,168,76,0.15);
+  --gold-glow: rgba(201,168,76,0.4);
+  --silver: #A8A9AD;
+  --bg: #0A0A0A;
+  --surface: #111111;
+  --surface-2: #1A1A1A;
+  --surface-3: #222222;
+  --text: #E8E8E8;
+  --text-dim: #888888;
+  --green: #34D399;
+  --blue: #60A5FA;
+  --red: #F87171;
+  --purple: #A78BFA;
+  --orange: #FB923C;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* --- HEADER --- */
+.hero {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-dim);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.hero h1 {
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--gold), #fff, var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: 18px;
+  color: var(--text-dim);
+  max-width: 600px;
+}
+
+/* --- NAV --- */
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid rgba(201,168,76,0.1);
+  padding: 24px 0;
+  overflow-y: auto;
+  z-index: 100;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.side-nav.open { transform: translateX(0); }
+
+.nav-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 200;
+  background: var(--surface-2);
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--gold);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-title {
+  padding: 0 24px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 12px;
+}
+
+.nav-section {
+  padding: 8px 24px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 16px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  font-size: 14px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.nav-link .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--surface-3);
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.nav-link.active .step-num {
+  background: var(--gold);
+  color: #000;
+}
+
+/* --- MAIN CONTENT --- */
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px 120px;
+}
+
+/* --- COMPARISON SECTION --- */
+.comparison {
+  margin-bottom: 80px;
+}
+
+.comparison h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: var(--gold);
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.compare-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 32px;
+  transition: border-color 0.3s;
+}
+
+.compare-card.recommended {
+  border-color: var(--gold);
+  position: relative;
+}
+
+.compare-card.recommended::after {
+  content: 'RECOMMENDED FOR YOU';
+  position: absolute;
+  top: -12px;
+  left: 24px;
+  background: var(--gold);
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+.compare-card h3 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.compare-card .subtitle {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+
+.compare-card .price {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.compare-card .price span {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-dim);
+}
+
+.feature-list {
+  list-style: none;
+}
+
+.feature-list li {
+  padding: 8px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.feature-list li:last-child { border: none; }
+
+.check { color: var(--green); font-weight: 700; flex-shrink: 0; }
+.cross { color: var(--red); font-weight: 700; flex-shrink: 0; opacity: 0.5; }
+
+.verdict-box {
+  background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(201,168,76,0.03));
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 32px;
+}
+
+.verdict-box h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.verdict-box p {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+/* --- PHASE SECTIONS --- */
+.phase {
+  margin-bottom: 80px;
+  scroll-margin-top: 40px;
+}
+
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.phase-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 20px;
+  font-weight: 800;
+  background: var(--gold-dim);
+  color: var(--gold);
+  border: 1px solid rgba(201,168,76,0.3);
+  flex-shrink: 0;
+}
+
+.phase-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.phase-header .phase-time {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* --- STEP CARDS --- */
+.step-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin-bottom: 16px;
+  transition: border-color 0.3s;
+}
+
+.step-card:hover {
+  border-color: rgba(201,168,76,0.2);
+}
+
+.step-card h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-card h3 .icon {
+  font-size: 18px;
+}
+
+.step-card p {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+
+.code-block {
+  background: #0D0D0D;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+  margin: 12px 0;
+  color: #ccc;
+}
+
+.code-block .comment { color: #555; }
+.code-block .keyword { color: var(--purple); }
+.code-block .string { color: var(--green); }
+.code-block .folder { color: var(--gold); }
+.code-block .file { color: var(--blue); }
+
+/* --- PROMPT BLOCKS --- */
+.prompt-block {
+  background: linear-gradient(135deg, rgba(96,165,250,0.06), rgba(167,139,250,0.06));
+  border: 1px solid rgba(96,165,250,0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 16px 0;
+  position: relative;
+}
+
+.prompt-block::before {
+  content: 'ANTIGRAVITY PROMPT';
+  position: absolute;
+  top: -10px;
+  left: 16px;
+  background: var(--surface);
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--blue);
+  border-radius: 4px;
+}
+
+.prompt-block p {
+  font-size: 14px;
+  font-style: italic;
+  color: var(--blue);
+  line-height: 1.7;
+}
+
+/* --- FILE MAP --- */
+.file-map {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 28px 32px;
+  margin: 24px 0;
+}
+
+.file-map h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--gold);
+}
+
+.file-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  font-size: 13px;
+}
+
+.file-row:last-child { border: none; }
+
+.file-from { color: var(--text-dim); font-family: 'SF Mono', monospace; font-size: 12px; }
+.file-arrow { color: var(--gold); font-weight: 700; }
+.file-to { color: var(--green); font-family: 'SF Mono', monospace; font-size: 12px; }
+
+/* --- TIMELINE --- */
+.timeline {
+  position: relative;
+  padding-left: 32px;
+  margin: 32px 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--gold), var(--gold-dim), transparent);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -28px;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--bg);
+}
+
+.timeline-item h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.timeline-item .time {
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.timeline-item p {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* --- TABLE --- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.data-table th {
+  background: var(--surface-3);
+  color: var(--gold);
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text);
+}
+
+.data-table tr:hover td { background: rgba(201,168,76,0.03); }
+
+/* --- TAGS --- */
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.tag-green { background: rgba(52,211,153,0.15); color: var(--green); }
+.tag-blue { background: rgba(96,165,250,0.15); color: var(--blue); }
+.tag-purple { background: rgba(167,139,250,0.15); color: var(--purple); }
+.tag-gold { background: var(--gold-dim); color: var(--gold); }
+.tag-orange { background: rgba(251,146,60,0.15); color: var(--orange); }
+
+/* --- CHECKLIST --- */
+.checklist {
+  list-style: none;
+  margin: 16px 0;
+}
+
+.checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+.checklist li:last-child { border: none; }
+
+.checklist .box {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(201,168,76,0.3);
+  border-radius: 5px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .compare-grid { grid-template-columns: 1fr; }
+  .main { padding: 0 20px 80px; }
+  .file-row { grid-template-columns: 1fr; gap: 4px; }
+  .file-arrow { display: none; }
+}
+
+/* --- SCROLL ANIMATIONS --- */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV TOGGLE -->
+<button class="nav-toggle" onclick="document.querySelector('.side-nav').classList.toggle('open')">&#9776;</button>
+
+<!-- SIDE NAV -->
+<nav class="side-nav" id="sideNav">
+  <div class="nav-title">Migration Guide</div>
+
+  <div class="nav-section">Decision</div>
+  <a class="nav-link" href="#comparison"><span class="step-num">?</span> Antigravity vs Cursor</a>
+
+  <div class="nav-section">Setup</div>
+  <a class="nav-link" href="#phase-1"><span class="step-num">1</span> Install & Configure</a>
+  <a class="nav-link" href="#phase-2"><span class="step-num">2</span> Workspace Structure</a>
+  <a class="nav-link" href="#phase-3"><span class="step-num">3</span> Load Blueprints</a>
+
+  <div class="nav-section">Build</div>
+  <a class="nav-link" href="#phase-4"><span class="step-num">4</span> Website MVP</a>
+  <a class="nav-link" href="#phase-5"><span class="step-num">5</span> Auth & Supabase</a>
+  <a class="nav-link" href="#phase-6"><span class="step-num">6</span> Core Engine</a>
+  <a class="nav-link" href="#phase-7"><span class="step-num">7</span> Stripe Integration</a>
+  <a class="nav-link" href="#phase-8"><span class="step-num">8</span> Mobile App</a>
+  <a class="nav-link" href="#phase-9"><span class="step-num">9</span> Desktop App</a>
+
+  <div class="nav-section">Launch</div>
+  <a class="nav-link" href="#phase-10"><span class="step-num">10</span> Agent Orchestration</a>
+  <a class="nav-link" href="#phase-11"><span class="step-num">11</span> Deploy & Go Live</a>
+  <a class="nav-link" href="#timeline"><span class="step-num">&rarr;</span> Full Timeline</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-badge">Implementation Playbook</div>
+  <h1>K0RE &rarr; Antigravity</h1>
+  <p>Step-by-step guide to building the K0RE ecosystem in Google Antigravity. Every prompt. Every file. Every phase.</p>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ==================== COMPARISON ==================== -->
+  <section class="comparison fade-in" id="comparison">
+    <h2>Antigravity vs Cursor: The Verdict</h2>
+
+    <div class="compare-grid">
+      <!-- ANTIGRAVITY -->
+      <div class="compare-card recommended">
+        <h3>Google Antigravity</h3>
+        <div class="subtitle">Agent-First IDE &middot; You manage, it builds</div>
+        <div class="price">$0 <span>with your Google plan</span></div>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> Free with Google Workspace (AI Ultra for priority)</li>
+          <li><span class="check">&check;</span> Agent Manager &mdash; multiple agents work in parallel</li>
+          <li><span class="check">&check;</span> Built-in browser testing (agents verify their own work)</li>
+          <li><span class="check">&check;</span> Implementation Plans &mdash; reviews architecture before coding</li>
+          <li><span class="check">&check;</span> Supports Claude Opus/Sonnet + Gemini 3 Pro</li>
+          <li><span class="check">&check;</span> Stateful memory across sessions (@memory)</li>
+          <li><span class="check">&check;</span> Artifacts system for verification</li>
+          <li><span class="check">&check;</span> Perfect for greenfield builds (K0RE is greenfield)</li>
+          <li><span class="cross">&times;</span> Newer &mdash; occasional aggressive actions (the D: drive incident)</li>
+          <li><span class="cross">&times;</span> Rate limits on free tier (5-hour refresh window)</li>
+        </ul>
+      </div>
+
+      <!-- CURSOR -->
+      <div class="compare-card">
+        <h3>Cursor</h3>
+        <div class="subtitle">AI-Augmented Editor &middot; You code, it assists</div>
+        <div class="price">$20 <span>/month (Pro)</span></div>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> Fastest inline completions in the industry</li>
+          <li><span class="check">&check;</span> Shadow workspace catches errors before applying</li>
+          <li><span class="check">&check;</span> More mature/stable for production codebases</li>
+          <li><span class="check">&check;</span> Strong multi-file editing (Composer)</li>
+          <li><span class="check">&check;</span> Great for iterating on existing code</li>
+          <li><span class="cross">&times;</span> $20/month minimum cost</li>
+          <li><span class="cross">&times;</span> Single agent at a time (no parallel execution)</li>
+          <li><span class="cross">&times;</span> No built-in browser testing</li>
+          <li><span class="cross">&times;</span> You drive every step (more hands-on required)</li>
+          <li><span class="cross">&times;</span> No Google Workspace integration</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="verdict-box">
+      <h3>Why Antigravity Wins for You</h3>
+      <p>
+        Three reasons this is your play: <strong>(1)</strong> You already have a Google plan &mdash; Antigravity is free and AI Ultra gives you priority access with higher limits. That's $0 vs $20+/month for Cursor.
+        <strong>(2)</strong> K0RE is a greenfield build &mdash; Antigravity excels at building from scratch, spawning multiple agents to work on different parts simultaneously. You can have one agent building the website while another sets up Stripe while another configures Supabase.
+        <strong>(3)</strong> Your blueprints are ready &mdash; Antigravity's Plan Mode will read your master plan, wireframes, and architecture docs, then generate an implementation plan for you to approve before writing a single line of code. You're the manager, it's the engineering team. That matches exactly how you work.
+      </p>
+      <p style="margin-top: 16px; font-size: 13px; color: var(--text-dim);">
+        <strong>Pro tip:</strong> Keep Cursor installed as backup. Use it when you need to hand-edit specific files or debug production issues. Think of Antigravity as your build team and Cursor as your personal Swiss Army knife.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 1: INSTALL ==================== -->
+  <section class="phase fade-in" id="phase-1">
+    <div class="phase-header">
+      <div class="phase-number">1</div>
+      <div>
+        <h2>Install & Configure Antigravity</h2>
+        <div class="phase-time">15 minutes</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128229;</span> Download Antigravity</h3>
+      <p>Go to <strong>antigravity.google</strong> and download for your OS. It's a VS Code-based editor &mdash; will feel familiar if you've used VS Code or Cursor.</p>
+      <div class="code-block">
+        <span class="comment"># Or install via command line (macOS)</span><br>
+        brew install --cask google-antigravity
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128272;</span> Sign In with Google</h3>
+      <p>Sign in with your existing Google account. If you're on a Google Workspace plan, you automatically get Antigravity access. For unlimited agent usage, ask your admin to add the <strong>AI Ultra Access</strong> add-on &mdash; it unlocks priority models (Gemini 3 Pro, Claude Opus/Sonnet) and removes rate limits.</p>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#9881;</span> Configure Model Preferences</h3>
+      <p>Open Settings and set your preferred models. For K0RE, I recommend:</p>
+      <table class="data-table">
+        <tr><th>Task Type</th><th>Model</th><th>Why</th></tr>
+        <tr><td>Planning & Architecture</td><td>Gemini 3 Pro Deep Think</td><td>Best at complex system design</td></tr>
+        <tr><td>Code Generation</td><td>Claude Sonnet 4.5</td><td>Fastest quality code output</td></tr>
+        <tr><td>Quick Tasks / Completions</td><td>Gemini 3 Flash</td><td>Instant, free tier unlimited</td></tr>
+        <tr><td>Complex Refactoring</td><td>Claude Opus 4.5</td><td>Deepest reasoning for hard problems</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 2: WORKSPACE ==================== -->
+  <section class="phase fade-in" id="phase-2">
+    <div class="phase-header">
+      <div class="phase-number">2</div>
+      <div>
+        <h2>Create the Workspace Structure</h2>
+        <div class="phase-time">10 minutes</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128193;</span> Initialize the Monorepo</h3>
+      <p>Open Antigravity's terminal and scaffold the project. We use a monorepo so all K0RE apps share code.</p>
+      <div class="code-block">
+        <span class="comment"># Create the project</span><br>
+        mkdir kore && cd kore<br>
+        git init<br><br>
+        <span class="comment"># Create the folder structure</span><br>
+        mkdir -p <span class="folder">apps/web</span> <span class="folder">apps/mobile</span> <span class="folder">apps/desktop</span><br>
+        mkdir -p <span class="folder">packages/ui</span> <span class="folder">packages/api</span> <span class="folder">packages/core</span><br>
+        mkdir -p <span class="folder">supabase/functions</span><br>
+        mkdir -p <span class="folder">docs</span> <span class="folder">stripe</span><br><br>
+        <span class="comment"># Initialize package.json</span><br>
+        npm init -y<br>
+        npm install -D turbo typescript
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128200;</span> Full Project Map</h3>
+      <div class="code-block">
+        <span class="folder">kore/</span><br>
+        &#9500;&#9472;&#9472; <span class="folder">apps/</span><br>
+        &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="folder">web/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Next.js 15 + Tailwind + Framer Motion</span><br>
+        &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="folder">mobile/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># React Native (Expo)</span><br>
+        &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="folder">desktop/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Tauri (Rust + React)</span><br>
+        &#9500;&#9472;&#9472; <span class="folder">packages/</span><br>
+        &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="folder">ui/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Shared K0RE design system</span><br>
+        &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="folder">api/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Supabase client + types</span><br>
+        &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="folder">core/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># K0RE Score, memory, skills engine</span><br>
+        &#9500;&#9472;&#9472; <span class="folder">supabase/</span><br>
+        &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="folder">functions/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Edge functions (12 agents)</span><br>
+        &#9474;&nbsp;&nbsp; &#9500;&#9472;&#9472; <span class="file">config.toml</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Supabase project config</span><br>
+        &#9474;&nbsp;&nbsp; &#9492;&#9472;&#9472; <span class="folder">migrations/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Database migrations</span><br>
+        &#9500;&#9472;&#9472; <span class="folder">docs/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Master plan + wireframes (your blueprints)</span><br>
+        &#9500;&#9472;&#9472; <span class="folder">stripe/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Billing config, webhook handlers</span><br>
+        &#9500;&#9472;&#9472; <span class="file">turbo.json</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Turborepo config</span><br>
+        &#9500;&#9472;&#9472; <span class="file">.env.local</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment"># Your Supabase + Stripe keys</span><br>
+        &#9492;&#9472;&#9472; <span class="file">package.json</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 3: LOAD BLUEPRINTS ==================== -->
+  <section class="phase fade-in" id="phase-3">
+    <div class="phase-header">
+      <div class="phase-number">3</div>
+      <div>
+        <h2>Load Your Blueprints</h2>
+        <div class="phase-time">5 minutes</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128195;</span> Copy Files into docs/</h3>
+      <p>These are the implementation-ready blueprints the agent will reference. Copy them from your folder into the workspace.</p>
+
+      <div class="file-map">
+        <h3>File Mapping</h3>
+        <div class="file-row">
+          <span class="file-from">CLTRN-KORE-MASTER-PLAN-v3.html</span>
+          <span class="file-arrow">&rarr;</span>
+          <span class="file-to">docs/master-plan.html</span>
+        </div>
+        <div class="file-row">
+          <span class="file-from">CLTRN-WEBSITE-WIREFRAME.html</span>
+          <span class="file-arrow">&rarr;</span>
+          <span class="file-to">docs/wireframe-web.html</span>
+        </div>
+        <div class="file-row">
+          <span class="file-from">CLTRN-MOBILE-APP-WIREFRAMES.html</span>
+          <span class="file-arrow">&rarr;</span>
+          <span class="file-to">docs/wireframe-mobile.html</span>
+        </div>
+        <div class="file-row">
+          <span class="file-from">CLTRN-DESKTOP-APP-WIREFRAME.html</span>
+          <span class="file-arrow">&rarr;</span>
+          <span class="file-to">docs/wireframe-desktop.html</span>
+        </div>
+        <div class="file-row">
+          <span class="file-from">CLTRN-KORE-VENN-DIAGRAM.html</span>
+          <span class="file-arrow">&rarr;</span>
+          <span class="file-to">docs/venn-diagram.html</span>
+        </div>
+        <div class="file-row">
+          <span class="file-from">CLTRN-KORE-COMPETITIVE-LANDSCAPE.html</span>
+          <span class="file-arrow">&rarr;</span>
+          <span class="file-to">docs/competitive-landscape.html</span>
+        </div>
+        <div class="file-row">
+          <span class="file-from">command-center/.env.local</span>
+          <span class="file-arrow">&rarr;</span>
+          <span class="file-to">.env.local</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#129504;</span> Set Up Antigravity Memory</h3>
+      <p>Create a <code>.gemini/context.md</code> file so the agent always knows the K0RE architecture. This persists across sessions.</p>
+      <div class="code-block">
+        <span class="comment"># .gemini/context.md</span><br><br>
+        <span class="string"># K0RE - Advanced Intelligence Ecosystem</span><br><br>
+        ## Brand<br>
+        - AI = "Advanced Intelligence" (NOT Artificial)<br>
+        - Core slogan: "Dreaming Reality&trade;"<br>
+        - Colors: Black (#0A0A0A), Gold (#C9A84C), Silver (#A8A9AD)<br>
+        - All pricing ends in 8<br><br>
+        ## Architecture<br>
+        - 3 Supabase projects: Command Center, Trillium, Arterial<br>
+        - 12 AI agents orchestrated via heartbeat edge function<br>
+        - Cross-project credentials stored in ops_config table<br>
+        - See docs/master-plan.html for full specification<br><br>
+        ## Tech Stack<br>
+        - Frontend: Next.js 15, Tailwind, Framer Motion<br>
+        - Mobile: React Native (Expo)<br>
+        - Desktop: Tauri (Rust + React)<br>
+        - Backend: Supabase (Edge Functions, Auth, Realtime)<br>
+        - Payments: Stripe (Billing, Connect, Checkout, Invoicing)<br>
+        - Design system: Black/Gold/Silver, Inter font, premium aesthetic<br><br>
+        ## Key Rules<br>
+        - Reference wireframes in docs/ for all UI decisions<br>
+        - Use Tesla/Apple-level design quality<br>
+        - Every component must feel premium and intentional
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 4: WEBSITE MVP ==================== -->
+  <section class="phase fade-in" id="phase-4">
+    <div class="phase-header">
+      <div class="phase-number">4</div>
+      <div>
+        <h2>Build the Website MVP</h2>
+        <div class="phase-time">Week 1-2</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#127760;</span> Start with Plan Mode</h3>
+      <p>In Antigravity, hit <strong>Cmd+Shift+P</strong> and switch to <strong>Plan Mode</strong>. Give it this prompt:</p>
+
+      <div class="prompt-block">
+        <p>Read the master plan at docs/master-plan.html and the website wireframe at docs/wireframe-web.html. Build the K0RE marketing website using Next.js 15, Tailwind CSS, and Framer Motion. The site has 10 phases: The Portal (particle reveal), Philosophy (scroll text), Venn Diagram (interactive), Engine Showcase, Voice & Recording, Collective Intelligence, The First Dream (onboarding), Share the Dream (referrals), Pricing (4 tiers ending in 8, Stripe checkout), and Final CTA. Colors: black #0A0A0A, gold #C9A84C, silver #A8A9AD. Font: Inter. Feel: Tesla meets Apple. Generate the implementation plan first.</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#9989;</span> Review the Plan</h3>
+      <p>Antigravity will generate an <code>implementation_plan.md</code> in your <code>.gemini/</code> directory. Review it &mdash; make sure it covers all 10 phases from the wireframe, references the right color codes, and plans for mobile responsiveness. Then click <strong>Approve</strong>.</p>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128640;</span> Watch It Build</h3>
+      <p>Once approved, the agent will scaffold the Next.js app, create components, write styles, and even test in the built-in browser. Key pages it should create:</p>
+      <table class="data-table">
+        <tr><th>Route</th><th>Content</th><th>Priority</th></tr>
+        <tr><td>/</td><td>Landing page (all 10 phases)</td><td><span class="tag tag-gold">Critical</span></td></tr>
+        <tr><td>/pricing</td><td>Pricing cards + Stripe checkout</td><td><span class="tag tag-gold">Critical</span></td></tr>
+        <tr><td>/onboarding</td><td>The First Dream (5-step flow)</td><td><span class="tag tag-blue">High</span></td></tr>
+        <tr><td>/referrals</td><td>Share the Dream dashboard</td><td><span class="tag tag-blue">High</span></td></tr>
+        <tr><td>/redpaper</td><td>RedPaper teaser + audio player</td><td><span class="tag tag-purple">Medium</span></td></tr>
+        <tr><td>/login</td><td>Auth (Supabase)</td><td><span class="tag tag-gold">Critical</span></td></tr>
+        <tr><td>/dashboard</td><td>Post-login K0RE Score overview</td><td><span class="tag tag-gold">Critical</span></td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 5: AUTH & SUPABASE ==================== -->
+  <section class="phase fade-in" id="phase-5">
+    <div class="phase-header">
+      <div class="phase-number">5</div>
+      <div>
+        <h2>Auth & Supabase Integration</h2>
+        <div class="phase-time">Week 2-3</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128274;</span> Connect Your 3 Projects</h3>
+      <div class="prompt-block">
+        <p>Set up Supabase integration for K0RE. We have 3 projects: Command Center (lwnyvbibdjskbchexwra), Trillium (qbxtimjhsvqsxoemheqc), and Arterial (ckrsbstgxzhplxgsciwq). Read the CLAUDE.md in docs/ for the full architecture. The Command Center's ops_config table stores cross-project credentials. Set up the Supabase client in packages/api/ with TypeScript types generated from all 3 schemas. Implement auth with magic link + Google OAuth.</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128450;</span> Database Schema</h3>
+      <p>The agent should generate migrations for any new tables needed for the web app (user profiles, K0RE scores, memories). Your existing Supabase tables (loans, art_deals, ops_missions, etc.) stay untouched.</p>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 6: CORE ENGINE ==================== -->
+  <section class="phase fade-in" id="phase-6">
+    <div class="phase-header">
+      <div class="phase-number">6</div>
+      <div>
+        <h2>Build the Core Engine</h2>
+        <div class="phase-time">Week 3-4</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#129504;</span> K0RE Score + Memory + Skills</h3>
+      <div class="prompt-block">
+        <p>Build the K0RE Core Engine in packages/core/. Three subsystems: (1) K0RE Score &mdash; composite score across 6 domains (Financial Mastery, Business Growth, Health & Vitality, Relationships, Personal Development, Spiritual Alignment) scored 0-100, weighted average = overall K0RE Score. (2) Persistent Memory &mdash; stores user context, preferences, past interactions in Supabase with vector embeddings for retrieval. (3) Skill Execution Engine &mdash; chains of AI skills (Deal Memo, Financial Model, Market Analysis, etc.) that run sequentially with output piping. Reference the master plan sections 8, 9, and 10.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 7: STRIPE ==================== -->
+  <section class="phase fade-in" id="phase-7">
+    <div class="phase-header">
+      <div class="phase-number">7</div>
+      <div>
+        <h2>Stripe Integration</h2>
+        <div class="phase-time">Week 4-5</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128179;</span> Full Payment Infrastructure</h3>
+      <div class="prompt-block">
+        <p>Integrate Stripe into K0RE. Set up: (1) Stripe Billing for subscriptions &mdash; 4 tiers: Observer (Free), Operator ($78/mo), Commander ($198/mo), Architect ($398/mo). Annual pricing: $58/$158/$318. (2) Stripe Checkout for one-time purchases from the Skill Marketplace. (3) Stripe Connect for marketplace payouts (70/30 creator/platform split). (4) Stripe Invoicing for Enterprise (NET-30). Create webhook handlers for: checkout.session.completed, customer.subscription.updated, customer.subscription.deleted, invoice.payment_failed, payment_intent.succeeded. Build a revenue dashboard at /admin/revenue showing MRR, active subscribers, churn rate, GMV from marketplace.</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128176;</span> Stripe Products to Create</h3>
+      <table class="data-table">
+        <tr><th>Product</th><th>Stripe Feature</th><th>Price</th></tr>
+        <tr><td>Operator Monthly</td><td>Billing (Subscription)</td><td>$78/mo</td></tr>
+        <tr><td>Operator Annual</td><td>Billing (Subscription)</td><td>$58/mo ($696/yr)</td></tr>
+        <tr><td>Commander Monthly</td><td>Billing (Subscription)</td><td>$198/mo</td></tr>
+        <tr><td>Commander Annual</td><td>Billing (Subscription)</td><td>$158/mo ($1,896/yr)</td></tr>
+        <tr><td>Architect Monthly</td><td>Billing (Subscription)</td><td>$398/mo</td></tr>
+        <tr><td>Architect Annual</td><td>Billing (Subscription)</td><td>$318/mo ($3,816/yr)</td></tr>
+        <tr><td>Enterprise</td><td>Invoicing (NET-30)</td><td>$98/seat/mo (min 10)</td></tr>
+        <tr><td>Skill Marketplace</td><td>Checkout + Connect</td><td>Variable (70/30)</td></tr>
+        <tr><td>K0RE Coach License</td><td>Billing (Subscription)</td><td>$98/mo</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 8: MOBILE ==================== -->
+  <section class="phase fade-in" id="phase-8">
+    <div class="phase-header">
+      <div class="phase-number">8</div>
+      <div>
+        <h2>Mobile App</h2>
+        <div class="phase-time">Week 5-7</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128241;</span> React Native (Expo)</h3>
+      <div class="prompt-block">
+        <p>Build the K0RE mobile app using React Native with Expo. Reference the mobile wireframe at docs/wireframe-mobile.html for all 17 screens. Use the shared UI components from packages/ui/ and the core engine from packages/core/. Key screens: Welcome/Auth, Dashboard (K0RE Score rings), Chat (split-view AI + execution), Voice Recording (waveform + transcript), Skills Browser, Perfect Day Builder, Meeting Intelligence, Ecosystem Venn (interactive), The First Dream (onboarding), and Referrals & Earnings (Stripe Connect). Use react-native-reanimated for animations. Black/Gold/Silver color scheme.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 9: DESKTOP ==================== -->
+  <section class="phase fade-in" id="phase-9">
+    <div class="phase-header">
+      <div class="phase-number">9</div>
+      <div>
+        <h2>Desktop App</h2>
+        <div class="phase-time">Week 7-8</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128187;</span> Tauri (Lightweight Desktop)</h3>
+      <div class="prompt-block">
+        <p>Build the K0RE desktop app using Tauri with React frontend. Reference docs/wireframe-desktop.html for all 8 screens. This should feel like a native macOS app &mdash; traffic light window controls, sidebar navigation, system tray integration. Key screens: Menu Bar Quick Overlay (Spotlight-style), Main Dashboard (K0RE Score ring + 6 domains), Voice & Meetings (waveform + coaching), AI Chat + Execution, Skill Browser & Marketplace, Knowledge Library (RedPaper featured), Ecosystem Venn, Revenue Dashboard (admin only, Stripe data). Use Tauri for small binary size and native performance.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 10: AGENTS ==================== -->
+  <section class="phase fade-in" id="phase-10">
+    <div class="phase-header">
+      <div class="phase-number">10</div>
+      <div>
+        <h2>Agent Orchestration</h2>
+        <div class="phase-time">Week 8-10</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#129302;</span> Wire Up the 12 Agents</h3>
+      <p>Your agents already exist as Supabase edge functions. This phase connects them to the frontend apps so users can trigger agent workflows from the UI.</p>
+      <div class="prompt-block">
+        <p>Connect the K0RE agent orchestration system. We have 12 agents deployed as Supabase edge functions on the Command Center project. The heartbeat function orchestrates them all. The proposal-service is the intake. Read the CLAUDE.md for the full agent inventory and reaction chains. Build a UI in the dashboard where users can: (1) see active missions and their steps, (2) trigger new proposals (e.g., "Run property assessment on 123 Main St"), (3) see real-time agent activity via Supabase Realtime subscriptions, (4) view agent outputs (deal memos, financial models, meeting briefs). Wire up the reaction chains so completing one agent automatically triggers the next.</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#9889;</span> Reaction Chain Reference</h3>
+      <table class="data-table">
+        <tr><th>Trigger Event</th><th>&rarr;</th><th>Next Agent</th></tr>
+        <tr><td>broker.deal_qualified</td><td>&rarr;</td><td>builder.run_feasibility</td></tr>
+        <tr><td>builder.feasibility_complete</td><td>&rarr;</td><td>advisor.run_investor_model</td></tr>
+        <tr><td>advisor.model_complete</td><td>&rarr;</td><td>creator.draft_deal_memo</td></tr>
+        <tr><td>prospector.prospect_qualified</td><td>&rarr;</td><td>cadence.initiate_sequence</td></tr>
+        <tr><td>cadence.sequence_initiated</td><td>&rarr;</td><td>intel.generate_brief</td></tr>
+        <tr><td>deal_closer.deal_won</td><td>&rarr;</td><td>success.start_onboarding</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== PHASE 11: DEPLOY ==================== -->
+  <section class="phase fade-in" id="phase-11">
+    <div class="phase-header">
+      <div class="phase-number">11</div>
+      <div>
+        <h2>Deploy & Go Live</h2>
+        <div class="phase-time">Week 10-12</div>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#127758;</span> Deployment Stack</h3>
+      <table class="data-table">
+        <tr><th>App</th><th>Platform</th><th>Domain</th></tr>
+        <tr><td>Website</td><td>Vercel</td><td>kore.ai or cltrn.com</td></tr>
+        <tr><td>Mobile</td><td>App Store + Google Play (via Expo EAS)</td><td>-</td></tr>
+        <tr><td>Desktop</td><td>Direct download (Tauri auto-updater)</td><td>-</td></tr>
+        <tr><td>API / Agents</td><td>Supabase (already deployed)</td><td>*.supabase.co</td></tr>
+        <tr><td>Payments</td><td>Stripe</td><td>Dashboard at stripe.com</td></tr>
+      </table>
+    </div>
+
+    <div class="step-card">
+      <h3><span class="icon">&#128640;</span> Launch Checklist</h3>
+      <ul class="checklist">
+        <li><span class="box"></span> Stripe products created and tested in test mode</li>
+        <li><span class="box"></span> Stripe webhooks configured for production URL</li>
+        <li><span class="box"></span> Supabase RLS policies verified on all tables</li>
+        <li><span class="box"></span> Auth flow working (magic link + Google OAuth)</li>
+        <li><span class="box"></span> All 12 agents responding to heartbeat</li>
+        <li><span class="box"></span> Website loads in under 3 seconds</li>
+        <li><span class="box"></span> Mobile app submitted to App Store / Play Store</li>
+        <li><span class="box"></span> Desktop binary signed and notarized (macOS)</li>
+        <li><span class="box"></span> DNS configured for production domain</li>
+        <li><span class="box"></span> SSL certificates active</li>
+        <li><span class="box"></span> Error monitoring set up (Sentry)</li>
+        <li><span class="box"></span> Analytics configured</li>
+        <li><span class="box"></span> Referral engine tested end-to-end</li>
+        <li><span class="box"></span> "Dreaming Reality&trade;" trademark filed</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ==================== TIMELINE ==================== -->
+  <section class="phase fade-in" id="timeline">
+    <div class="phase-header">
+      <div class="phase-number">&rarr;</div>
+      <div>
+        <h2>Full Implementation Timeline</h2>
+        <div class="phase-time">12 Weeks to MVP</div>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="time">Week 1-2</div>
+        <h4>Website MVP + Landing Page</h4>
+        <p>Next.js site with all 10 phases, pricing page, Stripe checkout integration. Deploy to Vercel.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Week 2-3</div>
+        <h4>Auth + Supabase + Database</h4>
+        <p>Connect all 3 Supabase projects, generate types, implement auth flows, create user profile tables.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Week 3-4</div>
+        <h4>Core Engine (K0RE Score + Memory + Skills)</h4>
+        <p>Build scoring system, persistent memory with vector embeddings, skill execution engine in packages/core/.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Week 4-5</div>
+        <h4>Stripe Full Integration</h4>
+        <p>All subscription products, marketplace Connect, enterprise invoicing, webhook handlers, revenue dashboard.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Week 5-7</div>
+        <h4>Mobile App (17 Screens)</h4>
+        <p>React Native + Expo. All screens from wireframe. Share UI components with web via packages/ui/.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Week 7-8</div>
+        <h4>Desktop App (8 Screens)</h4>
+        <p>Tauri + React. Native macOS feel, system tray, admin revenue dashboard.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Week 8-10</div>
+        <h4>Agent Orchestration</h4>
+        <p>Connect 12 agents to frontend, build mission viewer, real-time agent activity, reaction chain triggers.</p>
+      </div>
+      <div class="timeline-item">
+        <div class="time">Week 10-12</div>
+        <h4>Polish, Test, Launch</h4>
+        <p>QA across all platforms, performance optimization, app store submissions, production deploy, go live.</p>
+      </div>
+    </div>
+
+    <div class="verdict-box" style="margin-top: 48px;">
+      <h3>You're Closer Than You Think</h3>
+      <p>
+        Most startups start implementation with nothing &mdash; a vague idea and a blank repo. You're starting with a 28-section master plan, 3 fully-designed wireframes (35 screens total), a working Supabase backend with 12 deployed agents, brand guidelines locked, pricing finalized, and competitive landscape mapped. Antigravity's job is to turn blueprints into code. You've already done the hardest part &mdash; the thinking.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Active nav link on scroll
+const sections = document.querySelectorAll('.phase, .comparison');
+const navLinks = document.querySelectorAll('.nav-link');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 100;
+    if (window.scrollY >= top) current = section.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+
+// Close nav on link click (mobile)
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth < 768) document.getElementById('sideNav').classList.remove('open');
+  });
+});
+</script>
+
+</body>
+</html>

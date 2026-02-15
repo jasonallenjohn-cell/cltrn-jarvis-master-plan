@@ -1,0 +1,10 @@
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/walkdir-52136737a3a6ea7a.d: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/dent.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/error.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/util.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libwalkdir-52136737a3a6ea7a.rlib: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/dent.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/error.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/util.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libwalkdir-52136737a3a6ea7a.rmeta: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/dent.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/error.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/util.rs
+
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/lib.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/dent.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/error.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/walkdir-2.5.0/src/util.rs:

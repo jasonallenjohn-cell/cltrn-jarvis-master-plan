@@ -1,0 +1,33 @@
+{
+  "name": "kore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "next": "14.2.0",
+    "turbo": "^2.8.9",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "npm@11.6.2",
+  "dependencies": {
+    "stripe": "^20.3.1"
+  }
+}

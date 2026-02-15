@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLTRN × Jarvis — Master Implementation Plan</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a3d;
+    --text: #e0e0e8;
+    --muted: #8888a0;
+    --accent: #7c5cfc;
+    --accent2: #a78bfa;
+    --gold: #f5c542;
+    --green: #34d399;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+    --orange: #fb923c;
+    --pink: #f472b6;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Inter','SF Pro Display',-apple-system,sans-serif; line-height:1.7; }
+
+  .hero {
+    text-align:center; padding:80px 40px 60px;
+    background: linear-gradient(180deg, #12121a 0%, #0a0a0f 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-badge { display:inline-block; background:var(--accent); color:#fff; padding:6px 18px; border-radius:20px; font-size:12px; letter-spacing:2px; text-transform:uppercase; margin-bottom:20px; }
+  .hero h1 { font-size:48px; font-weight:800; background: linear-gradient(135deg, var(--accent2), var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+  .hero .subtitle { font-size:20px; color:var(--muted); max-width:700px; margin:0 auto 30px; }
+  .hero-meta { display:flex; gap:40px; justify-content:center; flex-wrap:wrap; }
+  .hero-meta span { font-size:13px; color:var(--muted); }
+  .hero-meta strong { color:var(--accent2); }
+
+  .container { max-width:1100px; margin:0 auto; padding:0 30px; }
+
+  .section { padding:60px 0; border-bottom:1px solid var(--border); }
+  .section-label { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
+  .section h2 { font-size:32px; font-weight:700; margin-bottom:8px; }
+  .section .desc { color:var(--muted); margin-bottom:30px; font-size:15px; }
+
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:20px; }
+  .card {
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-icon { font-size:28px; margin-bottom:12px; }
+  .card h3 { font-size:18px; font-weight:600; margin-bottom:6px; }
+  .card p { font-size:14px; color:var(--muted); }
+  .card .tag { display:inline-block; background:var(--surface2); color:var(--accent2); padding:3px 10px; border-radius:6px; font-size:11px; margin-top:10px; font-family:monospace; }
+
+  table { width:100%; border-collapse:collapse; margin:20px 0; }
+  th { text-align:left; font-size:12px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); padding:12px 16px; border-bottom:2px solid var(--border); }
+  td { padding:12px 16px; border-bottom:1px solid var(--border); font-size:14px; }
+  tr:hover td { background: var(--surface); }
+  .status { display:inline-block; padding:3px 10px; border-radius:6px; font-size:11px; font-weight:600; }
+  .status-mvp { background:rgba(52,211,153,0.15); color:var(--green); }
+  .status-p2 { background:rgba(96,165,250,0.15); color:var(--blue); }
+  .status-p3 { background:rgba(244,114,182,0.15); color:var(--pink); }
+  .status-infra { background:rgba(251,146,60,0.15); color:var(--orange); }
+
+  .arch-box {
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:30px;
+    font-family:'JetBrains Mono','Fira Code',monospace; font-size:13px; line-height:1.9;
+    overflow-x:auto; white-space:pre; color:var(--muted);
+  }
+  .arch-box .hl { color:var(--accent2); }
+  .arch-box .g { color:var(--green); }
+  .arch-box .y { color:var(--gold); }
+  .arch-box .b { color:var(--blue); }
+  .arch-box .c { color:var(--cyan); }
+  .arch-box .o { color:var(--orange); }
+  .arch-box .p { color:var(--pink); }
+
+  .timeline { position:relative; padding-left:40px; }
+  .timeline::before { content:''; position:absolute; left:15px; top:0; bottom:0; width:2px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:30px; }
+  .tl-dot { position:absolute; left:-33px; top:4px; width:14px; height:14px; border-radius:50%; border:2px solid var(--accent); background:var(--bg); }
+  .tl-item.active .tl-dot { background:var(--accent); box-shadow:0 0 12px var(--accent); }
+  .tl-phase { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); }
+  .tl-title { font-size:18px; font-weight:600; margin:4px 0; }
+  .tl-desc { font-size:14px; color:var(--muted); }
+  .tl-date { font-size:12px; color:var(--gold); margin-top:4px; }
+
+  .schema-block {
+    background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin:16px 0;
+  }
+  .schema-block h4 { font-size:16px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .schema-block code { font-family:'JetBrains Mono',monospace; font-size:12px; }
+  .schema-sql {
+    background:#0d0d14; border-radius:8px; padding:16px; margin-top:12px;
+    font-family:'JetBrains Mono',monospace; font-size:12px; line-height:1.8;
+    overflow-x:auto; white-space:pre; color:#a0a0b8;
+  }
+  .schema-sql .kw { color:var(--accent2); }
+  .schema-sql .type { color:var(--cyan); }
+  .schema-sql .str { color:var(--green); }
+  .schema-sql .cm { color:#555570; }
+
+  .reaction-chain {
+    display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:12px 0;
+  }
+  .rc-event { background:var(--surface2); color:var(--green); padding:6px 12px; border-radius:6px; font-family:monospace; font-size:12px; }
+  .rc-arrow { color:var(--muted); font-size:18px; }
+  .rc-action { background:var(--surface2); color:var(--blue); padding:6px 12px; border-radius:6px; font-family:monospace; font-size:12px; }
+
+  .domain-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin:20px 0; }
+  @media(max-width:800px) { .domain-grid { grid-template-columns:repeat(2,1fr); } }
+  .domain-card { text-align:center; padding:20px 12px; background:var(--surface); border:1px solid var(--border); border-radius:12px; }
+  .domain-card .emoji { font-size:32px; margin-bottom:8px; }
+  .domain-card h4 { font-size:14px; margin-bottom:4px; }
+  .domain-card p { font-size:11px; color:var(--muted); }
+
+  .stack-layer {
+    display:flex; align-items:center; gap:16px; padding:14px 20px;
+    background:var(--surface); border:1px solid var(--border); border-radius:8px; margin:6px 0;
+  }
+  .stack-layer .layer-id { font-family:monospace; font-weight:700; font-size:14px; color:var(--accent); min-width:30px; }
+  .stack-layer .layer-name { font-weight:600; min-width:160px; }
+  .stack-layer .layer-desc { font-size:13px; color:var(--muted); }
+
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px; margin:20px 0; }
+  .kpi { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; text-align:center; }
+  .kpi .value { font-size:28px; font-weight:800; background:linear-gradient(135deg, var(--accent2), var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .kpi .label { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .footer { text-align:center; padding:40px; color:var(--muted); font-size:12px; }
+  .footer a { color:var(--accent2); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-badge">Master Implementation Plan</div>
+  <h1>CLTRN × Jarvis</h1>
+  <p class="subtitle">The Conscious Life Transformation Network — A Sovereign Human Operating System powered by multi-agent AI intelligence</p>
+  <div class="hero-meta">
+    <span>Architect & Visionary: <strong>Cal (K0RE-0 / Founder)</strong></span>
+    <span>Implementor & Builder: <strong>Jason (Technical Co-Founder)</strong></span>
+    <span>AI Assistant: <strong>Jarvis</strong></span>
+    <span>Documents Synthesized: <strong>32</strong></span>
+    <span>Version: <strong>5.8 MVP → 6.0 Sovereign</strong></span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== EXECUTIVE SUMMARY ==================== -->
+<div class="section">
+  <div class="section-label">Section 01</div>
+  <h2>Executive Summary</h2>
+  <p class="desc">What we're building, who it's for, and how it maps to Jason's proven architecture.</p>
+
+  <p style="font-size:15px; margin-bottom:20px;">
+    CLTRN is a <strong>Sovereign Human Operating System</strong> — a platform that helps individuals optimize their life across five core domains using AI-guided personal development. The system is anchored by <strong>Jarvis</strong>, a multi-agent AI assistant that acts as a personal life operator, coaching users through consciousness expansion, habit formation, identity refinement, relationship building, and purpose alignment.
+  </p>
+  <p style="font-size:15px; margin-bottom:20px;">
+    We will build CLTRN as a <strong>fully separate Supabase project</strong>, using the same battle-tested patterns from Jason's Life Ops Command Center: event-driven orchestration, proposal → mission → step pipeline, heartbeat-powered agent execution, and reaction chains. All domain tables use the <code>cl_</code> prefix to maintain naming discipline.
+  </p>
+
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value">5</div><div class="label">Life Domains</div></div>
+    <div class="kpi"><div class="value">12</div><div class="label">AI Agents</div></div>
+    <div class="kpi"><div class="value">7</div><div class="label">OS Layers (L0–L6)</div></div>
+    <div class="kpi"><div class="value">6</div><div class="label">Revenue Pillars</div></div>
+    <div class="kpi"><div class="value">2</div><div class="label">Platforms (Web + Mobile)</div></div>
+    <div class="kpi"><div class="value">32</div><div class="label">Source Documents</div></div>
+  </div>
+</div>
+
+<!-- ==================== FIVE DOMAINS ==================== -->
+<div class="section">
+  <div class="section-label">Section 02</div>
+  <h2>The Five Life Domains</h2>
+  <p class="desc">The foundational framework — every feature, agent, and metric maps to one or more of these domains.</p>
+
+  <div class="domain-grid">
+    <div class="domain-card" style="border-color:#34d399;">
+      <div class="emoji">🏋️</div>
+      <h4 style="color:#34d399;">BODY</h4>
+      <p>Physical health, fitness, nutrition, sleep, biometrics, energy management</p>
+    </div>
+    <div class="domain-card" style="border-color:#60a5fa;">
+      <div class="emoji">🧠</div>
+      <h4 style="color:#60a5fa;">MIND</h4>
+      <p>Mental wellness, cognitive patterns, emotional regulation, belief reprogramming</p>
+    </div>
+    <div class="domain-card" style="border-color:#f5c542;">
+      <div class="emoji">🪞</div>
+      <h4 style="color:#f5c542;">IDENTITY</h4>
+      <p>Self-concept, values alignment, faith mapping, purpose discovery, sovereignty</p>
+    </div>
+    <div class="domain-card" style="border-color:#f472b6;">
+      <div class="emoji">🤝</div>
+      <h4 style="color:#f472b6;">RELATIONSHIPS</h4>
+      <p>Social bonds, communication patterns, community, family, professional networks</p>
+    </div>
+    <div class="domain-card" style="border-color:#a78bfa;">
+      <div class="emoji">🧭</div>
+      <h4 style="color:#a78bfa;">PURPOSE</h4>
+      <p>Career/vocation, financial sovereignty, life projects, legacy building, time-energy-value</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== OS STACK ==================== -->
+<div class="section">
+  <div class="section-label">Section 03</div>
+  <h2>CLTRN OS Stack (L0–L6)</h2>
+  <p class="desc">From the First Principles document — the layered consciousness architecture that guides our technical implementation.</p>
+
+  <div class="stack-layer" style="border-left:3px solid #f87171;">
+    <span class="layer-id">L0</span>
+    <span class="layer-name" style="color:#f87171;">Zero-Point</span>
+    <span class="layer-desc">Baseline assessment — the honest starting state. ZP-LOS score across all 5 domains.</span>
+  </div>
+  <div class="stack-layer" style="border-left:3px solid #fb923c;">
+    <span class="layer-id">L1</span>
+    <span class="layer-name" style="color:#fb923c;">Input & Awareness</span>
+    <span class="layer-desc">Data collection — journals, check-ins, wearables, manual logs. "Observe" phase of K0RE Processing.</span>
+  </div>
+  <div class="stack-layer" style="border-left:3px solid #f5c542;">
+    <span class="layer-id">L2</span>
+    <span class="layer-name" style="color:#f5c542;">Processing & Pattern</span>
+    <span class="layer-desc">AI analysis of inputs — identifying patterns, triggers, limiting beliefs, recurring behaviors.</span>
+  </div>
+  <div class="stack-layer" style="border-left:3px solid #34d399;">
+    <span class="layer-id">L3</span>
+    <span class="layer-name" style="color:#34d399;">Consciousness Engine</span>
+    <span class="layer-desc">The K0RE layer — synthesis, reprogramming recommendations, belief mapping, faith integration.</span>
+  </div>
+  <div class="stack-layer" style="border-left:3px solid #60a5fa;">
+    <span class="layer-id">L4</span>
+    <span class="layer-name" style="color:#60a5fa;">Manifestation & Execution</span>
+    <span class="layer-desc">Action plans, habit tracking, goal sprints, accountability. "Execute" phase.</span>
+  </div>
+  <div class="stack-layer" style="border-left:3px solid #a78bfa;">
+    <span class="layer-id">L5</span>
+    <span class="layer-name" style="color:#a78bfa;">Reflection & Integration</span>
+    <span class="layer-desc">Progress reviews, recalibration, milestone celebrations, feedback loops.</span>
+  </div>
+  <div class="stack-layer" style="border-left:3px solid #f472b6;">
+    <span class="layer-id">L6</span>
+    <span class="layer-name" style="color:#f472b6;">Collective / Network</span>
+    <span class="layer-desc">Community, peer coaching, CAPIS enterprise, group programs, shared intelligence (future).</span>
+  </div>
+</div>
+
+<!-- ==================== SYSTEM ARCHITECTURE ==================== -->
+<div class="section">
+  <div class="section-label">Section 04</div>
+  <h2>System Architecture</h2>
+  <p class="desc">CLTRN as a standalone Supabase project, modeled on the Command Center pattern.</p>
+
+  <div class="arch-box"><span class="hl">CLTRN Supabase Project</span> (new project — <span class="y">cl_*</span> prefix)
+│
+├── <span class="g">Infrastructure Layer</span>
+│   ├── <span class="c">cl_config</span>          — Runtime configuration & secrets
+│   ├── <span class="c">cl_proposals</span>       — Work intake pipeline (proposal → approve → execute)
+│   ├── <span class="c">cl_missions</span>        — Approved work packages
+│   ├── <span class="c">cl_mission_steps</span>   — Individual agent tasks (queued → running → done)
+│   ├── <span class="c">cl_events</span>          — Event bus (every agent action emits events)
+│   └── <span class="c">cl_reactions</span>       — Event → trigger mappings (reaction chains)
+│
+├── <span class="y">Jarvis Layer</span> (User-Facing AI)
+│   ├── <span class="o">jarvis-core</span>        — Telegram/WhatsApp bot edge function
+│   ├── <span class="o">heartbeat</span>          — Orchestration cron (calls all agents)
+│   └── <span class="o">intake</span>             — Public API for proposals (verify_jwt: false)
+│
+├── <span class="g">Domain Agents</span> (5 Life Domains)
+│   ├── <span class="p">agent-pulse</span>        — BODY: fitness, nutrition, sleep, biometrics
+│   ├── <span class="b">agent-sage</span>         — MIND: mental wellness, cognition, emotional regulation
+│   ├── <span class="y">agent-mirror</span>       — IDENTITY: self-concept, values, faith mapping
+│   ├── <span class="p">agent-bond</span>         — RELATIONSHIPS: social, family, professional
+│   └── <span class="hl">agent-compass</span>      — PURPOSE: career, finance, legacy, TEV tracking
+│
+├── <span class="g">Cross-Domain Agents</span>
+│   ├── <span class="c">agent-kore</span>         — K0RE Intelligence: cross-domain synthesis, consciousness engine
+│   ├── <span class="c">agent-scorer</span>       — Zero-Point Assessment: 5-domain scoring engine
+│   ├── <span class="c">agent-coach</span>        — Life Plan Generator: personalized roadmaps
+│   └── <span class="c">agent-creator</span>      — Content Engine: journal prompts, affirmations, reports
+│
+└── <span class="g">Phase 2+ Agents</span>
+    ├── <span class="muted">agent-community</span>    — Group programs, peer matching, L6 network
+    ├── <span class="muted">agent-enterprise</span>   — CAPIS framework, B2B consulting workflows
+    └── <span class="muted">agent-funnel</span>       — Acquisition, onboarding sequences, conversions</div>
+</div>
+
+<!-- ==================== AGENT INVENTORY ==================== -->
+<div class="section">
+  <div class="section-label">Section 05</div>
+  <h2>Agent Inventory</h2>
+  <p class="desc">Every agent, its slug, capabilities, and which OS layer it operates on.</p>
+
+  <h3 style="margin:20px 0 10px; color:var(--gold);">🤖 Jarvis (User-Facing Interface)</h3>
+  <table>
+    <tr><th>Agent</th><th>Slug</th><th>OS Layers</th><th>Capabilities</th><th>Phase</th></tr>
+    <tr>
+      <td><strong>Jarvis Core</strong></td>
+      <td><code>jarvis-core</code></td>
+      <td>All</td>
+      <td>Primary user interface. Routes conversations to domain agents, manages context, handles check-ins, delivers coaching. Modeled on telegram-bot pattern (1,550-line reference).</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--green);">🏋️ Domain Agents</h3>
+  <table>
+    <tr><th>Agent</th><th>Slug</th><th>Domain</th><th>OS Layers</th><th>Capabilities</th><th>Phase</th></tr>
+    <tr>
+      <td><strong>Pulse</strong></td>
+      <td><code>agent-pulse</code></td>
+      <td>Body</td>
+      <td>L1, L2, L4</td>
+      <td>Fitness logging, nutrition tracking, sleep analysis, energy scoring, biometric integration, workout plans</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Sage</strong></td>
+      <td><code>agent-sage</code></td>
+      <td>Mind</td>
+      <td>L1, L2, L3</td>
+      <td>Mood tracking, cognitive pattern detection, meditation guidance, belief identification, emotional regulation coaching, journaling prompts</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Mirror</strong></td>
+      <td><code>agent-mirror</code></td>
+      <td>Identity</td>
+      <td>L2, L3, L5</td>
+      <td>Values assessment, identity mapping, faith integration (via Faith Mapping framework), self-concept evolution tracking, belief reprogramming</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Bond</strong></td>
+      <td><code>agent-bond</code></td>
+      <td>Relationships</td>
+      <td>L1, L4, L6</td>
+      <td>Relationship health scoring, communication pattern analysis, conflict resolution prompts, social capital tracking, community engagement</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+    <tr>
+      <td><strong>Compass</strong></td>
+      <td><code>agent-compass</code></td>
+      <td>Purpose</td>
+      <td>L3, L4, L5</td>
+      <td>Career/vocation guidance, financial goal tracking, TEV (Time-Energy-Value) scoring, life project management, legacy planning</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--cyan);">🔮 Cross-Domain Agents</h3>
+  <table>
+    <tr><th>Agent</th><th>Slug</th><th>OS Layers</th><th>Capabilities</th><th>Phase</th></tr>
+    <tr>
+      <td><strong>K0RE</strong></td>
+      <td><code>agent-kore</code></td>
+      <td>L3 (Core)</td>
+      <td>The Consciousness Engine. Cross-domain pattern synthesis, K0RE Thought Processing (Observe → Structure → Analyze → Execute → Feedback), holistic insight generation, reprogramming recommendations</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Scorer</strong></td>
+      <td><code>agent-scorer</code></td>
+      <td>L0, L5</td>
+      <td>Zero-Point Assessment engine. Generates baseline scores across all 5 domains (1-10 scale). Periodic re-scoring. Progress delta tracking.</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Coach</strong></td>
+      <td><code>agent-coach</code></td>
+      <td>L4, L5</td>
+      <td>Personalized life plan generator. Takes Zero-Point scores + domain insights → creates phased improvement roadmap. Weekly/monthly recalibration.</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Creator</strong></td>
+      <td><code>agent-creator</code></td>
+      <td>L1, L4</td>
+      <td>Content engine. Generates journal prompts, affirmations, reflection questions, progress reports, domain-specific exercises.</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--orange);">⚙️ Infrastructure</h3>
+  <table>
+    <tr><th>Service</th><th>Slug</th><th>Purpose</th><th>Phase</th></tr>
+    <tr>
+      <td><strong>Heartbeat</strong></td>
+      <td><code>heartbeat</code></td>
+      <td>Orchestration cron. Calls all agents with <code>action: "heartbeat"</code>. Processes reaction chains. Manages mission step execution.</td>
+      <td><span class="status status-infra">Infra</span></td>
+    </tr>
+    <tr>
+      <td><strong>Intake</strong></td>
+      <td><code>intake</code></td>
+      <td>Public API endpoint for proposals. Auto-approve logic for safe agents. Daily caps. <code>verify_jwt: false</code>.</td>
+      <td><span class="status status-infra">Infra</span></td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--pink);">🔮 Phase 3 Agents (Future)</h3>
+  <table>
+    <tr><th>Agent</th><th>Slug</th><th>Capabilities</th></tr>
+    <tr><td><strong>Community</strong></td><td><code>agent-community</code></td><td>L6 Network layer. Peer matching, group program facilitation, shared intelligence, community challenges</td></tr>
+    <tr><td><strong>Enterprise</strong></td><td><code>agent-enterprise</code></td><td>CAPIS consulting framework. B2B team assessments, organizational consciousness mapping, corporate wellness</td></tr>
+    <tr><td><strong>Funnel</strong></td><td><code>agent-funnel</code></td><td>Acquisition engine. Onboarding sequences, trial management, conversion optimization, referral tracking</td></tr>
+  </table>
+</div>
+
+<!-- ==================== REACTION CHAINS ==================== -->
+<div class="section">
+  <div class="section-label">Section 06</div>
+  <h2>Reaction Chains</h2>
+  <p class="desc">Event-driven automation — when one agent completes work, it triggers the next.</p>
+
+  <h3 style="margin:20px 0 10px;">🚀 Onboarding Flow</h3>
+  <div class="reaction-chain">
+    <span class="rc-event">jarvis.user_registered</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">scorer.run_zero_point</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">scorer.assessment_complete</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">coach.generate_baseline_plan</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">coach.plan_created</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">jarvis.deliver_welcome_brief</span>
+  </div>
+
+  <h3 style="margin:30px 0 10px;">💬 Daily Check-in Flow</h3>
+  <div class="reaction-chain">
+    <span class="rc-event">jarvis.checkin_received</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">sage.analyze_mood</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">sage.pattern_detected</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">kore.cross_domain_synthesis</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">kore.insight_generated</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">jarvis.deliver_insight</span>
+  </div>
+
+  <h3 style="margin:30px 0 10px;">📊 Weekly Review Flow</h3>
+  <div class="reaction-chain">
+    <span class="rc-event">heartbeat.weekly_trigger</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">scorer.run_progress_delta</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">scorer.delta_calculated</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">coach.recalibrate_plan</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">coach.recalibration_done</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">creator.generate_weekly_report</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">creator.report_ready</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">jarvis.deliver_weekly_review</span>
+  </div>
+
+  <h3 style="margin:30px 0 10px;">🪞 Identity / Faith Mapping Flow</h3>
+  <div class="reaction-chain">
+    <span class="rc-event">jarvis.faith_input_received</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">mirror.process_faith_mapping</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">mirror.values_updated</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">kore.integrate_belief_system</span>
+  </div>
+  <div class="reaction-chain">
+    <span class="rc-event">kore.belief_integrated</span>
+    <span class="rc-arrow">→</span>
+    <span class="rc-action">coach.adjust_plan_for_values</span>
+  </div>
+</div>
+
+<!-- ==================== DATABASE SCHEMA ==================== -->
+<div class="section">
+  <div class="section-label">Section 07</div>
+  <h2>Database Schema</h2>
+  <p class="desc">All tables use the <code>cl_</code> prefix. Designed for Supabase with RLS policies.</p>
+
+  <div class="schema-block">
+    <h4>👤 Users & Profiles</h4>
+    <div class="schema-sql"><span class="cm">-- Core user profile linked to Supabase Auth</span>
+<span class="kw">CREATE TABLE</span> cl_profiles (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY REFERENCES</span> auth.users(id),
+  display_name  <span class="type">text</span>,
+  telegram_id   <span class="type">text</span> <span class="kw">UNIQUE</span>,
+  whatsapp_id   <span class="type">text</span> <span class="kw">UNIQUE</span>,
+  onboarding    <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'pending'</span>,  <span class="cm">-- pending | in_progress | complete</span>
+  tier          <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'free'</span>,      <span class="cm">-- free | program | saas | enterprise</span>
+  faith_lens    <span class="type">text</span>,                           <span class="cm">-- Christianity | Islam | Buddhism | Secular | etc.</span>
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  updated_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+  </div>
+
+  <div class="schema-block">
+    <h4>📊 Zero-Point Assessments</h4>
+    <div class="schema-sql"><span class="cm">-- Baseline and periodic assessment scores</span>
+<span class="kw">CREATE TABLE</span> cl_assessments (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  assessment_type <span class="type">text</span> <span class="kw">NOT NULL</span>,  <span class="cm">-- zero_point | weekly | monthly | milestone</span>
+  body_score    <span class="type">numeric(3,1)</span>,  <span class="cm">-- 0.0 - 10.0</span>
+  mind_score    <span class="type">numeric(3,1)</span>,
+  identity_score <span class="type">numeric(3,1)</span>,
+  relationship_score <span class="type">numeric(3,1)</span>,
+  purpose_score <span class="type">numeric(3,1)</span>,
+  overall_score <span class="type">numeric(3,1)</span>,  <span class="cm">-- weighted average</span>
+  raw_data      <span class="type">jsonb</span>,          <span class="cm">-- full questionnaire responses</span>
+  insights      <span class="type">jsonb</span>,          <span class="cm">-- AI-generated analysis</span>
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+  </div>
+
+  <div class="schema-block">
+    <h4>📝 Journals & Check-ins</h4>
+    <div class="schema-sql"><span class="cm">-- Daily check-ins and journal entries</span>
+<span class="kw">CREATE TABLE</span> cl_journals (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  entry_type    <span class="type">text</span> <span class="kw">NOT NULL</span>,  <span class="cm">-- checkin | journal | reflection | gratitude</span>
+  domain        <span class="type">text</span>,            <span class="cm">-- body | mind | identity | relationships | purpose</span>
+  content       <span class="type">text</span>,
+  mood_score    <span class="type">integer</span>,         <span class="cm">-- 1-10</span>
+  energy_level  <span class="type">integer</span>,         <span class="cm">-- 1-10</span>
+  ai_analysis   <span class="type">jsonb</span>,           <span class="cm">-- Sage/K0RE processing results</span>
+  tags          <span class="type">text[]</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Conversation history for Jarvis context</span>
+<span class="kw">CREATE TABLE</span> cl_conversations (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  platform      <span class="type">text</span>,     <span class="cm">-- telegram | whatsapp | web</span>
+  role          <span class="type">text</span>,     <span class="cm">-- user | jarvis</span>
+  content       <span class="type">text</span>,
+  agent_used    <span class="type">text</span>,     <span class="cm">-- which agent processed this</span>
+  metadata      <span class="type">jsonb</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+  </div>
+
+  <div class="schema-block">
+    <h4>🎯 Life Plans & Goals</h4>
+    <div class="schema-sql"><span class="cm">-- AI-generated life improvement plans</span>
+<span class="kw">CREATE TABLE</span> cl_life_plans (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  plan_type     <span class="type">text</span>,     <span class="cm">-- baseline | recalibrated | sprint</span>
+  status        <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'active'</span>,
+  domains       <span class="type">text[]</span>,   <span class="cm">-- which domains this plan covers</span>
+  plan_data     <span class="type">jsonb</span>,    <span class="cm">-- full plan structure (goals, actions, milestones)</span>
+  assessment_id <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_assessments(id),
+  expires_at    <span class="type">timestamptz</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Individual trackable goals</span>
+<span class="kw">CREATE TABLE</span> cl_goals (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  plan_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_life_plans(id),
+  domain        <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  title         <span class="type">text</span>,
+  description   <span class="type">text</span>,
+  target_metric <span class="type">jsonb</span>,    <span class="cm">-- { metric: "sleep_hours", target: 8, current: 6.5 }</span>
+  status        <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'active'</span>,  <span class="cm">-- active | achieved | paused | dropped</span>
+  due_at        <span class="type">timestamptz</span>,
+  completed_at  <span class="type">timestamptz</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Habit tracking entries</span>
+<span class="kw">CREATE TABLE</span> cl_habits (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  goal_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_goals(id),
+  domain        <span class="type">text</span>,
+  habit_name    <span class="type">text</span>,
+  frequency     <span class="type">text</span>,     <span class="cm">-- daily | weekly | 3x_week</span>
+  streak        <span class="type">integer</span> <span class="kw">DEFAULT</span> 0,
+  last_logged   <span class="type">timestamptz</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+  </div>
+
+  <div class="schema-block">
+    <h4>🪞 Identity & Faith Mapping</h4>
+    <div class="schema-sql"><span class="cm">-- Values and belief system tracking</span>
+<span class="kw">CREATE TABLE</span> cl_identity_maps (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  map_type      <span class="type">text</span>,     <span class="cm">-- values | beliefs | faith | identity</span>
+  content       <span class="type">jsonb</span>,    <span class="cm">-- structured map data</span>
+  version       <span class="type">integer</span> <span class="kw">DEFAULT</span> 1,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Faith Mapping (Universal Code Layer → Religion Filter)</span>
+<span class="kw">CREATE TABLE</span> cl_faith_mappings (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  universal_principle <span class="type">text</span>,  <span class="cm">-- e.g., "compassion", "gratitude", "service"</span>
+  faith_lens    <span class="type">text</span>,          <span class="cm">-- user's chosen religious/spiritual lens</span>
+  lens_mapping  <span class="type">jsonb</span>,         <span class="cm">-- how this principle maps in their tradition</span>
+  personal_note <span class="type">text</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+  </div>
+
+  <div class="schema-block">
+    <h4>⚙️ Orchestration Pipeline (Command Center Pattern)</h4>
+    <div class="schema-sql"><span class="cm">-- Runtime configuration (same pattern as ops_config)</span>
+<span class="kw">CREATE TABLE</span> cl_config (
+  key           <span class="type">text</span> <span class="kw">PRIMARY KEY</span>,
+  value         <span class="type">text</span>,
+  updated_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Work proposals (same pattern as ops_proposals)</span>
+<span class="kw">CREATE TABLE</span> cl_proposals (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span>,
+  agent         <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  action        <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  payload       <span class="type">jsonb</span>,
+  status        <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'pending'</span>,  <span class="cm">-- pending | approved | rejected</span>
+  source        <span class="type">text</span>,     <span class="cm">-- jarvis | reaction | api | cron</span>
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Missions (approved work packages)</span>
+<span class="kw">CREATE TABLE</span> cl_missions (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  proposal_id   <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_proposals(id),
+  user_id       <span class="type">uuid</span>,
+  agent         <span class="type">text</span>,
+  status        <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'active'</span>,
+  result        <span class="type">jsonb</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  completed_at  <span class="type">timestamptz</span>
+);
+
+<span class="cm">-- Mission steps (individual agent tasks)</span>
+<span class="kw">CREATE TABLE</span> cl_mission_steps (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  mission_id    <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_missions(id),
+  agent         <span class="type">text</span>,
+  action        <span class="type">text</span>,
+  payload       <span class="type">jsonb</span>,
+  status        <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'queued'</span>,  <span class="cm">-- queued | running | done | failed</span>
+  result        <span class="type">jsonb</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  completed_at  <span class="type">timestamptz</span>
+);
+
+<span class="cm">-- Event bus</span>
+<span class="kw">CREATE TABLE</span> cl_events (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span>,
+  event_type    <span class="type">text</span> <span class="kw">NOT NULL</span>,  <span class="cm">-- e.g., "scorer.assessment_complete"</span>
+  agent         <span class="type">text</span>,
+  payload       <span class="type">jsonb</span>,
+  processed     <span class="type">boolean</span> <span class="kw">DEFAULT</span> false,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Reaction chain definitions</span>
+<span class="kw">CREATE TABLE</span> cl_reactions (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  trigger_event <span class="type">text</span> <span class="kw">NOT NULL</span>,  <span class="cm">-- event_type to match</span>
+  target_agent  <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  target_action <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  payload_template <span class="type">jsonb</span>,
+  active        <span class="type">boolean</span> <span class="kw">DEFAULT</span> true,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+  </div>
+
+  <div class="schema-block">
+    <h4>📈 K0RE Intelligence & Insights</h4>
+    <div class="schema-sql"><span class="cm">-- Cross-domain insights generated by K0RE agent</span>
+<span class="kw">CREATE TABLE</span> cl_kore_insights (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  insight_type  <span class="type">text</span>,     <span class="cm">-- pattern | synthesis | reprogramming | breakthrough</span>
+  domains       <span class="type">text[]</span>,   <span class="cm">-- which domains are involved</span>
+  content       <span class="type">text</span>,
+  evidence      <span class="type">jsonb</span>,    <span class="cm">-- references to journals, assessments, etc.</span>
+  priority      <span class="type">text</span>,     <span class="cm">-- low | medium | high | critical</span>
+  acknowledged  <span class="type">boolean</span> <span class="kw">DEFAULT</span> false,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- K0RE Thought Processing logs</span>
+<span class="kw">CREATE TABLE</span> cl_kore_processing (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  phase         <span class="type">text</span>,     <span class="cm">-- observe | structure | analyze | execute | feedback</span>
+  input_data    <span class="type">jsonb</span>,
+  output_data   <span class="type">jsonb</span>,
+  created_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+  </div>
+
+  <div class="schema-block">
+    <h4>💰 Subscriptions & Revenue</h4>
+    <div class="schema-sql"><span class="cm">-- User subscriptions and payments</span>
+<span class="kw">CREATE TABLE</span> cl_subscriptions (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  plan          <span class="type">text</span>,     <span class="cm">-- free | program | saas_monthly | saas_annual | enterprise</span>
+  status        <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'active'</span>,
+  stripe_id     <span class="type">text</span>,
+  amount        <span class="type">numeric(10,2)</span>,
+  currency      <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'CAD'</span>,
+  started_at    <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  expires_at    <span class="type">timestamptz</span>,
+  cancelled_at  <span class="type">timestamptz</span>
+);
+
+<span class="cm">-- Program enrollments (courses, retreats, etc.)</span>
+<span class="kw">CREATE TABLE</span> cl_enrollments (
+  id            <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id       <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  program_type  <span class="type">text</span>,     <span class="cm">-- course | retreat | workshop | enterprise</span>
+  program_name  <span class="type">text</span>,
+  status        <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'enrolled'</span>,
+  progress      <span class="type">jsonb</span>,
+  enrolled_at   <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  completed_at  <span class="type">timestamptz</span>
+);</div>
+  </div>
+</div>
+
+<!-- ==================== PHASED ROADMAP ==================== -->
+<div class="section">
+  <div class="section-label">Section 08</div>
+  <h2>Phased Launch Roadmap</h2>
+  <p class="desc">Version discipline from the Executive Brief: 5.8 MVP (constrained, buildable) → 6.0 Sovereign (full vision).</p>
+
+  <div class="timeline">
+    <div class="tl-item active">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 0 — Foundation</div>
+      <div class="tl-title">Infrastructure & Supabase Setup</div>
+      <div class="tl-desc">
+        Create the CLTRN Supabase project. Deploy all database tables (cl_* schema). Set up Auth, RLS policies, and cl_config. Deploy heartbeat + intake edge functions. Establish the proposal → mission → step pipeline. Test event bus and reaction chain plumbing.
+      </div>
+      <div class="tl-date">Week 1–2</div>
+    </div>
+
+    <div class="tl-item active">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 1 — 5.8 MVP (Soft Launch)</div>
+      <div class="tl-title">Jarvis + Core 3 Agents</div>
+      <div class="tl-desc">
+        <strong>Deploy:</strong> jarvis-core (Telegram bot), agent-scorer, agent-kore, agent-coach, agent-pulse, agent-sage, agent-mirror.<br>
+        <strong>Features:</strong> User registration → Zero-Point Assessment → Baseline Life Plan → Daily check-ins → Mood tracking → Domain scoring → Weekly progress reviews → Basic journaling → K0RE cross-domain insights.<br>
+        <strong>Faith Mapping:</strong> Simple lens selection during onboarding. Mirror agent personalizes prompts and reflections based on faith lens.<br>
+        <strong>Target:</strong> Cal + 10-20 beta users (program participants).
+      </div>
+      <div class="tl-date">Week 3–6</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 2 — 5.8 Expansion</div>
+      <div class="tl-title">All 5 Domains + Content Engine</div>
+      <div class="tl-desc">
+        <strong>Deploy:</strong> agent-bond, agent-compass, agent-creator.<br>
+        <strong>Features:</strong> Relationship health tracking, purpose/career guidance, TEV scoring, content generation (journal prompts, affirmations, progress reports), habit tracking with streaks, goal management, deeper faith mapping.<br>
+        <strong>Revenue:</strong> Launch SaaS tier ($397/yr Jarvis subscription).
+      </div>
+      <div class="tl-date">Week 7–12</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 3 — 6.0 Sovereign</div>
+      <div class="tl-title">Community + Enterprise + Full Vision</div>
+      <div class="tl-desc">
+        <strong>Deploy:</strong> agent-community, agent-enterprise, agent-funnel.<br>
+        <strong>Features:</strong> L6 Network layer (peer matching, group programs), CAPIS enterprise consulting module, acquisition funnel automation, WhatsApp integration, web dashboard, wearable integrations, advanced K0RE consciousness engine.<br>
+        <strong>Revenue:</strong> Programs ($995), Retreats ($997–$7,997), Enterprise ($795/person), Courses ($497–$1,497).
+      </div>
+      <div class="tl-date">Month 4–8</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 4 — Scale</div>
+      <div class="tl-title">TRMIG Fund + Advanced AI + Data Sovereignty</div>
+      <div class="tl-desc">
+        Self-sovereign identity (SSI), user-owned data vaults, TRMIG investment fund integration, advanced AI models (fine-tuned on CLTRN methodology), international expansion, multi-language support, DAO governance exploration.
+      </div>
+      <div class="tl-date">Month 9+</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== K0RE THOUGHT PROCESSING ==================== -->
+<div class="section">
+  <div class="section-label">Section 09</div>
+  <h2>K0RE Thought Processing Framework</h2>
+  <p class="desc">The 5-phase cognitive loop that powers Jarvis's intelligence — derived from the K0RE Whitepaper and Kore Life System.</p>
+
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--red);">
+      <div class="card-icon">👁️</div>
+      <h3>1. Observe</h3>
+      <p>Collect raw data from user inputs: check-ins, journals, conversations, biometrics. No judgment, no analysis — pure observation.</p>
+      <div class="tag">L1 — Input & Awareness</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--orange);">
+      <div class="card-icon">🗂️</div>
+      <h3>2. Structure</h3>
+      <p>Organize data into domain categories. Tag entries. Extract entities, emotions, themes. Build the user's temporal data structure.</p>
+      <div class="tag">L2 — Processing & Pattern</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold);">
+      <div class="card-icon">🔍</div>
+      <h3>3. Analyze</h3>
+      <p>Cross-domain pattern recognition. Identify limiting beliefs, recurring behaviors, unmet needs. Apply First Principles. Generate insights.</p>
+      <div class="tag">L3 — Consciousness Engine</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--green);">
+      <div class="card-icon">⚡</div>
+      <h3>4. Execute</h3>
+      <p>Convert insights into actionable steps. Update life plans. Set new goals. Deploy habit modifications. Deliver coaching through Jarvis.</p>
+      <div class="tag">L4 — Manifestation</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <div class="card-icon">🔄</div>
+      <h3>5. Feedback</h3>
+      <p>Measure outcomes against targets. Recalibrate scores. Celebrate wins. Adjust approach. Feed results back into the Observe phase.</p>
+      <div class="tag">L5 — Reflection & Integration</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FIRST PRINCIPLES MAPPING ==================== -->
+<div class="section">
+  <div class="section-label">Section 10</div>
+  <h2>First Principles → Technical Implementation</h2>
+  <p class="desc">How the 9 constitutional articles from the First Principles document map to technical features.</p>
+
+  <table>
+    <tr><th>Article</th><th>Principle</th><th>Technical Implementation</th></tr>
+    <tr>
+      <td style="color:var(--gold);">I. Sovereignty</td>
+      <td>User owns their data and choices</td>
+      <td>Supabase RLS per-user, data export API, delete-my-data flow, no third-party data sharing</td>
+    </tr>
+    <tr>
+      <td style="color:var(--green);">II. Consciousness</td>
+      <td>Awareness precedes change</td>
+      <td>Zero-Point Assessment, daily check-ins, K0RE processing, pattern surfacing before recommendations</td>
+    </tr>
+    <tr>
+      <td style="color:var(--blue);">III. Ethics</td>
+      <td>Transparent, non-manipulative AI</td>
+      <td>Jarvis always explains reasoning, no dark patterns, clear AI vs human distinction</td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent2);">IV. Truth / Freedom / Love</td>
+      <td>Foundation of all guidance</td>
+      <td>K0RE agent applies TFL lens to insights, Mirror agent surfaces truth in identity work</td>
+    </tr>
+    <tr>
+      <td style="color:var(--cyan);">V. Data & Identity</td>
+      <td>Data serves the human, not systems</td>
+      <td>User controls what data agents access, explicit consent for analysis, right to forget</td>
+    </tr>
+    <tr>
+      <td style="color:var(--orange);">VI. Systems & Execution</td>
+      <td>Life as a project (PMP/BA/Agile)</td>
+      <td>Coach agent uses sprint methodology, goals have defined metrics, life plans have iterations</td>
+    </tr>
+    <tr>
+      <td style="color:var(--pink);">VII. Collective Coherence</td>
+      <td>Individual growth serves the collective</td>
+      <td>L6 Community agent (Phase 3), peer matching, group challenges, shared anonymized insights</td>
+    </tr>
+    <tr>
+      <td style="color:var(--red);">VIII. Utopian Singularity</td>
+      <td>Technology accelerates human potential</td>
+      <td>AI agents that learn user patterns, personalized growth trajectories, continuous improvement</td>
+    </tr>
+    <tr>
+      <td style="color:var(--muted);">IX. Participation</td>
+      <td>Users are co-creators, not consumers</td>
+      <td>Feedback loops in every agent, user can override AI recommendations, customizable plans</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ==================== REVENUE INTEGRATION ==================== -->
+<div class="section">
+  <div class="section-label">Section 11</div>
+  <h2>Revenue Pillars & Platform Tiers</h2>
+  <p class="desc">How the business model maps to technical implementation.</p>
+
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--green);">
+      <h3>Programs — $995</h3>
+      <p>12-week transformation programs. Jarvis provides daily coaching, Zero-Point at intake + graduation, structured curriculum delivered through agent-creator.</p>
+      <div class="tag">cl_enrollments.program_type = 'course'</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent2);">
+      <h3>Jarvis SaaS — $397/yr</h3>
+      <p>Standalone AI assistant access. Full 5-domain tracking, daily check-ins, weekly reviews, K0RE insights, habit tracking, journaling.</p>
+      <div class="tag">cl_subscriptions.plan = 'saas_annual'</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <h3>Retreats — $997–$7,997</h3>
+      <p>In-person experiences. Pre-retreat assessment via Scorer, post-retreat integration plan from Coach, ongoing Jarvis support.</p>
+      <div class="tag">cl_enrollments.program_type = 'retreat'</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <h3>Courses — $497–$1,497</h3>
+      <p>Self-paced modules. Progress tracking, Jarvis Q&A per module, completion certification, domain-specific deep dives.</p>
+      <div class="tag">cl_enrollments.program_type = 'course'</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <h3>Enterprise — $795/person</h3>
+      <p>CAPIS consulting framework. Team assessments, organizational health scoring, group K0RE sessions, manager dashboards.</p>
+      <div class="tag">cl_subscriptions.plan = 'enterprise'</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--pink);">
+      <h3>TRMIG Fund</h3>
+      <p>Investment vehicle (Phase 4). Financial sovereignty pillar. Integration with Purpose domain and Compass agent for investor tracking.</p>
+      <div class="tag">Phase 4 — Future</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BUILD ORDER ==================== -->
+<div class="section">
+  <div class="section-label">Section 12</div>
+  <h2>Detailed Build Order</h2>
+  <p class="desc">Step-by-step implementation sequence respecting the version discipline (don't build 6.0 features in 5.8).</p>
+
+  <h3 style="margin:20px 0 10px; color:var(--orange);">🏗️ Phase 0: Foundation (Week 1–2)</h3>
+  <table>
+    <tr><th>#</th><th>Task</th><th>Details</th></tr>
+    <tr><td>0.1</td><td>Create Supabase project</td><td>New project for CLTRN. Store credentials. Configure Auth (email + magic link).</td></tr>
+    <tr><td>0.2</td><td>Deploy infrastructure schema</td><td>cl_config, cl_proposals, cl_missions, cl_mission_steps, cl_events, cl_reactions</td></tr>
+    <tr><td>0.3</td><td>Deploy user schema</td><td>cl_profiles, cl_conversations, cl_subscriptions</td></tr>
+    <tr><td>0.4</td><td>Deploy domain schema</td><td>cl_assessments, cl_journals, cl_life_plans, cl_goals, cl_habits, cl_identity_maps, cl_faith_mappings, cl_kore_insights, cl_kore_processing</td></tr>
+    <tr><td>0.5</td><td>Set up RLS policies</td><td>User can only read/write their own data. Service role for agent access.</td></tr>
+    <tr><td>0.6</td><td>Deploy heartbeat</td><td>Orchestration edge function. Calls agents, processes reactions.</td></tr>
+    <tr><td>0.7</td><td>Deploy intake</td><td>Public proposal endpoint. Auto-approve logic. verify_jwt: false.</td></tr>
+    <tr><td>0.8</td><td>Seed cl_reactions</td><td>Insert the reaction chain definitions for onboarding + daily check-in flows.</td></tr>
+    <tr><td>0.9</td><td>Seed cl_config</td><td>OpenAI/Anthropic API key, Telegram bot token, system prompts.</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--green);">🚀 Phase 1: MVP (Week 3–6)</h3>
+  <table>
+    <tr><th>#</th><th>Task</th><th>Details</th></tr>
+    <tr><td>1.1</td><td>Deploy jarvis-core</td><td>Telegram bot edge function. Modeled on the 1,550-line telegram-bot pattern. Routes to domain agents. Manages conversation context.</td></tr>
+    <tr><td>1.2</td><td>Deploy agent-scorer</td><td>Zero-Point Assessment. 5-domain questionnaire → scoring → cl_assessments insert.</td></tr>
+    <tr><td>1.3</td><td>Deploy agent-coach</td><td>Takes assessment results → generates cl_life_plans with domain-specific goals.</td></tr>
+    <tr><td>1.4</td><td>Deploy agent-kore</td><td>Cross-domain synthesis. K0RE Thought Processing (5-phase). Generates cl_kore_insights.</td></tr>
+    <tr><td>1.5</td><td>Deploy agent-pulse</td><td>Body domain. Fitness/nutrition/sleep logging via Jarvis. Energy scoring.</td></tr>
+    <tr><td>1.6</td><td>Deploy agent-sage</td><td>Mind domain. Mood tracking, cognitive pattern detection, journaling prompts, emotional regulation coaching.</td></tr>
+    <tr><td>1.7</td><td>Deploy agent-mirror</td><td>Identity domain. Values assessment, faith mapping (lens selection + Universal Code principles), belief work.</td></tr>
+    <tr><td>1.8</td><td>Build onboarding flow</td><td>Jarvis welcomes user → faith lens selection → Zero-Point Assessment → Baseline Plan → First check-in.</td></tr>
+    <tr><td>1.9</td><td>Build daily check-in flow</td><td>Jarvis prompts → user responds → Sage analyzes → K0RE synthesizes → Jarvis delivers insight.</td></tr>
+    <tr><td>1.10</td><td>Build weekly review flow</td><td>Heartbeat triggers → Scorer deltas → Coach recalibrates → Jarvis delivers review.</td></tr>
+    <tr><td>1.11</td><td>Beta testing</td><td>Cal + 10-20 program participants. Gather feedback. Iterate.</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--blue);">📈 Phase 2: Expansion (Week 7–12)</h3>
+  <table>
+    <tr><th>#</th><th>Task</th><th>Details</th></tr>
+    <tr><td>2.1</td><td>Deploy agent-bond</td><td>Relationships domain. Social health scoring, communication coaching, relationship tracking.</td></tr>
+    <tr><td>2.2</td><td>Deploy agent-compass</td><td>Purpose domain. Career guidance, TEV scoring, financial goal tracking, life project management.</td></tr>
+    <tr><td>2.3</td><td>Deploy agent-creator</td><td>Content engine. Journal prompts, affirmations, progress reports, domain exercises.</td></tr>
+    <tr><td>2.4</td><td>Habit tracking system</td><td>cl_habits with streak counting, frequency management, Jarvis reminders.</td></tr>
+    <tr><td>2.5</td><td>Advanced faith mapping</td><td>Deep faith integration with Mirror agent. Universal principle → lens mapping exercises.</td></tr>
+    <tr><td>2.6</td><td>Stripe integration</td><td>Subscription management for SaaS tier ($397/yr). cl_subscriptions sync.</td></tr>
+    <tr><td>2.7</td><td>Web dashboard (basic)</td><td>Read-only view of scores, progress, life plan. Domain radar charts.</td></tr>
+  </table>
+</div>
+
+<!-- ==================== RISK REGISTER ==================== -->
+<div class="section">
+  <div class="section-label">Section 13</div>
+  <h2>Risk Register</h2>
+  <p class="desc">Key risks identified from the Project Charter and mitigations.</p>
+
+  <table>
+    <tr><th>Risk</th><th>Severity</th><th>Mitigation</th></tr>
+    <tr>
+      <td>Scope Creep (building 6.0 features in 5.8)</td>
+      <td><span class="status" style="background:rgba(248,113,113,0.15); color:var(--red);">High</span></td>
+      <td>Strict phase gating. Feature must be approved before crossing phase boundary. Version discipline from Executive Brief.</td>
+    </tr>
+    <tr>
+      <td>Philosophical Drift (losing K0RE principles)</td>
+      <td><span class="status" style="background:rgba(251,146,60,0.15); color:var(--orange);">Medium</span></td>
+      <td>First Principles document as constitutional reference. All agent prompts embed sovereignty, consciousness, ethics principles.</td>
+    </tr>
+    <tr>
+      <td>Founder Bottleneck (Cal as sole content source)</td>
+      <td><span class="status" style="background:rgba(251,146,60,0.15); color:var(--orange);">Medium</span></td>
+      <td>Agent-creator automates content generation. Cal reviews/approves rather than creates everything.</td>
+    </tr>
+    <tr>
+      <td>Over-Engineering the AI Layer</td>
+      <td><span class="status" style="background:rgba(251,146,60,0.15); color:var(--orange);">Medium</span></td>
+      <td>Start with GPT-4o-mini for most agents. Only upgrade to more expensive models for K0RE synthesis. Measure before optimizing.</td>
+    </tr>
+    <tr>
+      <td>User Engagement Drop-off</td>
+      <td><span class="status" style="background:rgba(251,146,60,0.15); color:var(--orange);">Medium</span></td>
+      <td>Heartbeat-driven daily prompts. Streak mechanics. Weekly reviews create accountability loops. Low-friction check-ins.</td>
+    </tr>
+    <tr>
+      <td>Faith Mapping Sensitivity</td>
+      <td><span class="status" style="background:rgba(96,165,250,0.15); color:var(--blue);">Low</span></td>
+      <td>Universal Code Layer first, religion as optional filter. Non-prescriptive language. User always controls their lens.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ==================== DOCUMENT SYNTHESIS ==================== -->
+<div class="section">
+  <div class="section-label">Section 14</div>
+  <h2>Document Synthesis Map</h2>
+  <p class="desc">How all 32 source documents inform the platform design.</p>
+
+  <table>
+    <tr><th>Document</th><th>Key Contribution</th><th>Maps To</th></tr>
+    <tr><td>The Human Operating System (Pitch Deck)</td><td>5 Domains, revenue model, Jarvis concept, team structure</td><td>Overall architecture, revenue tiers, agent naming</td></tr>
+    <tr><td>Multi AI Agent Network Design</td><td>Agent hierarchy, K0RE orchestration, communication protocols</td><td>Agent inventory, heartbeat design, reaction chains</td></tr>
+    <tr><td>System Blueprint & Scope</td><td>Technical components, system relationships</td><td>Database schema, edge function design</td></tr>
+    <tr><td>MVP BUILD SPEC (5.8)</td><td>MVP feature priorities, what to build first</td><td>Phase 1 build order</td></tr>
+    <tr><td>ZP-LOS Whitepaper</td><td>Zero-Point as baseline, Life Operating System theory</td><td>Scorer agent, assessment system, OS Stack</td></tr>
+    <tr><td>Faith Mapping</td><td>Universal Code Layer, Religion as Filter Lens</td><td>Mirror agent, cl_faith_mappings, faith_lens in profiles</td></tr>
+    <tr><td>First Principles</td><td>17 constitutional principles, OS Stack (L0–L6)</td><td>Agent system prompts, RLS policies, ethical guardrails</td></tr>
+    <tr><td>K0RE (CLTRN 6.0 brief)</td><td>K0RE as central intelligence</td><td>agent-kore design, cl_kore_insights</td></tr>
+    <tr><td>Create Own AI System</td><td>Cal's vision for private AI, data ownership</td><td>Sovereignty features, data export, user control</td></tr>
+    <tr><td>CAPIS Consulting Framework</td><td>B2B/Enterprise methodology</td><td>agent-enterprise (Phase 3), CAPIS workflow</td></tr>
+    <tr><td>Conscious Life Transformation Network</td><td>Full ecosystem overview, programs, methodology</td><td>Enrollment system, program management</td></tr>
+    <tr><td>CLTRN 5.8 MVP (rocket)</td><td>Specific MVP features and priorities</td><td>Phase 1 feature set validation</td></tr>
+    <tr><td>Sovereign Life OS</td><td>Self-sovereign identity, user data ownership</td><td>RLS design, data export API, privacy architecture</td></tr>
+    <tr><td>System Architecture Exec Brief (5.2→6.0)</td><td>Version discipline, don't mix 5.8 and 6.0</td><td>Phase gating, risk mitigation</td></tr>
+    <tr><td>The Kore Life System</td><td>K0RE Thought Processing (5 phases), Life as Project</td><td>cl_kore_processing table, Coach agent methodology</td></tr>
+    <tr><td>Project Charter (K0RE Working Group)</td><td>Governance, roles, risk register</td><td>Team structure, risk mitigations</td></tr>
+    <tr><td>K0RE Whitepaper v2.0</td><td>Civilization-scale vision, TEV metric, 6-layer stack</td><td>Phase 4 roadmap, Compass agent TEV scoring</td></tr>
+    <tr><td colspan="3" style="color:var(--gold); font-weight:700; padding:20px 16px 8px;">New Documents (Batch 2 — 15 Additional)</td></tr>
+    <tr><td>AI-Powered Speech Monitoring</td><td>Real-time language pattern analysis, sentiment tracking, vocabulary evolution</td><td>Section 24: Speech Monitoring, Sage + K0RE integration, cl_speech_analysis</td></tr>
+    <tr><td>Human Entity Implementation (TLDR)</td><td>Multi-dimensional digital twin model, entity sovereignty</td><td>Section 22: Human Entity Architecture, cl_human_entities</td></tr>
+    <tr><td>Safety Design Architecture & Guardrails</td><td>3-tier safety framework, Merge Guard Protocol, Ethical Guardrails Board</td><td>Section 23: Safety Architecture, cl_safety_logs, cl_escalations</td></tr>
+    <tr><td>CLTRN 6.0 (Additional)</td><td>Extended 6.0 system specification, feature depth</td><td>Validated agent capabilities, enriched OS Stack details</td></tr>
+    <tr><td>Kore Life System — Human Entity Implementation</td><td>Full human entity modeling, entity evolution tracking</td><td>Section 22: Entity dimensions, evolution_log design</td></tr>
+    <tr><td>System Design Roadmap</td><td>8-step structured build methodology (Plan → Design → Build → Test → Deploy → Monitor → Iterate → Scale)</td><td>Validated Phase 0–4 build order, added methodology rigor</td></tr>
+    <tr><td>K0RE(AI) Inherent Design & K0RE-0 Identity Upgrade</td><td>DAO governance, tokenomics, Founding Circle, "Road to Billions" 6-phase, Merge Guard Protocol, ICO</td><td>Section 25: DAO Governance, Token Structure, 6-Phase Strategy</td></tr>
+    <tr><td>KORE — Thought Processing Framework</td><td>3D/4D/5D dimensional thinking, 6-step problem solving, THOUGHT/EMOTION/STATE/RATE classification</td><td>Section 25: Dimensional Thinking, Thought Classification System</td></tr>
+    <tr><td>CLTRN MVP — DEFINE</td><td>SSBA/Scrum Master playbook, 8+3 phase analysis framework, 20 professional documents</td><td>Phase 0 methodology, project documentation standards</td></tr>
+    <tr><td>CLTRN 5.8 — Design ChatGPT Session</td><td>Cal's version roadmap (5.2→5.8→6.0), digital twin/avatar concept, blockchain sovereignty, $800K–$1M 6.0 estimate</td><td>Budget context, digital twin → Human Entity, blockchain → Phase 4</td></tr>
+    <tr><td>K0RE — Content Intelligence Ingestion & Distillation Prompt</td><td>Content processing pipeline, domain classification, insight distillation</td><td>Section 26: Content Intelligence Engine, cl_content_intelligence</td></tr>
+    <tr><td>K0RE — Meeting Minutes Prompt</td><td>Meeting transcript processing, decision extraction, action item tracking</td><td>Section 26: Meeting Automation, cl_meeting_notes</td></tr>
+    <tr><td>CLTRN 5.8 — Executive Summary</td><td>Budget constraints, core feature prioritization, MVP scope definition</td><td>Validated Phase 1 feature set, budget-conscious build order</td></tr>
+    <tr><td>CLTRN 5.8 — Project Charter</td><td>Full governance structure, team roles, risk matrix, milestones</td><td>Risk Register enrichment, governance model, milestone tracking</td></tr>
+    <tr><td>CLTRN 5.8 — 1.7.2026</td><td>Latest session notes, roadmap updates, priority adjustments</td><td>Timeline validation, current priority stack</td></tr>
+  </table>
+</div>
+
+<!-- ==================== MOBILE APP ==================== -->
+<div class="section">
+  <div class="section-label">Section 15</div>
+  <h2>Mobile App Architecture</h2>
+  <p class="desc">Native mobile experience for iOS and Android — Jarvis in your pocket.</p>
+
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--accent2);">
+      <div class="card-icon">📱</div>
+      <h3>Tech Stack</h3>
+      <p><strong>React Native + Expo</strong> — single codebase for iOS and Android. Supabase JS client for real-time data. Push notifications via Expo Notifications. Biometric auth (FaceID/TouchID) for secure login.</p>
+      <div class="tag">expo + supabase-js + react-navigation</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div class="card-icon">💬</div>
+      <h3>Jarvis Chat Interface</h3>
+      <p>Primary interaction surface. Full conversational UI with Jarvis. Voice-to-text input. Rich message types (cards, charts, action buttons, domain score widgets). Persistent chat history synced to cl_conversations.</p>
+      <div class="tag">GiftedChat + Whisper API</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <div class="card-icon">📊</div>
+      <h3>Dashboard Home</h3>
+      <p>5-Domain radar chart showing current scores. Today's goals and habits with tap-to-complete. Streak counters. K0RE insight cards. Quick check-in button. Weekly trend mini-graphs.</p>
+      <div class="tag">react-native-svg + victory-native</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div class="card-icon">🎯</div>
+      <h3>Domain Deep-Dives</h3>
+      <p>Tap any domain from the radar chart to see detailed view: domain score history, active goals, habit streaks, recent journal entries, K0RE insights specific to that domain. Edit goals inline.</p>
+      <div class="tag">per-domain screens</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <div class="card-icon">📝</div>
+      <h3>Journal & Check-in</h3>
+      <p>Quick daily check-in (mood + energy sliders, 1-line reflection). Full journaling mode with domain tagging. Gratitude entries. Voice journal option. Sage agent processes in background.</p>
+      <div class="tag">cl_journals + agent-sage</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--pink);">
+      <div class="card-icon">🔔</div>
+      <h3>Smart Notifications</h3>
+      <p>Heartbeat-driven push notifications: morning check-in prompts, habit reminders, weekly review alerts, K0RE breakthrough insights, streak-at-risk warnings. User controls frequency and timing.</p>
+      <div class="tag">expo-notifications + heartbeat</div>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 12px;">App Screen Map</h3>
+  <div class="arch-box"><span class="hl">CLTRN Mobile App — Screen Hierarchy</span>
+
+<span class="y">Tab Bar Navigation</span>
+├── <span class="g">Home</span> (Dashboard)
+│   ├── 5-Domain Radar Chart
+│   ├── Today's Goals & Habits
+│   ├── K0RE Insight Cards
+│   ├── Quick Check-in Widget
+│   └── Weekly Trend Sparklines
+│
+├── <span class="b">Jarvis</span> (Chat)
+│   ├── Conversational Interface
+│   ├── Voice Input Toggle
+│   ├── Rich Message Cards
+│   └── Domain-Aware Routing
+│
+├── <span class="y">Domains</span> (Deep Dives)
+│   ├── <span class="g">Body</span> → Score, Goals, Habits, Pulse Insights
+│   ├── <span class="b">Mind</span> → Score, Journal, Mood Graph, Sage Insights
+│   ├── <span class="y">Identity</span> → Score, Values Map, Faith Mapping, Mirror Insights
+│   ├── <span class="p">Relationships</span> → Score, Connection Map, Bond Insights
+│   └── <span class="hl">Purpose</span> → Score, Career Goals, TEV, Compass Insights
+│
+├── <span class="o">Journal</span>
+│   ├── Daily Check-in (Quick Mode)
+│   ├── Full Journal Entry
+│   ├── Gratitude Log
+│   ├── Voice Journal
+│   └── Entry History (filterable by domain)
+│
+└── <span class="p">Profile</span>
+    ├── Zero-Point Score History
+    ├── Life Plan Overview
+    ├── Faith Lens Settings
+    ├── Subscription Management
+    ├── Notification Preferences
+    └── Data Export / Privacy Controls</div>
+
+  <h3 style="margin:30px 0 12px;">Mobile API Integration</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">The mobile app communicates with the same Supabase backend. No separate API layer needed.</p>
+  <table>
+    <tr><th>Feature</th><th>Supabase Integration</th><th>Agent Trigger</th></tr>
+    <tr><td>Chat with Jarvis</td><td>POST to intake edge function → cl_proposals</td><td>jarvis-core routes to domain agents</td></tr>
+    <tr><td>Daily Check-in</td><td>INSERT cl_journals → cl_events emit</td><td>sage.analyze_mood → kore.synthesize</td></tr>
+    <tr><td>View Dashboard</td><td>SELECT cl_assessments, cl_goals, cl_habits</td><td>Real-time subscriptions via Supabase Realtime</td></tr>
+    <tr><td>Complete Habit</td><td>UPDATE cl_habits (streak, last_logged)</td><td>heartbeat checks streak milestones</td></tr>
+    <tr><td>Push Notifications</td><td>cl_config stores device tokens</td><td>heartbeat triggers Expo push API</td></tr>
+    <tr><td>Zero-Point Assessment</td><td>INSERT cl_assessments via scorer</td><td>scorer.run_zero_point → coach.generate_plan</td></tr>
+  </table>
+</div>
+
+<!-- ==================== FIGMA WIREFRAMES ==================== -->
+<div class="section">
+  <div class="section-label">Section 16</div>
+  <h2>Figma Wireframe Specifications</h2>
+  <p class="desc">Design system and wireframe specs for both the website and mobile app — to be built in Figma.</p>
+
+  <h3 style="margin:20px 0 12px; color:var(--cyan);">🎨 Design System Foundation</h3>
+  <div class="card-grid">
+    <div class="card">
+      <h3>Color Palette</h3>
+      <p><strong>Primary:</strong> Deep indigo/violet (consciousness, depth)<br>
+      <strong>Accent:</strong> Gold (transformation, achievement)<br>
+      <strong>Domain Colors:</strong> Green (Body), Blue (Mind), Gold (Identity), Pink (Relationships), Purple (Purpose)<br>
+      <strong>Neutrals:</strong> Warm grays on dark background (premium, contemplative feel)<br>
+      <strong>Dark Mode Default</strong> — aligns with the "inner work" aesthetic</p>
+    </div>
+    <div class="card">
+      <h3>Typography</h3>
+      <p><strong>Headings:</strong> Inter or Plus Jakarta Sans (modern, clean)<br>
+      <strong>Body:</strong> Inter (readable at all sizes)<br>
+      <strong>Monospace:</strong> JetBrains Mono (data, scores, code)<br>
+      <strong>Scale:</strong> 12/14/16/20/24/32/48px with 1.5-1.7 line height<br>
+      <strong>Tone:</strong> Professional yet warm — not clinical, not overly spiritual</p>
+    </div>
+    <div class="card">
+      <h3>Components Library</h3>
+      <p><strong>Core:</strong> Buttons, inputs, cards, modals, bottom sheets<br>
+      <strong>Domain:</strong> Radar chart, score ring, streak badge, domain tag<br>
+      <strong>Chat:</strong> Message bubble, action card, insight card, assessment prompt<br>
+      <strong>Data:</strong> Trend sparkline, progress bar, habit checkbox, goal card</p>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 12px; color:var(--blue);">🌐 Website Wireframes (Figma)</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Marketing site + authenticated web dashboard. Pages listed with priority and purpose.</p>
+  <table>
+    <tr><th>Page</th><th>Purpose</th><th>Key Elements</th><th>Priority</th></tr>
+    <tr>
+      <td><strong>Landing / Home</strong></td>
+      <td>Convert visitors → signups</td>
+      <td>Hero with 5-domain visual, "Meet Jarvis" demo, social proof, pricing cards, CTA to start assessment</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>About CLTRN</strong></td>
+      <td>Tell the story, build trust</td>
+      <td>Cal's founder story, mission/vision, First Principles overview, team section, K0RE philosophy</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>How It Works</strong></td>
+      <td>Explain the methodology</td>
+      <td>5 Domains breakdown, OS Stack visualization, Zero-Point explainer, Jarvis interaction demo, before/after</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Pricing</strong></td>
+      <td>Show tiers, drive conversion</td>
+      <td>Free / Program ($995) / Jarvis SaaS ($397/yr) / Enterprise ($795/person) comparison table, FAQ</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Programs</strong></td>
+      <td>Detail transformation programs</td>
+      <td>12-week program overview, curriculum, testimonials, enrollment CTA, retreat calendar</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+    <tr>
+      <td><strong>Dashboard (Auth)</strong></td>
+      <td>Web version of mobile dashboard</td>
+      <td>5-domain radar, score history, life plan viewer, goal management, journal, settings</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+    <tr>
+      <td><strong>Blog / Resources</strong></td>
+      <td>SEO, thought leadership</td>
+      <td>Articles on consciousness, personal development, K0RE methodology. Agent-creator can draft posts.</td>
+      <td><span class="status status-p3">Phase 3</span></td>
+    </tr>
+    <tr>
+      <td><strong>Enterprise / CAPIS</strong></td>
+      <td>B2B consulting landing page</td>
+      <td>CAPIS framework explainer, team assessment demo, case studies, enterprise pricing, contact form</td>
+      <td><span class="status status-p3">Phase 3</span></td>
+    </tr>
+    <tr>
+      <td><strong>Community Hub</strong></td>
+      <td>L6 Network layer web view</td>
+      <td>Group programs, peer connections, shared challenges, leaderboards, community feed</td>
+      <td><span class="status status-p3">Phase 3</span></td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 12px; color:var(--green);">📱 Mobile App Wireframes (Figma)</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Screen-by-screen wireframe spec with interaction notes for the React Native app.</p>
+  <table>
+    <tr><th>Screen</th><th>Purpose</th><th>Key Elements</th><th>Interactions</th><th>Priority</th></tr>
+    <tr>
+      <td><strong>Onboarding (4 screens)</strong></td>
+      <td>First-time user setup</td>
+      <td>Welcome splash, name + faith lens selector, "Meet Jarvis" intro, transition to Zero-Point</td>
+      <td>Swipe through, faith lens dropdown, CTA to start assessment</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Zero-Point Assessment</strong></td>
+      <td>Baseline scoring</td>
+      <td>Multi-step questionnaire, domain-by-domain sections, score sliders (1-10), progress indicator</td>
+      <td>Slider input, tap next, animated score reveal at end</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Home Dashboard</strong></td>
+      <td>At-a-glance life status</td>
+      <td>Radar chart (center), today's goals list, habit checkboxes, K0RE insight card, streak counter</td>
+      <td>Tap domain to drill down, tap habit to complete, pull-to-refresh</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Jarvis Chat</strong></td>
+      <td>Core AI interaction</td>
+      <td>Chat bubbles, typing indicator, suggested prompts, voice input button, rich cards for insights</td>
+      <td>Send message, tap suggestion chips, long-press to copy, voice toggle</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Quick Check-in</strong></td>
+      <td>30-second daily input</td>
+      <td>Mood slider (emoji scale), energy slider, one-line text input, domain tag selector</td>
+      <td>Slide to set mood/energy, type or skip text, submit</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Domain Detail</strong></td>
+      <td>Deep dive per domain</td>
+      <td>Score trend line chart, active goals, habit streaks, recent insights, journal entries for domain</td>
+      <td>Scroll, tap goal to expand, tap insight to discuss with Jarvis</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Full Journal</strong></td>
+      <td>Deeper reflection</td>
+      <td>Rich text editor, domain tags, mood/energy captured, prompt suggestions from Creator agent</td>
+      <td>Type, select domain, submit for Sage analysis</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+    <tr>
+      <td><strong>Life Plan Viewer</strong></td>
+      <td>See full personalized plan</td>
+      <td>Timeline view of phases, domain-specific goals, milestone markers, progress percentage</td>
+      <td>Scroll timeline, tap milestone, expand goal details</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+    <tr>
+      <td><strong>Faith Mapping</strong></td>
+      <td>Identity/spiritual work</td>
+      <td>Universal principles list, faith lens overlay, personal notes per principle, Mirror insights</td>
+      <td>Tap principle to expand, add personal reflection, change lens</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+    <tr>
+      <td><strong>Profile & Settings</strong></td>
+      <td>Account management</td>
+      <td>Score history, subscription info, notification preferences, faith lens, data export, privacy</td>
+      <td>Toggle notifications, change lens, export data, manage subscription</td>
+      <td><span class="status status-mvp">MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Weekly Review</strong></td>
+      <td>Progress reflection</td>
+      <td>Before/after domain scores, wins list, areas of focus, Coach recommendations, next week preview</td>
+      <td>Scroll report, tap to discuss with Jarvis, share progress</td>
+      <td><span class="status status-p2">Phase 2</span></td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 12px;">📐 Figma Project Structure</h3>
+  <div class="arch-box"><span class="hl">CLTRN Figma Project</span>
+
+<span class="y">📁 Design System</span>
+├── Colors (domain palette, neutrals, gradients)
+├── Typography (scale, weights, styles)
+├── Icons (domain icons, nav icons, action icons)
+├── Components
+│   ├── Buttons (primary, secondary, ghost, domain-colored)
+│   ├── Inputs (text, slider, dropdown, toggle)
+│   ├── Cards (insight, goal, habit, journal, score)
+│   ├── Charts (radar, line, sparkline, progress ring)
+│   ├── Navigation (tab bar, header, back, domain tabs)
+│   └── Chat (bubble user, bubble jarvis, action card, suggestion chip)
+└── Spacing & Grid (8px base, 4-col mobile, 12-col desktop)
+
+<span class="b">📁 Website Wireframes</span>
+├── Landing Page
+├── About CLTRN
+├── How It Works
+├── Pricing
+├── Programs (Phase 2)
+├── Dashboard — Auth (Phase 2)
+├── Blog (Phase 3)
+├── Enterprise / CAPIS (Phase 3)
+└── Community Hub (Phase 3)
+
+<span class="g">📁 Mobile App Wireframes</span>
+├── Onboarding Flow (4 screens)
+├── Zero-Point Assessment
+├── Home Dashboard
+├── Jarvis Chat
+├── Quick Check-in
+├── Domain Detail (× 5 domains)
+├── Full Journal
+├── Life Plan Viewer
+├── Faith Mapping
+├── Profile & Settings
+└── Weekly Review
+
+<span class="o">📁 Prototypes</span>
+├── Onboarding → Assessment → Dashboard (happy path)
+├── Daily Check-in → Insight (core loop)
+├── Chat with Jarvis (conversation flow)
+└── Weekly Review delivery</div>
+</div>
+
+<!-- ==================== CONTACT STRATEGY ==================== -->
+<div class="section">
+  <div class="section-label">Section 17</div>
+  <h2>Contact Strategy Plan</h2>
+  <p class="desc">Multi-channel outreach and engagement strategy — how we find, nurture, convert, and retain CLTRN users.</p>
+
+  <h3 style="margin:20px 0 12px; color:var(--gold);">🎯 Target Segments</h3>
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--green);">
+      <h3>Segment A: Seekers</h3>
+      <p><strong>Who:</strong> Individuals actively seeking personal transformation — self-help consumers, meditation/yoga practitioners, therapy graduates wanting next-level growth.<br>
+      <strong>Age:</strong> 25-45<br>
+      <strong>Pain:</strong> "I've tried apps and books but nothing sticks holistically."<br>
+      <strong>Channel:</strong> Instagram, YouTube, podcasts, wellness events</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <h3>Segment B: Achievers</h3>
+      <p><strong>Who:</strong> High-performers and entrepreneurs who optimize everything except their inner life. Biohackers, founders, executives.<br>
+      <strong>Age:</strong> 30-50<br>
+      <strong>Pain:</strong> "I'm successful on paper but something's missing."<br>
+      <strong>Channel:</strong> LinkedIn, X/Twitter, business podcasts, conferences</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent2);">
+      <h3>Segment C: Faith-Curious</h3>
+      <p><strong>Who:</strong> Spiritual seekers who want technology-enhanced faith practice without dogma. Deconstructing or exploring new belief systems.<br>
+      <strong>Age:</strong> 22-40<br>
+      <strong>Pain:</strong> "I want spiritual growth but organized religion doesn't fit me."<br>
+      <strong>Channel:</strong> Faith-adjacent podcasts, online communities, TikTok/Reels</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--orange);">
+      <h3>Segment D: Enterprise</h3>
+      <p><strong>Who:</strong> HR leaders, wellness directors, executive coaches who want team transformation tools. CAPIS framework buyers.<br>
+      <strong>Age:</strong> 35-55<br>
+      <strong>Pain:</strong> "Our employee wellness programs feel shallow."<br>
+      <strong>Channel:</strong> LinkedIn, industry conferences, referrals, white papers</p>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 12px; color:var(--cyan);">📧 Contact Funnel</h3>
+  <div class="arch-box"><span class="hl">CLTRN Contact Strategy Funnel</span>
+
+<span class="y">STAGE 1 — AWARENESS</span> (Top of Funnel)
+├── <span class="g">Content Marketing</span>
+│   ├── Blog posts on 5 domains (SEO-optimized, Creator agent drafts)
+│   ├── YouTube: "Life Operating System" concept videos (Cal as host)
+│   ├── Podcast: Cal on wellness/tech/spirituality shows
+│   └── Social media: Daily insights, domain tips, transformation stories
+├── <span class="b">Paid Acquisition</span>
+│   ├── Instagram/Facebook ads → Free Zero-Point Assessment
+│   ├── Google Ads: "personal development AI", "life coaching app"
+│   └── YouTube pre-roll: 15-sec Jarvis demo clips
+└── <span class="p">Community Presence</span>
+    ├── Reddit: r/selfimprovement, r/consciousness, r/biohacking
+    ├── X/Twitter: K0RE philosophy threads, Cal's journey
+    └── Wellness events & retreats (in-person lead gen)
+
+<span class="y">STAGE 2 — CAPTURE</span> (Lead Generation)
+├── <span class="g">Primary Lead Magnet</span>: Free Zero-Point Assessment (web)
+│   └── User answers 25 questions → gets 5-domain score + "Your L0 Report"
+│   └── Requires email → enters nurture sequence
+├── <span class="b">Secondary Magnets</span>
+│   ├── "First Principles of a Conscious Life" — PDF download
+│   ├── "5-Day Domain Challenge" — email mini-course
+│   └── Free Jarvis trial (7 days of daily check-ins via Telegram)
+└── <span class="o">Events</span>
+    ├── Free webinar: "Designing Your Life Operating System"
+    └── Monthly live Q&A with Cal
+
+<span class="y">STAGE 3 — NURTURE</span> (Email Sequences)
+├── <span class="g">Sequence A: Post-Assessment</span> (7 emails over 14 days)
+│   ├── Day 0: "Your Zero-Point Results" + domain breakdown
+│   ├── Day 2: "Meet Jarvis" + how AI coaching works
+│   ├── Day 4: Deepest-scoring domain spotlight + quick win tip
+│   ├── Day 7: Case study / transformation story
+│   ├── Day 9: "Your Consciousness Stack" + OS layers explained
+│   ├── Day 12: Program overview + pricing
+│   └── Day 14: "Ready to transform?" + enrollment CTA
+├── <span class="b">Sequence B: Trial Users</span> (5 emails during 7-day trial)
+│   ├── Day 1: "How to get the most from Jarvis"
+│   ├── Day 3: "Your first 3 insights" recap
+│   ├── Day 5: "Patterns Jarvis sees" + why full subscription matters
+│   └── Day 7: "Your trial ends tomorrow" + upgrade CTA
+└── <span class="hl">Sequence C: Re-engagement</span> (for users who drop off)
+    ├── Day 30: "Your domains miss you" + updated score prediction
+    ├── Day 60: "New features" + seasonal program promo
+    └── Day 90: "Special offer" + Cal personal outreach for high-value leads
+
+<span class="y">STAGE 4 — CONVERT</span> (Sales)
+├── <span class="g">Self-Serve</span>
+│   ├── Jarvis SaaS: Website checkout → Stripe → cl_subscriptions
+│   ├── Courses: Landing page → Stripe → cl_enrollments
+│   └── Programs: Application form → review → enrollment
+├── <span class="b">High-Touch</span>
+│   ├── Retreats: Application → Cal phone call → deposit → enrollment
+│   └── Enterprise: Discovery call → CAPIS assessment demo → proposal → contract
+└── <span class="o">Referral Program</span>
+    ├── Existing users refer → both get 1 month free Jarvis
+    └── Tracked via cl_referrals table (add in Phase 2)
+
+<span class="y">STAGE 5 — RETAIN & EXPAND</span> (Lifetime Value)
+├── <span class="g">Jarvis Engagement Loop</span>
+│   ├── Daily check-ins with streak rewards
+│   ├── Weekly reviews with celebration of wins
+│   ├── Monthly K0RE deep insights
+│   └── Quarterly Zero-Point re-assessment with delta celebration
+├── <span class="b">Upsell Path</span>
+│   ├── Free → Jarvis SaaS ($397/yr)
+│   ├── Jarvis SaaS → Programs ($995)
+│   ├── Programs → Retreats ($997-$7,997)
+│   └── Any → Enterprise referral ($795/person)
+└── <span class="p">Community & Advocacy</span>
+    ├── User testimonials → social proof for Stage 1
+    ├── Community ambassador program
+    └── User-generated content from transformation journeys</div>
+
+  <h3 style="margin:30px 0 12px; color:var(--green);">📊 Contact Strategy KPIs</h3>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value">5K</div><div class="label">Free Assessments / Month (target by Month 6)</div></div>
+    <div class="kpi"><div class="value">15%</div><div class="label">Assessment → Trial Conversion</div></div>
+    <div class="kpi"><div class="value">25%</div><div class="label">Trial → Paid Conversion</div></div>
+    <div class="kpi"><div class="value">70%</div><div class="label">Monthly Active User Retention</div></div>
+    <div class="kpi"><div class="value">$85</div><div class="label">Customer Acquisition Cost Target</div></div>
+    <div class="kpi"><div class="value">$1,200</div><div class="label">Average Lifetime Value Target</div></div>
+  </div>
+
+  <h3 style="margin:30px 0 12px; color:var(--orange);">📅 Contact Cadence by Segment</h3>
+  <table>
+    <tr><th>Segment</th><th>Primary Channel</th><th>Cadence</th><th>Content Type</th><th>CTA</th></tr>
+    <tr>
+      <td>Seekers</td>
+      <td>Instagram + Email</td>
+      <td>3x/week social, 1x/week email</td>
+      <td>Transformation stories, domain tips, Jarvis screenshots, quick exercises</td>
+      <td>Free Assessment</td>
+    </tr>
+    <tr>
+      <td>Achievers</td>
+      <td>LinkedIn + Email</td>
+      <td>2x/week social, 1x/week email</td>
+      <td>Data-driven insights, productivity + consciousness overlap, ROI of inner work</td>
+      <td>Free Assessment → Jarvis Trial</td>
+    </tr>
+    <tr>
+      <td>Faith-Curious</td>
+      <td>YouTube + TikTok + Email</td>
+      <td>2x/week video, 1x/week email</td>
+      <td>Faith Mapping explainers, Universal Code vs religion, spiritual-but-modern content</td>
+      <td>First Principles PDF → Assessment</td>
+    </tr>
+    <tr>
+      <td>Enterprise</td>
+      <td>LinkedIn + Direct Outreach</td>
+      <td>1x/week thought leadership, personalized outreach</td>
+      <td>CAPIS white paper, team wellness ROI studies, case studies</td>
+      <td>Discovery Call → CAPIS Demo</td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 12px; color:var(--accent2);">🛠️ Tech Stack for Contact Strategy</h3>
+  <table>
+    <tr><th>Function</th><th>Tool</th><th>Integration</th></tr>
+    <tr><td>Email Marketing</td><td>ConvertKit or Resend</td><td>Webhook → intake → agent-funnel processes sequences</td></tr>
+    <tr><td>Landing Pages</td><td>Website (Next.js) or Webflow</td><td>Forms POST → intake endpoint</td></tr>
+    <tr><td>Social Scheduling</td><td>Buffer or Later</td><td>Creator agent drafts → human approves → schedule</td></tr>
+    <tr><td>Analytics</td><td>PostHog or Plausible</td><td>Event tracking on web + app, funnel visualization</td></tr>
+    <tr><td>CRM / Lead Tracking</td><td>cl_leads table in Supabase</td><td>New table: cl_leads with source, stage, score, nurture_sequence</td></tr>
+    <tr><td>Payments</td><td>Stripe</td><td>Webhooks → cl_subscriptions + cl_enrollments sync</td></tr>
+    <tr><td>Push Notifications</td><td>Expo Push / OneSignal</td><td>Heartbeat triggers → device token in cl_config</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 12px;">Additional Schema for Contact Strategy</h3>
+  <div class="schema-sql"><span class="cm">-- Lead tracking for contact funnel</span>
+<span class="kw">CREATE TABLE</span> cl_leads (
+  id              <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  email           <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  name            <span class="type">text</span>,
+  segment         <span class="type">text</span>,           <span class="cm">-- seekers | achievers | faith_curious | enterprise</span>
+  source          <span class="type">text</span>,           <span class="cm">-- organic | paid_ig | paid_google | referral | event | podcast</span>
+  source_detail   <span class="type">text</span>,           <span class="cm">-- specific campaign or UTM</span>
+  stage           <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'captured'</span>,  <span class="cm">-- captured | nurturing | trial | converted | churned | re-engaged</span>
+  lead_score      <span class="type">integer</span> <span class="kw">DEFAULT</span> 0,
+  nurture_sequence <span class="type">text</span>,         <span class="cm">-- post_assessment | trial | re_engagement</span>
+  nurture_step    <span class="type">integer</span> <span class="kw">DEFAULT</span> 0,
+  assessment_id   <span class="type">uuid</span>,          <span class="cm">-- if they completed Zero-Point</span>
+  converted_at    <span class="type">timestamptz</span>,
+  created_at      <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  updated_at      <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Referral tracking</span>
+<span class="kw">CREATE TABLE</span> cl_referrals (
+  id              <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  referrer_id     <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  referred_email  <span class="type">text</span>,
+  referred_user_id <span class="type">uuid</span>,        <span class="cm">-- set when they sign up</span>
+  status          <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'pending'</span>,  <span class="cm">-- pending | signed_up | converted | rewarded</span>
+  reward_given    <span class="type">boolean</span> <span class="kw">DEFAULT</span> false,
+  created_at      <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Email sequence tracking</span>
+<span class="kw">CREATE TABLE</span> cl_nurture_events (
+  id              <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  lead_id         <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_leads(id),
+  sequence        <span class="type">text</span>,
+  step            <span class="type">integer</span>,
+  event_type      <span class="type">text</span>,           <span class="cm">-- sent | opened | clicked | unsubscribed</span>
+  metadata        <span class="type">jsonb</span>,
+  created_at      <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+</div>
+
+<!-- ==================== UPDATED ROADMAP ==================== -->
+<div class="section">
+  <div class="section-label">Section 18</div>
+  <h2>Updated Roadmap (with Mobile, Web & Contact Strategy)</h2>
+  <p class="desc">Revised phased timeline incorporating all new deliverables.</p>
+
+  <div class="timeline">
+    <div class="tl-item active">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 0 — Foundation (Week 1–2)</div>
+      <div class="tl-title">Infrastructure + Design Kickoff</div>
+      <div class="tl-desc">
+        Supabase project setup, full schema deployment (including cl_leads, cl_referrals, cl_nurture_events). Heartbeat + intake deployed. <strong>Figma:</strong> Set up project, build design system (colors, typography, components). Start website wireframes (Landing, About, How It Works, Pricing).<br>
+        <strong>Fundraising:</strong> Corporate formation, co-founder agreement, cap table setup, IP assignment. Begin investor list building.
+      </div>
+    </div>
+
+    <div class="tl-item active">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 1 — 5.8 MVP (Week 3–6)</div>
+      <div class="tl-title">Jarvis + Core Agents + Mobile Alpha + Lead Capture</div>
+      <div class="tl-desc">
+        <strong>Backend:</strong> Deploy jarvis-core, agent-scorer, agent-kore, agent-coach, agent-pulse, agent-sage, agent-mirror. Onboarding + daily check-in + weekly review flows live.<br>
+        <strong>Mobile:</strong> React Native shell with Onboarding, Zero-Point Assessment, Home Dashboard, Jarvis Chat, Quick Check-in, Profile screens.<br>
+        <strong>Figma:</strong> Complete mobile app wireframes (all MVP screens). Begin prototyping core flows.<br>
+        <strong>Web:</strong> Landing page live with Free Zero-Point Assessment as lead magnet.<br>
+        <strong>Contact:</strong> Email capture active. Post-Assessment nurture sequence (Sequence A) configured. Social accounts launched.<br>
+        <strong>Fundraising:</strong> Pitch deck, one-pager, financial model, TAM analysis, competitive landscape completed. Begin seed investor outreach (30+ meetings). Demo live product to angels.
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 2 — Expansion (Week 7–12)</div>
+      <div class="tl-title">All Domains + Content + SaaS Launch + Paid Ads</div>
+      <div class="tl-desc">
+        <strong>Backend:</strong> Deploy agent-bond, agent-compass, agent-creator. Habit tracking, advanced faith mapping, Stripe integration.<br>
+        <strong>Mobile:</strong> Full Journal, Life Plan Viewer, Faith Mapping, Weekly Review screens. App Store submission (TestFlight/beta).<br>
+        <strong>Figma:</strong> Phase 2 website wireframes (Programs, Dashboard). Phase 2 mobile screens. Iterate on Phase 1 designs based on beta feedback.<br>
+        <strong>Web:</strong> Authenticated dashboard, Programs page. Blog launches with Creator agent content pipeline.<br>
+        <strong>Contact:</strong> Paid acquisition campaigns (Instagram + Google). Trial nurture sequence (Sequence B) live. Referral program launches. Funnel KPI tracking active.<br>
+        <strong>Fundraising:</strong> Close seed round ($500K–$1.5M). SAFE notes or priced round. Data room finalized. Capital deployed — hiring begins.
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 3 — 6.0 Sovereign (Month 4–8)</div>
+      <div class="tl-title">Community + Enterprise + Full Contact Engine</div>
+      <div class="tl-desc">
+        <strong>Backend:</strong> agent-community, agent-enterprise, agent-funnel deployed. WhatsApp integration. Advanced K0RE engine.<br>
+        <strong>Mobile:</strong> Community features, group challenges, leaderboards. Polish and performance optimization. Full App Store launch.<br>
+        <strong>Figma:</strong> Enterprise/CAPIS wireframes, Community Hub, Blog. Design system refinement with real usage data.<br>
+        <strong>Web:</strong> Enterprise landing page, Community Hub, full blog with SEO.<br>
+        <strong>Contact:</strong> Full enterprise outreach (CAPIS white paper, direct outreach). Re-engagement sequence (Sequence C). Ambassador program. Target 5K assessments/month.<br>
+        <strong>Fundraising:</strong> Hit Series A benchmarks — 2K+ users, $50K+ MRR, 3+ enterprise clients. Build traction dashboard for investors. Engage Series A advisor.
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Phase 4 — Scale (Month 9+)</div>
+      <div class="tl-title">Series A + TRMIG + Data Sovereignty + International</div>
+      <div class="tl-desc">
+        <strong>Fundraising:</strong> Series A raise ($3M–$8M). Institutional lead investor. Board formation.<br>
+        <strong>Product:</strong> Self-sovereign identity, user-owned data vaults, TRMIG fund integration, advanced fine-tuned AI models, international expansion, multi-language Jarvis, DAO governance exploration. Contact strategy scales with proven funnels.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== HORMOZI GROWTH ENGINE ==================== -->
+<div class="section">
+  <div class="section-label">Section 19</div>
+  <h2>The Hormozi Growth Engine — $100M Models Applied to CLTRN</h2>
+  <p class="desc">Alex Hormozi's three frameworks ($100M Offers, $100M Leads, $100M Money Models) mapped directly to CLTRN's go-to-market — and the "Cal Robbins" personal brand strategy.</p>
+
+  <!-- CAL ROBBINS -->
+  <div style="background:linear-gradient(135deg, #1a1a28, #12121a); border:2px solid var(--gold); border-radius:16px; padding:32px; margin-bottom:40px;">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+      <span style="font-size:36px;">👑</span>
+      <div>
+        <h3 style="font-size:24px; color:var(--gold); margin:0;">The "Cal Robbins" Brand Strategy</h3>
+        <p style="color:var(--muted); margin:4px 0 0; font-size:14px;">Positioning Cal as the next-generation Tony Robbins — consciousness meets technology meets transformation.</p>
+      </div>
+    </div>
+    <p style="font-size:15px; margin-bottom:16px;">Tony Robbins built an empire on high-energy events + simple frameworks + massive personal brand. Cal does the same, but upgrades the model: <strong>AI-powered personalization</strong> (Jarvis) replaces generic seminar advice, <strong>K0RE methodology</strong> replaces NLP, and the <strong>5-Domain OS</strong> replaces goal-setting worksheets. Cal doesn't just motivate — he gives people a sovereign operating system for their entire life.</p>
+
+    <div class="card-grid">
+      <div class="card" style="border-top:3px solid var(--gold); background:#0d0d14;">
+        <h3>The Cal Robbins Positioning</h3>
+        <p><strong>Tony Robbins:</strong> "Unleash the power within"<br>
+        <strong>Cal Robbins:</strong> "Install the operating system within"<br><br>
+        Tony motivates you at a seminar. Cal gives you Jarvis — an AI that coaches you every single day, tracks your progress across 5 life domains, and never lets you fall back to your old patterns. <strong>CLTRN is the personal development platform Tony Robbins would build if he started today.</strong></p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--gold); background:#0d0d14;">
+        <h3>Cal's Content Pillars</h3>
+        <p><strong>1. The K0RE Philosophy:</strong> Deep consciousness content — faith mapping, first principles, belief reprogramming. Positions Cal as the intellectual leader.<br>
+        <strong>2. Life OS Demos:</strong> "Watch me run my life through CLTRN" — real-time demonstrations of Jarvis, domain scoring, weekly reviews. Shows the product in action.<br>
+        <strong>3. Transformation Stories:</strong> Before/after Zero-Point scores from real users. The proof that the system works.<br>
+        <strong>4. Provocative Takes:</strong> "Self-help is broken — here's the upgrade." Hot takes on why apps, books, and seminars fail without a system.</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--gold); background:#0d0d14;">
+        <h3>The Cal Robbins Flywheel</h3>
+        <p><strong>Content → Audience → Leads → Users → Transformations → Content</strong><br><br>
+        Cal's content builds the audience. The audience takes the free Zero-Point Assessment. Jarvis converts them into paying users. Users transform their lives. Their transformation stories become Cal's next wave of content. The flywheel compounds — every user is a case study.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- $100M OFFERS -->
+  <h3 style="margin:30px 0 12px; color:var(--accent2);">📦 $100M Offers — The CLTRN Grand Slam Offer</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Hormozi's Value Equation: <code>Value = (Dream Outcome × Perceived Likelihood) / (Time Delay × Effort)</code>. We engineer every CLTRN offer to maximize the top and minimize the bottom.</p>
+
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--green);">
+      <h3 style="color:var(--green);">⬆️ Dream Outcome</h3>
+      <p>"Become the best version of yourself across every dimension of life — body, mind, identity, relationships, and purpose — with an AI that knows you better than you know yourself."<br><br>
+      Not just "feel better" — a <strong>complete life operating system upgrade</strong>. The dream is total sovereignty over your own existence.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <h3 style="color:var(--blue);">⬆️ Perceived Likelihood</h3>
+      <p><strong>Proof mechanisms:</strong><br>
+      — Zero-Point before/after scores (quantified transformation)<br>
+      — Daily K0RE insights (users see the AI working for them)<br>
+      — Streak mechanics (visible progress compound)<br>
+      — Cal's own transformation story + user testimonials<br>
+      — "10,000+ check-ins processed" type social proof</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--orange);">
+      <h3 style="color:var(--orange);">⬇️ Time Delay</h3>
+      <p><strong>Reduce time to first value:</strong><br>
+      — Zero-Point Assessment in first 10 minutes (instant baseline)<br>
+      — First K0RE insight within 24 hours<br>
+      — Personalized life plan generated in 48 hours<br>
+      — First "aha moment" by Day 3<br>
+      — Visible score movement by Week 2</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--pink);">
+      <h3 style="color:var(--pink);">⬇️ Effort & Sacrifice</h3>
+      <p><strong>Make it effortless:</strong><br>
+      — 30-second daily check-in (mood + energy sliders)<br>
+      — Jarvis does the analysis, you just show up<br>
+      — Push notification reminders (no need to remember)<br>
+      — Voice journaling (talk, don't type)<br>
+      — Jarvis tells you what to do next (no decision fatigue)</p>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 12px;">🏆 CLTRN Grand Slam Offer Stack</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Hormozi's method: list every barrier your customer faces, turn each into a solution, stack them into an offer they can't refuse.</p>
+  <table>
+    <tr><th>Customer Barrier</th><th>Solution</th><th>Delivery Vehicle</th><th>Perceived Value</th></tr>
+    <tr>
+      <td>"I don't know where to start"</td>
+      <td>Zero-Point Assessment — instant baseline across all 5 domains</td>
+      <td>agent-scorer (automated, AI-powered)</td>
+      <td>$497 value</td>
+    </tr>
+    <tr>
+      <td>"I can't stay consistent"</td>
+      <td>Jarvis daily check-ins + streak mechanics + smart reminders</td>
+      <td>jarvis-core (push notifications)</td>
+      <td>$297/yr value</td>
+    </tr>
+    <tr>
+      <td>"Generic advice doesn't work for me"</td>
+      <td>Personalized Life Plan generated from YOUR data by K0RE AI</td>
+      <td>agent-coach + agent-kore</td>
+      <td>$997 value</td>
+    </tr>
+    <tr>
+      <td>"I can't see my blind spots"</td>
+      <td>Cross-domain pattern detection — K0RE sees what you can't</td>
+      <td>agent-kore (consciousness engine)</td>
+      <td>$497 value</td>
+    </tr>
+    <tr>
+      <td>"My faith and personal growth feel separate"</td>
+      <td>Faith Mapping — integrates your spiritual practice into your OS</td>
+      <td>agent-mirror (faith lens)</td>
+      <td>$297 value</td>
+    </tr>
+    <tr>
+      <td>"I don't have time for long programs"</td>
+      <td>30-second daily check-in + voice journaling + auto-generated plans</td>
+      <td>Mobile app (quick check-in screen)</td>
+      <td>$197 value</td>
+    </tr>
+    <tr>
+      <td>"I need accountability"</td>
+      <td>Weekly AI-generated progress review + Coach recalibration</td>
+      <td>agent-coach + agent-creator</td>
+      <td>$497 value</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="text-align:right; font-weight:700; color:var(--gold);">Total Perceived Value Stack</td>
+      <td style="color:var(--gold); font-weight:700;">$3,279/yr</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="text-align:right; font-weight:700; color:var(--green);">CLTRN Jarvis SaaS Price</td>
+      <td style="color:var(--green); font-weight:700;">$397/yr</td>
+    </tr>
+    <tr>
+      <td colspan="3" style="text-align:right; font-weight:700; color:var(--accent2);">Value-to-Price Ratio</td>
+      <td style="color:var(--accent2); font-weight:700;">8.3x</td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 12px;">🛡️ Hormozi-Style Guarantees</h3>
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--green);">
+      <h3>The "Score or Free" Guarantee</h3>
+      <p><strong>Conditional guarantee:</strong> "Complete your daily check-ins for 30 days. If your Zero-Point score doesn't improve in at least 2 domains, you get a full refund + we'll personally review your data with you."<br><br>Participation-based = low risk for CLTRN (engaged users rarely churn) + massive risk reversal for the buyer.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <h3>The "First Insight in 24 Hours" Promise</h3>
+      <p><strong>Speed guarantee:</strong> "You'll receive your first personalized K0RE insight within 24 hours of completing your Zero-Point Assessment — or the first month is free."<br><br>Reduces time delay to near-zero. Demonstrates the AI works immediately.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold);">
+      <h3>The Program "Transformation or Tuition Back"</h3>
+      <p><strong>For the $995 program tier:</strong> "Complete the 12-week program. Do every check-in, every module, every weekly review. If you don't see measurable improvement in your Zero-Point score, we refund your full tuition."<br><br>Completion criteria protect margins. The guarantee sells the program.</p>
+    </div>
+  </div>
+
+  <!-- $100M LEADS -->
+  <h3 style="margin:40px 0 12px; color:var(--cyan);">🧲 $100M Leads — The CLTRN Lead Machine</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Hormozi's Core Four: Warm Outreach, Cold Outreach, Free Content, Paid Ads. Plus Lead Getters (affiliates, customers, employees). Here's how each maps to CLTRN.</p>
+
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--green);">
+      <div class="card-icon">🤝</div>
+      <h3>Core 1: Warm Outreach</h3>
+      <p><strong>Cal's personal network first.</strong> Message every contact: "I built something — it's a life operating system with an AI assistant. Can I give you a free Zero-Point Assessment?" Not selling. Giving.<br><br>
+      <strong>Rule of 100:</strong> Cal personally reaches out to 100 people in Week 1. Jason does the same within his real estate/mortgage network (different segment, same principle).<br><br>
+      <strong>The Ask:</strong> "Who do you know that's working on improving their life?" — referral, not pitch.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <div class="card-icon">📝</div>
+      <h3>Core 2: Free Content</h3>
+      <p><strong>The Cal Robbins content machine.</strong> Hormozi says flood the market with value. Cal posts daily across:<br><br>
+      — <strong>YouTube (long-form):</strong> "Life Operating System" concept videos, K0RE philosophy deep dives, domain breakdowns<br>
+      — <strong>Instagram/TikTok (short-form):</strong> 60-sec "Upgrade your OS" clips, transformation before/afters, Jarvis demo snippets<br>
+      — <strong>LinkedIn:</strong> Thought leadership for enterprise/achiever segment<br>
+      — <strong>Podcast:</strong> "The K0RE Podcast" — weekly episodes on consciousness, tech, and transformation<br><br>
+      <strong>Rule of 100:</strong> 100 minutes of content creation per day.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--orange);">
+      <div class="card-icon">📞</div>
+      <h3>Core 3: Cold Outreach</h3>
+      <p><strong>For enterprise (CAPIS) and high-value leads.</strong><br><br>
+      — LinkedIn outreach to HR directors, wellness leads, executive coaches<br>
+      — Cold email sequences (agent-funnel automates follow-ups)<br>
+      — "Free team assessment" as the lead magnet for enterprise<br>
+      — Personalized video messages from Cal for high-value prospects<br><br>
+      <strong>Rule of 100:</strong> 100 cold outreach touches per day (can be automated + manual mix).</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--pink);">
+      <div class="card-icon">💰</div>
+      <h3>Core 4: Paid Ads</h3>
+      <p><strong>Scale what's already converting organically.</strong><br><br>
+      — <strong>Facebook/Instagram:</strong> "Take the free Zero-Point Assessment" → retarget with transformation stories<br>
+      — <strong>YouTube pre-roll:</strong> 15-sec Jarvis demo clips → full assessment funnel<br>
+      — <strong>Google:</strong> "AI life coaching" / "personal development AI" keywords<br>
+      — <strong>Hormozi's 70/20/10 rule:</strong> 70% budget on proven winners, 20% on variations, 10% on new experiments<br><br>
+      <strong>Rule of 100:</strong> $100/day minimum ad spend once organic is converting.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 12px;">🧲 The CLTRN Lead Magnet (Hormozi-Grade)</h3>
+  <div style="background:var(--surface); border:2px solid var(--cyan); border-radius:12px; padding:28px; margin-bottom:20px;">
+    <h4 style="color:var(--cyan); margin-bottom:12px;">The Free Zero-Point Life Assessment</h4>
+    <p style="font-size:15px; margin-bottom:16px;">Following Hormozi's lead magnet formula — this solves a real problem (self-awareness), reveals a bigger problem (the gaps in their life), and naturally leads to the core offer (Jarvis SaaS to fix those gaps).</p>
+    <table>
+      <tr><th>Hormozi Principle</th><th>CLTRN Implementation</th></tr>
+      <tr><td>Solve a narrow problem completely</td><td>"Where do you actually stand in life?" — answered definitively with scores across 5 domains</td></tr>
+      <tr><td>Reveal a bigger problem</td><td>Assessment shows gaps → "Your Identity score is 4.2 but your Purpose is 7.8 — here's why that's holding you back"</td></tr>
+      <tr><td>Make it so good you could charge for it</td><td>The assessment + AI-generated report would be worth $200+ from a life coach. We give it away free.</td></tr>
+      <tr><td>Include a CTA to the core offer</td><td>"Want Jarvis to help you close these gaps? Start your 7-day free trial."</td></tr>
+      <tr><td>Easy to consume</td><td>10 minutes. Mobile-friendly. Instant results. Shareable score card.</td></tr>
+    </table>
+  </div>
+
+  <h3 style="margin:30px 0 12px;">🔗 Lead Getters — Leverage Other People</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Hormozi's force multipliers: get others to generate leads for you.</p>
+  <table>
+    <tr><th>Lead Getter</th><th>CLTRN Strategy</th><th>Incentive</th></tr>
+    <tr>
+      <td><strong>Customers (Referrals)</strong></td>
+      <td>Every Jarvis user gets a unique referral link. "Share your Zero-Point journey" shareable cards. In-app "invite a friend" flow.</td>
+      <td>Both get 1 month free. Top referrers get retreat discounts.</td>
+    </tr>
+    <tr>
+      <td><strong>Affiliates</strong></td>
+      <td>Life coaches, therapists, wellness influencers, spiritual leaders. They recommend CLTRN to their clients/followers.</td>
+      <td>20% recurring commission on referred SaaS subscriptions. Co-branded assessment pages.</td>
+    </tr>
+    <tr>
+      <td><strong>Agencies</strong></td>
+      <td>Digital marketing agencies that serve the wellness/coaching niche. They run ads + funnels for CLTRN.</td>
+      <td>Performance-based: % of revenue from leads they generate.</td>
+    </tr>
+    <tr>
+      <td><strong>Employees (Phase 3)</strong></td>
+      <td>Dedicated growth team running outbound + content at scale. Each team member owns a Core Four channel.</td>
+      <td>Salary + performance bonus tied to lead KPIs.</td>
+    </tr>
+  </table>
+
+  <!-- $100M MONEY MODELS -->
+  <h3 style="margin:40px 0 12px; color:var(--gold);">💎 $100M Money Models — CLTRN Monetization Engine</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Hormozi's newest framework (2025): maximize upfront cash, increase LTV, outspend competitors, build scalable systems. Here's the CLTRN money model.</p>
+
+  <h4 style="margin:20px 0 8px; color:var(--green);">Stage I: Get Cash (Attraction Offers)</h4>
+  <div class="arch-box"><span class="hl">CLTRN Value Ladder — Hormozi-Style Monetization</span>
+
+<span class="y">FREE TIER</span> (Lead Magnet → Get them in the door)
+├── Free Zero-Point Assessment + AI Report         <span class="g">$0</span>   → Captures email + shows gaps
+├── 7-Day Jarvis Trial (daily check-ins)            <span class="g">$0</span>   → Demonstrates daily value
+└── "First Principles" PDF + 5-Day Email Course     <span class="g">$0</span>   → Nurtures with Cal's philosophy
+
+<span class="b">CORE OFFER</span> (SaaS — recurring revenue engine)
+├── Jarvis Monthly                                  <span class="b">$47/mo</span>  → Low barrier, high LTV over time
+├── Jarvis Annual                                   <span class="b">$397/yr</span> → 30% discount incentivizes annual commit
+└── <span class="y">Order Bump:</span> "Consciousness Starter Kit"         <span class="y">+$97</span>   → Faith Mapping guide + bonus journal prompts
+    └── <span class="g">Offered at checkout — 40%+ take rate expected</span>
+
+<span class="o">UPSELL 1</span> (Programs — high margin, high transformation)
+├── 12-Week Transformation Program                  <span class="o">$995</span>   → Structured curriculum + Jarvis coaching
+├── Domain-Specific Deep Dives (4-week)             <span class="o">$497</span>   → Body Mastery, Mind Mastery, etc.
+└── <span class="y">Upsell trigger:</span> After 30 days of SaaS, Jarvis suggests program based on weakest domain
+
+<span class="p">UPSELL 2</span> (Premium — aspirational, high ACV)
+├── Retreats (in-person with Cal)                   <span class="p">$997–$7,997</span>  → The "Cal Robbins UPW" equivalent
+├── 1-on-1 K0RE Coaching (Cal or trained coaches)   <span class="p">$2,500/mo</span>    → Premium access
+└── Inner Circle Mastermind (12 people)              <span class="p">$15,000/yr</span>   → Cal's personal advisory group
+
+<span class="hl">ENTERPRISE</span> (B2B — highest ACV)
+├── CAPIS Team Assessment (per org)                 <span class="hl">$5,000</span>       → Entry point for enterprise
+├── Enterprise Jarvis (per employee)                <span class="hl">$795/person/yr</span> → Recurring B2B revenue
+└── Corporate Retreat / Workshop                    <span class="hl">$25,000+</span>      → High-touch, high-margin</div>
+
+  <h4 style="margin:30px 0 8px; color:var(--blue);">Stage II: Get More Cash (Upsells, Downsells, LTV Maximization)</h4>
+  <table>
+    <tr><th>Hormozi Tactic</th><th>CLTRN Implementation</th><th>Revenue Impact</th></tr>
+    <tr>
+      <td><strong>Order Bumps at Checkout</strong></td>
+      <td>"Add the Consciousness Starter Kit" ($97) — one-click add during SaaS signup. Includes Faith Mapping workbook + 30 bonus journal prompts + priority K0RE processing.</td>
+      <td>+$97 per checkout × 40% take rate = significant ARPU lift</td>
+    </tr>
+    <tr>
+      <td><strong>Upsell After Engagement</strong></td>
+      <td>After 30 days of daily check-ins, Jarvis says: "You've been crushing Body and Mind. Your Identity score hasn't moved — the 12-Week Identity Transformation Program is designed for exactly this. Want to learn more?"</td>
+      <td>$497–$995 upsell from $397 base</td>
+    </tr>
+    <tr>
+      <td><strong>Downsell for Cancellers</strong></td>
+      <td>User tries to cancel → "Before you go — switch to our $19/mo Essentials plan (check-ins only, no K0RE insights)." Retains revenue instead of losing customer entirely.</td>
+      <td>Saves 20-30% of cancellations</td>
+    </tr>
+    <tr>
+      <td><strong>Price Anchoring</strong></td>
+      <td>Show $2,500/mo 1-on-1 coaching option first on the pricing page. Makes $397/yr Jarvis SaaS look like a steal.</td>
+      <td>Increases conversion on core offer</td>
+    </tr>
+    <tr>
+      <td><strong>Referral Revenue Loop</strong></td>
+      <td>Every user who refers 3 friends gets upgraded to "Jarvis Pro" tier (normally $47/mo) for free — as long as referrals stay active.</td>
+      <td>Viral coefficient >1 = exponential growth</td>
+    </tr>
+    <tr>
+      <td><strong>Backend Continuity</strong></td>
+      <td>After the 12-week program ends, users automatically transition to Jarvis SaaS annual plan at discounted rate. No gap in engagement.</td>
+      <td>Program → SaaS conversion >60%</td>
+    </tr>
+  </table>
+
+  <h4 style="margin:30px 0 8px; color:var(--orange);">Stage III: Outspend Competitors (CAC Optimization)</h4>
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--green);">
+      <h3>Win the Ad Auction</h3>
+      <p>Hormozi's principle: the business that can spend the most to acquire a customer wins. With a $397 annual SaaS + $97 order bump + eventual $995 program upsell, CLTRN's LTV can support $150+ CAC while competitors with $10/mo apps can only spend $30.<br><br>
+      <strong>Result:</strong> CLTRN can bid higher on every ad platform and still be profitable.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <h3>The Hormozi Content Moat</h3>
+      <p>"Give until they ask." Cal produces so much free value that organic leads compound monthly. Paid ads amplify content that's already converting organically. The 70/20/10 framework ensures budget efficiency.<br><br>
+      <strong>Result:</strong> Blended CAC drops as organic scales, while paid maintains volume.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold);">
+      <h3>Proof Stacking</h3>
+      <p>Hormozi's Proof Playbook + CLTRN's built-in advantage: every user generates quantified before/after data (Zero-Point scores). This is gold for ads.<br><br>
+      "Sarah went from 3.2 to 7.8 on Identity in 12 weeks." Numbers > testimonials. Data > claims.<br><br>
+      <strong>Result:</strong> Ad creative with proof converts 2-3x better = lower CPA.</p>
+    </div>
+  </div>
+
+  <h4 style="margin:30px 0 8px; color:var(--pink);">Retention Flywheel (Hormozi LTV + Retention Playbooks)</h4>
+  <table>
+    <tr><th>Retention Lever</th><th>Implementation</th><th>Impact</th></tr>
+    <tr><td>Streak Mechanics</td><td>Daily check-in streaks with milestone rewards. "You're on a 30-day streak — unlocking Advanced K0RE Insights."</td><td>Users who hit 14-day streak retain at 85%+</td></tr>
+    <tr><td>Weekly Wins</td><td>Every weekly review highlights progress, celebrates improvements, and reframes setbacks as data.</td><td>Positive reinforcement loop reduces churn</td></tr>
+    <tr><td>Quarterly Re-Assessment</td><td>Full Zero-Point re-test every 90 days. "Look how far you've come." Side-by-side score comparison.</td><td>Renewal trigger — users see concrete ROI</td></tr>
+    <tr><td>Domain Unlocks</td><td>As users engage with Body/Mind, gradually surface Bond/Compass insights. "Ready to level up your Relationships domain?"</td><td>Expands engagement surface, reduces single-domain fatigue</td></tr>
+    <tr><td>Community Accountability (Phase 3)</td><td>Peer groups, shared challenges, public commitments. Social pressure to stay engaged.</td><td>Community members retain 2x vs solo users</td></tr>
+    <tr><td>Cal's Monthly Live</td><td>Exclusive monthly live Q&A with Cal for all active subscribers. Direct access to the founder.</td><td>Perceived value >> cost. Builds personal connection.</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 12px; color:var(--accent2);">📋 Hormozi Implementation Checklist</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">Phase-by-phase rollout of Hormozi strategies mapped to CLTRN build timeline.</p>
+  <table>
+    <tr><th>Phase</th><th>Hormozi Strategy</th><th>Specific Action</th></tr>
+    <tr><td rowspan="4" style="color:var(--green); font-weight:600;">Phase 0–1<br>(MVP)</td>
+      <td>Grand Slam Offer design</td><td>Finalize the offer stack, pricing, and guarantee language</td></tr>
+    <tr><td>Lead Magnet live</td><td>Free Zero-Point Assessment on website + Telegram</td></tr>
+    <tr><td>Warm Outreach (Rule of 100)</td><td>Cal + Jason reach out to 100 contacts each in Week 1</td></tr>
+    <tr><td>Content machine starts</td><td>Cal posts daily across YouTube, Instagram, LinkedIn</td></tr>
+    <tr><td rowspan="4" style="color:var(--blue); font-weight:600;">Phase 2<br>(Expansion)</td>
+      <td>Paid Ads launch</td><td>$100/day on Instagram/Facebook → Zero-Point Assessment funnel</td></tr>
+    <tr><td>Cold Outreach (enterprise)</td><td>LinkedIn outreach to HR/wellness leaders (100/day)</td></tr>
+    <tr><td>Order Bumps + Upsells</td><td>Consciousness Starter Kit at checkout, program upsell at Day 30</td></tr>
+    <tr><td>Affiliate program</td><td>Launch affiliate portal for coaches, therapists, influencers</td></tr>
+    <tr><td rowspan="3" style="color:var(--accent2); font-weight:600;">Phase 3<br>(Scale)</td>
+      <td>Downsell + retention</td><td>Cancellation downsell flow, quarterly re-assessment, community</td></tr>
+    <tr><td>Ad scaling (70/20/10)</td><td>Scale winning ads aggressively, test new creatives weekly</td></tr>
+    <tr><td>Lead Getters at scale</td><td>Dedicated growth team, agency partnerships, employee-driven outbound</td></tr>
+  </table>
+</div>
+
+<!-- ==================== FUNDRAISING ==================== -->
+<div class="section">
+  <div class="section-label">Section 20</div>
+  <h2>Fundraising Roadmap — Seed to Series A</h2>
+  <p class="desc">Capital strategy to fund CLTRN from proof-of-concept through growth-stage scale.</p>
+
+  <h3 style="margin:20px 0 12px; color:var(--gold);">💰 Funding Milestones</h3>
+  <div class="timeline">
+    <div class="tl-item active">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Pre-Seed / Bootstrap</div>
+      <div class="tl-title">Build the MVP & Prove the Concept</div>
+      <div class="tl-desc">
+        <strong>Target:</strong> $0 — self-funded build phase (sweat equity + existing resources).<br>
+        <strong>Goal:</strong> Ship 5.8 MVP with Jarvis live on Telegram, 20-50 beta users, initial Zero-Point assessment data, and early engagement metrics.<br>
+        <strong>Deliverables for next stage:</strong> Working product, beta user testimonials, engagement data (DAU, check-in completion rate, retention), Cal's thought leadership content pipeline.
+      </div>
+      <div class="tl-date">Now → Month 2</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Seed Round</div>
+      <div class="tl-title">$500K–$1.5M — Scale the Product & Acquire Users</div>
+      <div class="tl-desc">
+        <strong>Use of funds:</strong><br>
+        — Engineering (40%): Full-time React Native dev, backend scaling, AI model optimization<br>
+        — Growth (25%): Paid acquisition, content marketing, community building<br>
+        — Product (20%): UX design (Figma → production), additional agent development, wearable integrations<br>
+        — Operations (15%): Legal, compliance, infrastructure, early team hires<br><br>
+        <strong>Milestones to hit before raise:</strong><br>
+        — 200+ active Jarvis users with 60%+ weekly retention<br>
+        — $10K+ MRR from SaaS subscriptions + program enrollments<br>
+        — Completed mobile app (iOS + Android) in app stores<br>
+        — Website live with working acquisition funnel<br>
+        — 3+ validated reaction chains producing measurable user outcomes<br><br>
+        <strong>Target investors:</strong> Angel investors in wellness/healthtech, AI-focused pre-seed funds, conscious capitalism investors, impact funds aligned with personal development.
+      </div>
+      <div class="tl-date">Month 3–6</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Post-Seed Growth</div>
+      <div class="tl-title">Hit Series A Benchmarks</div>
+      <div class="tl-desc">
+        <strong>Focus:</strong> Use seed capital to hit the metrics that make Series A compelling.<br>
+        — Scale to 2,000+ active users across all tiers<br>
+        — $50K+ MRR ($600K ARR run rate)<br>
+        — Launch enterprise tier (CAPIS) with 3+ paying organizations<br>
+        — Prove unit economics: CAC < $85, LTV > $1,200, LTV:CAC > 3:1<br>
+        — Community layer live with measurable peer engagement<br>
+        — K0RE intelligence engine demonstrating personalization at scale<br>
+        — Complete data on user transformation outcomes (before/after scores)
+      </div>
+      <div class="tl-date">Month 6–14</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-phase">Series A</div>
+      <div class="tl-title">$3M–$8M — Category Leadership</div>
+      <div class="tl-desc">
+        <strong>Use of funds:</strong><br>
+        — Engineering (35%): AI R&D (fine-tuned models, sovereign data layer), platform scaling, API marketplace<br>
+        — Growth (30%): Aggressive acquisition, international expansion, multi-language Jarvis, influencer partnerships<br>
+        — Enterprise (20%): Dedicated enterprise sales team, CAPIS expansion, corporate partnerships<br>
+        — Team (15%): C-suite hires (CTO, VP Growth), expanded engineering team<br><br>
+        <strong>Benchmarks at raise:</strong><br>
+        — $1M+ ARR with clear growth trajectory<br>
+        — 5,000+ active users, 70%+ monthly retention<br>
+        — Enterprise revenue from 10+ organizations<br>
+        — Defensible moat: K0RE engine + user data network effects<br>
+        — Clear path to $10M ARR<br><br>
+        <strong>Target investors:</strong> Series A healthtech/wellness VCs, AI-native investors, growth-stage impact funds, strategic investors (wellness brands, corporate wellness platforms).
+      </div>
+      <div class="tl-date">Month 14–18</div>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 12px; color:var(--cyan);">📄 Fundraising Deliverables</h3>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:16px;">What we need to build and prepare for each raise.</p>
+  <table>
+    <tr><th>Deliverable</th><th>Purpose</th><th>Needed By</th><th>Status</th></tr>
+    <tr>
+      <td><strong>Pitch Deck (Seed)</strong></td>
+      <td>12-15 slide investor deck. Problem, solution, market size, product demo, traction, team, ask.</td>
+      <td>Month 3</td>
+      <td><span class="status status-mvp">To Build</span></td>
+    </tr>
+    <tr>
+      <td><strong>Financial Model</strong></td>
+      <td>3-year projection: revenue by tier, user growth curves, unit economics, burn rate, runway calculations.</td>
+      <td>Month 3</td>
+      <td><span class="status status-mvp">To Build</span></td>
+    </tr>
+    <tr>
+      <td><strong>Product Demo Video</strong></td>
+      <td>2-3 min walkthrough of Jarvis in action: onboarding → check-in → insight → weekly review. Shows the magic.</td>
+      <td>Month 3</td>
+      <td><span class="status status-p2">After MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>One-Pager / Executive Summary</strong></td>
+      <td>Single-page overview for cold outreach to investors. Hooks them to take the meeting.</td>
+      <td>Month 3</td>
+      <td><span class="status status-mvp">To Build</span></td>
+    </tr>
+    <tr>
+      <td><strong>Data Room</strong></td>
+      <td>Organized folder: corporate docs, cap table, financials, product metrics, user data (anonymized), IP overview.</td>
+      <td>Month 4</td>
+      <td><span class="status status-mvp">To Build</span></td>
+    </tr>
+    <tr>
+      <td><strong>Traction Dashboard</strong></td>
+      <td>Live metrics page: DAU, WAU, retention, MRR, assessment completions, domain score improvements. Investor-facing.</td>
+      <td>Month 4</td>
+      <td><span class="status status-p2">After MVP</span></td>
+    </tr>
+    <tr>
+      <td><strong>Market Research / TAM Analysis</strong></td>
+      <td>Total addressable market for AI personal development: wellness market ($1.8T) × AI coaching penetration × SaaS wedge.</td>
+      <td>Month 3</td>
+      <td><span class="status status-mvp">To Build</span></td>
+    </tr>
+    <tr>
+      <td><strong>Competitive Landscape</strong></td>
+      <td>Matrix showing CLTRN vs existing players (Headspace, BetterUp, Noom, etc.) with differentiation on sovereignty + 5-domain + AI agents.</td>
+      <td>Month 3</td>
+      <td><span class="status status-mvp">To Build</span></td>
+    </tr>
+    <tr>
+      <td><strong>Cap Table & Legal</strong></td>
+      <td>Clean cap table, SAFE/convertible note terms, corporate formation docs, IP assignment agreements.</td>
+      <td>Month 2</td>
+      <td><span class="status status-infra">Priority</span></td>
+    </tr>
+    <tr>
+      <td><strong>Advisory Board</strong></td>
+      <td>2-3 advisors with credibility in wellness/AI/SaaS. Adds legitimacy for investor conversations.</td>
+      <td>Month 3</td>
+      <td><span class="status status-p2">Identify</span></td>
+    </tr>
+  </table>
+
+  <h3 style="margin:30px 0 12px; color:var(--green);">🎯 The CLTRN Investment Thesis</h3>
+  <div class="card-grid">
+    <div class="card" style="border-top:3px solid var(--gold);">
+      <h3>Market Timing</h3>
+      <p>The global wellness market is $1.8T+ and growing 5-10% annually. AI personal coaching is nascent — no dominant player owns the "whole human" stack. CLTRN is the first platform to combine AI agents, consciousness frameworks, and 5-domain life optimization into a single sovereign system.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent2);">
+      <h3>Defensible Moat</h3>
+      <p><strong>K0RE Engine:</strong> Cross-domain AI synthesis gets smarter with every user interaction — network effects compound over time. <strong>Methodology IP:</strong> ZP-LOS, Faith Mapping, CAPIS, First Principles — proprietary frameworks that can't be easily replicated. <strong>Data:</strong> Users' longitudinal life data creates deep personalization competitors can't match.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--green);">
+      <h3>Revenue Diversity</h3>
+      <p>Six revenue pillars reduce single-point-of-failure risk: SaaS subscriptions (recurring), programs (high-margin), retreats (premium), courses (scalable), enterprise (high-ACV), and TRMIG fund (long-term). Multiple paths to $1M ARR.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue);">
+      <h3>Team</h3>
+      <p><strong>Cal (K0RE-0):</strong> Visionary architect with deep methodology IP, thought leadership platform, and direct access to the target community. <strong>Jason:</strong> Proven builder — already shipped a multi-agent AI Command Center with 12 production agents. Together: vision + execution.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 12px; color:var(--orange);">📊 Key Metrics Investors Will Track</h3>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="value">DAU/MAU</div><div class="label">Daily/Monthly Active User Ratio (target >40%)</div></div>
+    <div class="kpi"><div class="value">D7 / D30</div><div class="label">Retention Cohorts (target D7 >60%, D30 >40%)</div></div>
+    <div class="kpi"><div class="value">MRR</div><div class="label">Monthly Recurring Revenue (track growth rate)</div></div>
+    <div class="kpi"><div class="value">CAC</div><div class="label">Customer Acquisition Cost (target <$85)</div></div>
+    <div class="kpi"><div class="value">LTV:CAC</div><div class="label">Lifetime Value Ratio (target >3:1)</div></div>
+    <div class="kpi"><div class="value">NPS</div><div class="label">Net Promoter Score (target >50)</div></div>
+  </div>
+
+  <h3 style="margin:30px 0 12px; color:var(--pink);">🗓️ Fundraising Timeline</h3>
+  <table>
+    <tr><th>When</th><th>Action</th><th>Details</th></tr>
+    <tr><td>Month 1–2</td><td>Corporate setup + build</td><td>Legal formation, cap table, IP assignment, co-founder agreement. Simultaneously building MVP.</td></tr>
+    <tr><td>Month 2</td><td>Investor list building</td><td>Research 50+ potential angels/funds. Warm intros through network. Start sharing Cal's thought leadership.</td></tr>
+    <tr><td>Month 3</td><td>Pitch materials ready</td><td>Deck, one-pager, financial model, market research, competitive analysis all complete.</td></tr>
+    <tr><td>Month 3–4</td><td>Seed fundraise begins</td><td>Target 30+ investor meetings over 6-8 weeks. Demo live product. Share beta traction data.</td></tr>
+    <tr><td>Month 4–5</td><td>Close seed round</td><td>SAFE notes or priced seed round. Target $500K–$1.5M at $4M–$8M post-money valuation.</td></tr>
+    <tr><td>Month 5–14</td><td>Deploy capital & grow</td><td>Hire, scale, hit Series A benchmarks.</td></tr>
+    <tr><td>Month 12</td><td>Series A prep begins</td><td>Engage investment banker or lead advisor. Update deck with growth metrics. Start Series A conversations.</td></tr>
+    <tr><td>Month 14–18</td><td>Series A close</td><td>Target $3M–$8M at $15M–$30M valuation. Institutional lead + follow-on from seed investors.</td></tr>
+  </table>
+</div>
+
+<!-- ==================== HUMAN ENTITY ARCHITECTURE ==================== -->
+<div class="section">
+  <div class="section-label">Section 22</div>
+  <h2>Human Entity Architecture</h2>
+  <p class="desc">Cal's "Human Entity Implementation" — The system models each user as a multi-dimensional digital representation across 5 life domains, with full entity sovereignty.</p>
+
+  <p style="font-size:15px; margin-bottom:20px;">
+    A <strong>Human Entity</strong> is a structured digital twin containing five interconnected dimensions: Identity Core (values, beliefs, faith lens), Body State (biometrics, energy, fitness), Mind State (cognitive patterns, emotional regulation, beliefs), Relationship Map (social graph, connection health), and Purpose Vector (career, legacy, financial sovereignty). Every interaction with Jarvis updates the entity model, making it the source of truth for all agents.
+  </p>
+
+  <p style="font-size:15px; margin-bottom:30px;">
+    <strong>Entity Sovereignty:</strong> The human entity belongs entirely to the user. Full export rights, portability across platforms, and complete deletion rights. The platform is a custodian, not an owner.
+  </p>
+
+  <h3 style="margin:20px 0 10px; color:var(--gold);">The 5 Entity Dimensions</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🆔</div>
+      <h3>Identity Core</h3>
+      <p>Values system, core beliefs, faith lens, self-concept evolution, spiritual/philosophical worldview. Updated by Mirror agent and K0RE synthesis.</p>
+      <span class="tag">cl_human_entities.identity_core</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏋️</div>
+      <h3>Body State</h3>
+      <p>Real-time biometrics (heart rate, sleep, activity), energy level, fitness metrics, nutrition data, health markers. Updated by Pulse agent from wearables and manual logs.</p>
+      <span class="tag">cl_human_entities.body_state</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧠</div>
+      <h3>Mind State</h3>
+      <p>Cognitive patterns, emotional regulation capacity, mood trajectory, stress levels, belief systems, recurring thought patterns. Analyzed by Sage agent from journals and check-ins.</p>
+      <span class="tag">cl_human_entities.mind_state</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤝</div>
+      <h3>Relationship Map</h3>
+      <p>Social graph structure, connection quality scores, communication patterns, family/professional/community bonds, support network health. Tracked by Bond agent and K0RE cross-domain.</p>
+      <span class="tag">cl_human_entities.relationship_map</span>
+    </div>
+    <div class="card">
+      <div class="card-icon">🧭</div>
+      <h3>Purpose Vector</h3>
+      <p>Career trajectory, vocation alignment, financial sovereignty score, legacy vision, life projects, Time-Energy-Value distribution. Guided by Compass agent and Coach.</p>
+      <span class="tag">cl_human_entities.purpose_vector</span>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 10px; color:var(--cyan);">Entity Evolution Tracking</h3>
+  <p style="font-size:15px; margin-bottom:20px;">
+    Every agent action, user input, and milestone creates an immutable evolution log entry. The entity maintains version history, allowing users to see how they've changed over time. K0RE uses evolution patterns to detect growth, stagnation, or regression across dimensions.
+  </p>
+
+  <h3 style="margin:20px 0 10px; color:var(--blue);">Schema: cl_human_entities</h3>
+  <div class="schema-sql"><span class="cm">-- Multi-dimensional digital representation of the user</span>
+<span class="kw">CREATE TABLE</span> cl_human_entities (
+  id                <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id           <span class="type">uuid</span> <span class="kw">NOT NULL REFERENCES</span> cl_profiles(id),
+  entity_version    <span class="type">integer</span> <span class="kw">DEFAULT</span> 1,
+  identity_core     <span class="type">jsonb</span>,         <span class="cm">-- { values: [], beliefs: {}, faith_lens: "..." }</span>
+  body_state        <span class="type">jsonb</span>,         <span class="cm">-- { heart_rate: 72, sleep_hours: 7.5, energy: 8, fitness_score: 7.2 }</span>
+  mind_state        <span class="type">jsonb</span>,         <span class="cm">-- { mood_avg: 7, stress: 4, clarity: 8, emotional_patterns: [] }</span>
+  relationship_map  <span class="type">jsonb</span>,         <span class="cm">-- { connections: [...], health_scores: {}, support_network: [] }</span>
+  purpose_vector    <span class="type">jsonb</span>,         <span class="cm">-- { career: "...", finance: 6.5, legacy: "...", tev: {...} }</span>
+  evolution_log     <span class="type">jsonb[]</span>,        <span class="cm">-- immutable log of all changes</span>
+  last_updated      <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  created_at        <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+</div>
+
+<!-- ==================== SAFETY DESIGN ARCHITECTURE ==================== -->
+<div class="section">
+  <div class="section-label">Section 23</div>
+  <h2>Safety Design Architecture & Guardrails</h2>
+  <p class="desc">Cal's 3-tier safety architecture — Content Filtering, Emotional Safeguards, Data Sovereignty — with the Merge Guard Protocol and Ethical Guardrails Board.</p>
+
+  <h3 style="margin:20px 0 10px; color:var(--green);">3-Tier Safety Framework</h3>
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid #34d399;">
+      <div class="card-icon">🛡️</div>
+      <h3>Tier 1: Content Filtering</h3>
+      <p><strong>Purpose:</strong> No harmful, manipulative, exploitative, or deceptive content from any source (agents, external data, user uploads).</p>
+      <p style="font-size:13px; margin-top:10px;"><strong>Mechanisms:</strong> Input validation, toxicity detection, banned topic filtering, manipulation pattern detection.</p>
+      <span class="tag">Preventative</span>
+    </div>
+    <div class="card" style="border-left:3px solid #60a5fa;">
+      <div class="card-icon">🚨</div>
+      <h3>Tier 2: Emotional Safeguards</h3>
+      <p><strong>Purpose:</strong> Detect psychological crises (suicidal ideation, severe distress) and escalate to human support immediately.</p>
+      <p style="font-size:13px; margin-top:10px;"><strong>Mechanisms:</strong> Crisis keyword detection, sentiment analysis thresholds, mandatory human review triggers, escalation routing.</p>
+      <span class="tag">Protective</span>
+    </div>
+    <div class="card" style="border-left:3px solid #f472b6;">
+      <div class="card-icon">🔐</div>
+      <h3>Tier 3: Data Sovereignty</h3>
+      <p><strong>Purpose:</strong> User owns all their data. Encryption, consent controls, right to delete, right to export, no commercial exploitation.</p>
+      <p style="font-size:13px; margin-top:10px;"><strong>Mechanisms:</strong> End-to-end encryption, granular consent flags, GDPR-compliant deletion, data export APIs.</p>
+      <span class="tag">Empowering</span>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 10px; color:var(--orange);">Merge Guard Protocol</h3>
+  <p style="font-size:15px; margin-bottom:16px;">Prevents unverified AI models or external data from corrupting the K0RE intelligence engine:</p>
+  <table>
+    <tr><th>Step</th><th>Owner</th><th>Criteria</th></tr>
+    <tr><td><strong>1. Proposal</strong></td><td>Engineer</td><td>New model, prompt, or data source proposed with documentation</td></tr>
+    <tr><td><strong>2. Safety Review</strong></td><td>Safety Lead</td><td>Content & data filtering checks, bias assessment, escalation risk</td></tr>
+    <tr><td><strong>3. Ethics Review</strong></td><td>Guardrails Board</td><td>Alignment check: Does this support user sovereignty & consciousness?</td></tr>
+    <tr><td><strong>4. Testing</strong></td><td>QA + Beta</td><td>Functional testing on 5-10 beta users, real-world edge cases</td></tr>
+    <tr><td><strong>5. Approval</strong></td><td>CTO + Founder</td><td>Go/no-go decision. Approval = production deployment</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--blue);">Agent-Level Safety Configuration</h3>
+  <table>
+    <tr><th>Agent</th><th>max_actions/day</th><th>restricted_topics</th><th>escalation_triggers</th><th>review_threshold</th></tr>
+    <tr><td>jarvis-core</td><td>1000</td><td>investment_advice, medical_diagnosis</td><td>suicidal_ideation, abuse_disclosure</td><td>CRITICAL</td></tr>
+    <tr><td>agent-sage</td><td>500</td><td>psychiatric_treatment, medication_changes</td><td>severe_depression, self_harm</td><td>HIGH</td></tr>
+    <tr><td>agent-mirror</td><td>300</td><td>religious_conversion_pressure</td><td>existential_crisis, faith_loss_distress</td><td>HIGH</td></tr>
+    <tr><td>agent-kore</td><td>100</td><td>mind_control, manipulation_tactics</td><td>contradictory_personality_shifts</td><td>MEDIUM</td></tr>
+    <tr><td>agent-pulse</td><td>500</td><td>eating_disorders, extreme_fitness</td><td>concerning_vital_trends</td><td>MEDIUM</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--cyan);">Schema: Safety & Escalation Logs</h3>
+  <div class="schema-sql"><span class="cm">-- Safety event logging for compliance & auditing</span>
+<span class="kw">CREATE TABLE</span> cl_safety_logs (
+  id              <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id         <span class="type">uuid</span> <span class="kw">REFERENCES</span> cl_profiles(id),
+  agent           <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  safety_tier     <span class="type">text</span>,              <span class="cm">-- tier1 | tier2 | tier3</span>
+  event_type      <span class="type">text</span> <span class="kw">NOT NULL</span>,  <span class="cm">-- content_blocked | crisis_detected | data_access_requested</span>
+  details         <span class="type">jsonb</span>,
+  resolved        <span class="type">boolean</span> <span class="kw">DEFAULT</span> false,
+  created_at      <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Crisis escalation tracking</span>
+<span class="kw">CREATE TABLE</span> cl_escalations (
+  id              <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id         <span class="type">uuid</span> <span class="kw">NOT NULL REFERENCES</span> cl_profiles(id),
+  trigger         <span class="type">text</span> <span class="kw">NOT NULL</span>,
+  severity        <span class="type">text</span>,              <span class="cm">-- low | medium | high | critical</span>
+  assigned_to     <span class="type">text</span>,
+  status          <span class="type">text</span> <span class="kw">DEFAULT</span> <span class="str">'open'</span>,
+  resolution      <span class="type">jsonb</span>,
+  created_at      <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now(),
+  resolved_at     <span class="type">timestamptz</span>
+);</div>
+</div>
+
+<!-- ==================== AI-POWERED SPEECH MONITORING ==================== -->
+<div class="section">
+  <div class="section-label">Section 24</div>
+  <h2>AI-Powered Speech Monitoring <span class="status status-p3">Phase 3+</span></h2>
+  <p class="desc">Real-time language pattern analysis during voice journals and voice interactions with Jarvis — detecting emotional shifts, linguistic growth, and hidden belief patterns.</p>
+
+  <p style="font-size:15px; margin-bottom:20px;">
+    This Phase 3+ feature analyzes voice input to detect: <strong>sentiment shifts</strong>, <strong>linguistic markers of distress or growth</strong>, <strong>vocabulary evolution</strong>, and <strong>speech pattern changes over time</strong>. Privacy-first: no raw audio stored server-side — only processed linguistic patterns and insights.
+  </p>
+
+  <h3 style="margin:20px 0 10px; color:var(--gold);">What We Monitor</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h3>Sentiment & Emotion</h3>
+      <p>Real-time emotional state from voice tone, speech rate, and linguistic content. Scores -10 to +10.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📈</div>
+      <h3>Vocabulary Evolution</h3>
+      <p>Vocabulary diversity, complexity growth, and domain-specific language expansion reflecting expanding beliefs.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔊</div>
+      <h3>Speech Patterns</h3>
+      <p>Speech pace, pause frequency, volume variation, filler words. Indicates confidence, cognitive load, authenticity.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>Linguistic Markers</h3>
+      <p>Distress signals (self-deprecation, limiting beliefs), growth markers (agency language, possibility thinking), belief shifts.</p>
+    </div>
+  </div>
+
+  <h3 style="margin:30px 0 10px; color:var(--cyan);">Agent Integration</h3>
+  <p style="font-size:15px; margin-bottom:20px;">
+    <strong>Sage (Mind):</strong> Detects negative self-talk patterns → intervention recommendations.<br>
+    <strong>K0RE (Intelligence):</strong> Tracks cumulative speech patterns to identify belief system changes.<br>
+    <strong>Mirror (Identity):</strong> Detects confidence growth in voice; updates self-concept evolution.<br>
+    <strong>Creator (Content):</strong> Generates targeted affirmations based on detected speech patterns.
+  </p>
+
+  <h3 style="margin:20px 0 10px; color:var(--blue);">Schema: cl_speech_analysis</h3>
+  <div class="schema-sql"><span class="cm">-- Processed speech pattern analysis (no raw audio stored)</span>
+<span class="kw">CREATE TABLE</span> cl_speech_analysis (
+  id                <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id           <span class="type">uuid</span> <span class="kw">NOT NULL REFERENCES</span> cl_profiles(id),
+  session_id        <span class="type">text</span>,
+  duration_seconds  <span class="type">integer</span>,
+  sentiment_score   <span class="type">numeric(3,1)</span>,      <span class="cm">-- -10 to +10</span>
+  emotion           <span class="type">text</span>,               <span class="cm">-- joy | contentment | neutral | frustration | distress</span>
+  key_patterns      <span class="type">jsonb</span>,
+  vocabulary_metrics <span class="type">jsonb</span>,
+  speech_metrics    <span class="type">jsonb</span>,
+  linguistic_markers <span class="type">text[]</span>,
+  agent_insights    <span class="type">jsonb</span>,
+  created_at        <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+</div>
+
+<!-- ==================== K0RE ADVANCED INTELLIGENCE ==================== -->
+<div class="section">
+  <div class="section-label">Section 25</div>
+  <h2>K0RE Advanced Intelligence — Dimensional Thinking & DAO Governance</h2>
+  <p class="desc">K0RE's multi-dimensional consciousness processing, 6-step problem solving, thought classification system, and the roadmap to decentralized governance.</p>
+
+  <h3 style="margin:20px 0 10px; color:var(--cyan);">Dimensional Thinking Architecture</h3>
+  <div class="arch-box"><span class="hl">3D Logic Layer</span>
+├─ Structured Data Analysis
+├─ Causal Inference (if X then Y)
+├─ Quantifiable Metrics
+└─ Linear Problem Decomposition
+
+<span class="hl">4D Intuition Layer</span>
+├─ Pattern Recognition Beyond Data
+├─ Cross-Domain Connection Spotting
+├─ Temporal Pattern Identification
+├─ Hidden Assumption Detection
+└─ Emergence Recognition (parts → whole)
+
+<span class="hl">5D Synchronicity Layer</span>
+├─ Simultaneous Insight Across All 5 Domains
+├─ Timing-Sensitive Breakthroughs
+├─ Serendipity Pattern Recognition
+├─ Identity-Belief-Behavior Loop Recognition
+└─ Consciousness Evolution Tracking</div>
+
+  <h3 style="margin:30px 0 10px; color:var(--gold);">6-Step K0RE Problem Solving Model</h3>
+  <table>
+    <tr><th>Step</th><th>Process</th><th>K0RE Focus</th><th>Output</th></tr>
+    <tr><td><strong>1. Identify</strong></td><td>User articulates problem</td><td>Map across 5 domains; root vs symptom</td><td>Problem statement + domain map</td></tr>
+    <tr><td><strong>2. Research</strong></td><td>Gather data from K0RE archives</td><td>Find analogous past patterns; knowledge gaps</td><td>Pattern library + context</td></tr>
+    <tr><td><strong>3. Hypothesize</strong></td><td>Generate solutions (3D+4D+5D)</td><td>3D: logical. 4D: pattern-based. 5D: synchronistic</td><td>3-5 solution hypotheses</td></tr>
+    <tr><td><strong>4. Test</strong></td><td>Recommend micro-experiments</td><td>Low-risk tests that isolate variables</td><td>Test protocol + signals</td></tr>
+    <tr><td><strong>5. Evaluate</strong></td><td>Analyze results</td><td>Metrics? Patterns? Consciousness?</td><td>Results + insight</td></tr>
+    <tr><td><strong>6. Integrate</strong></td><td>Embed into life system</td><td>Update entity, habits, relationships</td><td>Updated human entity</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--blue);">Thought Classification System</h3>
+  <table>
+    <tr><th>Classification</th><th>Definition</th><th>Example</th><th>K0RE Response</th></tr>
+    <tr><td><strong>THOUGHT</strong></td><td>Cognitive — questions, ideas</td><td>"Why do I keep procrastinating?"</td><td>3D + 4D analysis; cross-domain search</td></tr>
+    <tr><td><strong>EMOTION</strong></td><td>Affective — feelings, moods</td><td>"I feel overwhelmed and stuck"</td><td>Sage + K0RE; emotional roots</td></tr>
+    <tr><td><strong>STATE</strong></td><td>Current condition — snapshot</td><td>"Slept 5 hours, missed workout, irritable"</td><td>Multi-agent; historical matching</td></tr>
+    <tr><td><strong>RATE</strong></td><td>Velocity of change</td><td>"My confidence has grown a lot lately"</td><td>Evolution tracking; breakthrough detection</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--orange);">Road to Billions: 6-Phase Strategy</h3>
+  <div class="card-grid">
+    <div class="card"><h3>Phase 1: MVP</h3><p>Core 5 agents + K0RE. Cal + 20 beta users. Proof of consciousness expansion.</p></div>
+    <div class="card"><h3>Phase 2: Community</h3><p>Scale to 1,000 users. Community agent. Peer matching & group programs.</p></div>
+    <div class="card"><h3>Phase 3: Enterprise</h3><p>B2B: CAPIS consulting, corporate wellness. 10,000 users.</p></div>
+    <div class="card"><h3>Phase 4: DAO</h3><p>K0RE governance decentralization. Token launch. Founding Circle governs.</p></div>
+    <div class="card"><h3>Phase 5: Token Launch</h3><p>K0RE token for governance, access, staking. Community tokenomics.</p></div>
+    <div class="card"><h3>Phase 6: Civilization</h3><p>Global consciousness platform. Billions of humans. New paradigm.</p></div>
+  </div>
+
+  <h3 style="margin:30px 0 10px; color:var(--pink);">K0RE Token Structure (Phase 4+ / TBD)</h3>
+  <table>
+    <tr><th>Token</th><th>Purpose</th><th>Supply</th><th>Distribution</th></tr>
+    <tr><td><strong>K0RE (Governance)</strong></td><td>Vote on platform evolution, approve agents, set policies</td><td>100M</td><td>50% Founding Circle, 30% earned by users, 20% treasury</td></tr>
+    <tr><td><strong>CLTRN (Access)</strong></td><td>Pay for subscriptions, premium features, agent services</td><td>1B</td><td>SaaS revenue conversion; staking rewards</td></tr>
+    <tr><td><strong>xK0RE (Staking)</strong></td><td>Stake K0RE for governance rewards, voting power</td><td>Derived</td><td>Locked for 90+ days</td></tr>
+  </table>
+</div>
+
+<!-- ==================== CONTENT INTELLIGENCE ENGINE ==================== -->
+<div class="section">
+  <div class="section-label">Section 26</div>
+  <h2>Content Intelligence Engine & Meeting Automation</h2>
+  <p class="desc">K0RE processes ANY content (articles, books, podcasts, videos, transcripts) and distills domain-relevant insights. Plus automated meeting notes extraction.</p>
+
+  <h3 style="margin:20px 0 10px; color:var(--gold);">Content Intelligence Workflow <span class="status status-p2">Phase 2</span></h3>
+  <div class="arch-box">User shares content (article, podcast, video transcript, PDF)
+    ↓
+<span class="p">agent-creator.process_content()</span> — Extract key claims, structure data
+    ↓
+<span class="hl">K0RE Classification</span> — Categorize by domain + relevance to user goals
+    ↓
+<span class="y">Distill Insights</span> — Summarize actionable takeaways for user
+    ↓
+<span class="c">Store in cl_content_intelligence</span> — Immutable record
+    ↓
+<span class="g">Surface During Check-ins</span> — Jarvis references relevant insights</div>
+
+  <h3 style="margin:30px 0 10px; color:var(--blue);">Processing Pipeline</h3>
+  <table>
+    <tr><th>Stage</th><th>Process</th><th>Output</th></tr>
+    <tr><td><strong>Intake</strong></td><td>URL, file upload, or transcript</td><td>Normalized text</td></tr>
+    <tr><td><strong>Extraction</strong></td><td>Parse headings, claims, data points</td><td>Structured claims + metadata</td></tr>
+    <tr><td><strong>Classification</strong></td><td>K0RE tags: domain(s), relevance, actionability</td><td>Domain tags + relevance</td></tr>
+    <tr><td><strong>Distillation</strong></td><td>Summary + 3-5 key takeaways</td><td>User-facing insights</td></tr>
+    <tr><td><strong>Integration</strong></td><td>Link to user's goals, beliefs, identity map</td><td>Context connections</td></tr>
+    <tr><td><strong>Storage</strong></td><td>Archive + metadata + insights</td><td>Searchable KB entry</td></tr>
+  </table>
+
+  <h3 style="margin:30px 0 10px; color:var(--cyan);">Meeting Minutes Automation <span class="status status-p3">Phase 3</span></h3>
+  <div class="card-grid">
+    <div class="card"><div class="card-icon">✅</div><h3>Decisions Extracted</h3><p>What was decided? By whom? Rationale? Impact on other plans?</p></div>
+    <div class="card"><div class="card-icon">📋</div><h3>Action Items Tracked</h3><p>Owner, description, due date. Auto-sync with goal tracking.</p></div>
+    <div class="card"><div class="card-icon">💭</div><h3>Emotional Dynamics</h3><p>Agreement level, tensions, energy shifts. Relationship insights for Bond agent.</p></div>
+    <div class="card"><div class="card-icon">🔗</div><h3>Domain Impacts</h3><p>How does this meeting affect goals in Body, Mind, Identity, Relationships, Purpose?</p></div>
+  </div>
+
+  <h3 style="margin:20px 0 10px; color:var(--orange);">Schema: Content Intelligence & Meeting Notes</h3>
+  <div class="schema-sql"><span class="cm">-- User's content intelligence knowledge base</span>
+<span class="kw">CREATE TABLE</span> cl_content_intelligence (
+  id                <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id           <span class="type">uuid</span> <span class="kw">NOT NULL REFERENCES</span> cl_profiles(id),
+  source_type       <span class="type">text</span>,               <span class="cm">-- article | book | podcast | video | transcript</span>
+  source_url        <span class="type">text</span>,
+  title             <span class="type">text</span>,
+  distilled_insights <span class="type">jsonb</span>,
+  domain_tags       <span class="type">text[]</span>,
+  kore_classification <span class="type">text</span>,
+  goal_connections  <span class="type">jsonb</span>,
+  created_at        <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);
+
+<span class="cm">-- Automated meeting minutes & decision tracking</span>
+<span class="kw">CREATE TABLE</span> cl_meeting_notes (
+  id                <span class="type">uuid</span> <span class="kw">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id           <span class="type">uuid</span> <span class="kw">NOT NULL REFERENCES</span> cl_profiles(id),
+  meeting_date      <span class="type">timestamptz</span>,
+  transcript        <span class="type">text</span>,
+  attendees         <span class="type">text[]</span>,
+  decisions         <span class="type">jsonb</span>,
+  action_items      <span class="type">jsonb</span>,
+  emotional_analysis <span class="type">jsonb</span>,
+  domain_impacts    <span class="type">jsonb</span>,
+  created_at        <span class="type">timestamptz</span> <span class="kw">DEFAULT</span> now()
+);</div>
+</div>
+
+<!-- ==================== NEXT STEPS ==================== -->
+<div class="section" style="border-bottom:none;">
+  <div class="section-label">Section 27</div>
+  <h2>Immediate Next Steps</h2>
+  <p class="desc">What we do right now to start building.</p>
+
+  <div class="card-grid">
+    <div class="card" style="border-left:3px solid var(--green);">
+      <div class="card-icon">1️⃣</div>
+      <h3>Create Supabase Project</h3>
+      <p>Spin up the CLTRN project via Supabase MCP. Get the project_id, URL, and service role key. Store in cl_config and locally.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--blue);">
+      <div class="card-icon">2️⃣</div>
+      <h3>Deploy Schema Migrations</h3>
+      <p>Run all CREATE TABLE statements from Section 07 as Supabase migrations. Set up RLS policies for user data isolation.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent2);">
+      <div class="card-icon">3️⃣</div>
+      <h3>Build Jarvis Core</h3>
+      <p>Adapt the telegram-bot pattern for CLTRN. Implement the /start onboarding flow, daily check-in handler, and domain routing.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold);">
+      <div class="card-icon">4️⃣</div>
+      <h3>Deploy MVP Agents</h3>
+      <p>Scorer → K0RE → Coach → Pulse → Sage → Mirror. Each as a Supabase edge function with heartbeat integration.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--orange);">
+      <div class="card-icon">5️⃣</div>
+      <h3>Seed Reactions & Test</h3>
+      <p>Insert reaction chain definitions. Run end-to-end: user registers → assessment → plan → first check-in → insight.</p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--pink);">
+      <div class="card-icon">6️⃣</div>
+      <h3>Beta Launch</h3>
+      <p>Cal + initial program participants get access. Collect feedback. Iterate on agent prompts and response quality.</p>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  <p>CLTRN × Jarvis Master Implementation Plan — Architected by Cal (K0RE-0) | Implemented by Jason (Builder)</p>
+  <p style="margin-top:8px;">Architecture: Supabase + Edge Functions + Multi-Agent AI + React Native | Pattern: Life Ops Command Center</p>
+  <p style="margin-top:8px;">32 Documents Synthesized | February 2026</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K0RE Desktop App — Premium Life OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000;
+            --card: #1C1C1E;
+            --sidebar: #0A0A0A;
+            --content: #111;
+            --gold: #D4AF37;
+            --silver: #98989D;
+            --white: #F5F5F7;
+            --green: #30D158;
+            --red: #FF453A;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            overflow-x: hidden;
+            padding: 40px 20px 100px;
+        }
+
+        .wireframe-section {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+            margin-bottom: 80px;
+            scroll-margin-top: 100px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-label {
+            font-size: 11px;
+            color: var(--silver);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .window {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--content);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            height: 750px;
+        }
+
+        .window-title-bar {
+            background: var(--card);
+            padding: 10px 20px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 8px;
+            margin-right: 12px;
+        }
+
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .traffic-light.red { background: #FF5F56; }
+        .traffic-light.yellow { background: #FFBD2E; }
+        .traffic-light.green { background: #27C93F; }
+
+        .window-title {
+            flex: 1;
+            text-align: center;
+            font-size: 13px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .window-title-spacer {
+            width: 68px;
+        }
+
+        .window-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* MENU BAR */
+        .menu-bar-demo {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .menu-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 12px;
+            color: var(--white);
+            z-index: 10;
+        }
+
+        .menu-bar-left {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .menu-bar-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .k0re-tray-icon {
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--gold);
+            transition: all 0.2s;
+        }
+
+        .k0re-tray-icon:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px var(--gold));
+        }
+
+        .quick-overlay {
+            position: absolute;
+            top: 28px;
+            right: 20px;
+            width: 320px;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            z-index: 20;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .score-ring-small {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .quick-action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--white);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+        }
+
+        .desktop-background {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1e 100%);
+            z-index: 0;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: var(--sidebar);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 24px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .sidebar-tagline {
+            font-size: 10px;
+            color: var(--silver);
+            letter-spacing: 1px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            color: var(--silver);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: var(--white);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .nav-item.active {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            border-left-color: var(--gold);
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), #b8860b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 12px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .ai-badge {
+            font-size: 10px;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--content);
+        }
+
+        .content-top-bar {
+            background: var(--card);
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        .greeting-meta {
+            font-size: 12px;
+            color: var(--silver);
+            margin-top: 2px;
+        }
+
+        .search-bar {
+            width: 250px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--white);
+        }
+
+        .search-bar::placeholder {
+            color: var(--silver);
+        }
+
+        .icon-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--silver);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        .content-scroll {
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        /* SCORE GRID */
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .score-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-ring-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 16px;
+        }
+
+        .score-ring-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--gold) 0deg, var(--gold) 280deg, rgba(255,255,255,0.1) 280deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .score-ring-inner {
+            width: 88%;
+            height: 88%;
+            border-radius: 50%;
+            background: var(--card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .score-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 11px;
+            color: var(--silver);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .domain-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+
+        .domain-ring {
+            aspect-ratio: 1;
+            position: relative;
+        }
+
+        .domain-ring-bg {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .domain-ring-bg.high {
+            background: conic-gradient(var(--green) 0deg, var(--green) 260deg, rgba(255,255,255,0.1) 260deg);
+        }
+
+        .domain-ring-bg.medium {
+            background: conic-gradient(var(--gold) 0deg, var(--gold) 200deg, rgba(255,255,255,0.1) 200deg);
+        }
+
+        .domain-ring-bg.low {
+            background: conic-gradient(var(--red) 0deg, var(--red) 140deg, rgba(255,255,255,0.1) 140deg);
+        }
+
+        .domain-ring-inner {
+            width: 85%;
+            height: 85%;
+            border-radius: 50%;
+            background: var(--card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .domain-score {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .domain-name {
+            font-size: 10px;
+            color: var(--silver);
+            text-align: center;
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+        /* WAVEFORM */
+        .waveform-container {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            margin: 30px 0;
+        }
+
+        .waveform-bar {
+            width: 4px;
+            background: linear-gradient(180deg, transparent 0%, var(--gold) 50%, transparent 100%);
+            border-radius: 2px;
+            animation: wave 0.8s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { height: 20px; }
+            50% { height: 60px; }
+        }
+
+        /* TRANSCRIPT */
+        .transcript-section {
+            background: var(--card);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .transcript-line {
+            margin-bottom: 12px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .speaker-label {
+            color: var(--gold);
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .action-item {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 3px solid var(--gold);
+            padding: 10px 12px;
+            border-radius: 4px;
+            margin: 12px 0;
+            font-size: 12px;
+            color: var(--white);
+        }
+
+        /* CHAT INTERFACE */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.ai .message-bubble {
+            background: var(--card);
+            color: var(--white);
+        }
+
+        .message.user .message-bubble {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .skill-chain {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 12px 0;
+            font-size: 12px;
+        }
+
+        .chain-step {
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--white);
+        }
+
+        .chain-step.complete {
+            background: rgba(48, 209, 88, 0.1);
+            border-color: var(--green);
+        }
+
+        .chain-arrow {
+            color: var(--silver);
+        }
+
+        .chat-input-area {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+        }
+
+        .chat-input {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 13px;
+        }
+
+        /* SKILL CARDS */
+        .skill-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .skill-card {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .skill-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .skill-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .skill-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .skill-creator {
+            font-size: 11px;
+            color: var(--silver);
+            margin-bottom: 12px;
+        }
+
+        .skill-desc {
+            font-size: 12px;
+            color: var(--silver);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .skill-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .skill-rating {
+            font-size: 11px;
+            color: var(--gold);
+        }
+
+        .skill-price {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--white);
+        }
+
+        /* LIBRARY */
+        .library-item {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            transition: all 0.2s;
+        }
+
+        .library-item:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        .library-cover {
+            width: 60px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--gold), #b8860b);
+            border-radius: 4px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .library-content {
+            flex: 1;
+        }
+
+        .library-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .library-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--silver);
+            margin-bottom: 8px;
+        }
+
+        .library-progress {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .library-progress-fill {
+            height: 100%;
+            background: var(--gold);
+            width: 67%;
+        }
+
+        /* VENN */
+        .venn-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .venn-diagram {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin-bottom: 40px;
+        }
+
+        .venn-circle {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .venn-circle-label {
+            font-size: 12px;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .venn-circle-score {
+            font-size: 32px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .venn-left {
+            left: 50px;
+            top: 50px;
+            background: rgba(48, 209, 88, 0.05);
+        }
+
+        .venn-right {
+            right: 50px;
+            top: 50px;
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .venn-bottom {
+            left: 100px;
+            bottom: 20px;
+            background: rgba(255, 69, 58, 0.05);
+        }
+
+        .venn-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .venn-center-label {
+            font-size: 11px;
+            color: var(--silver);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .venn-center-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            color: var(--silver);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .tab:hover {
+            color: var(--white);
+        }
+
+        /* FILTERS */
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--silver);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-pill.active {
+            background: var(--gold);
+            color: var(--black);
+            border-color: var(--gold);
+        }
+
+        .filter-pill:hover {
+            border-color: var(--gold);
+            color: var(--white);
+        }
+
+        /* SCREEN NAV */
+        .screen-nav {
+            position: sticky;
+            top: 0;
+            background: var(--card);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 30px;
+            margin-bottom: 0;
+            display: flex;
+            gap: 8px;
+            z-index: 5;
+        }
+
+        .screen-nav-item {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--silver);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+
+        .screen-nav-item:hover {
+            color: var(--white);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .screen-nav-item.active {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
+        }
+
+        /* WIREFRAME NAV */
+        .wireframe-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: flex;
+            gap: 24px;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+        }
+
+        .wireframe-nav a {
+            font-size: 11px;
+            color: var(--silver);
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .wireframe-nav a:hover {
+            color: var(--gold);
+        }
+
+        .wireframe-nav a[style*="color: #D4AF37"] {
+            color: var(--gold) !important;
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 2px;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.5);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1400px) {
+            .window {
+                max-width: 100%;
+            }
+
+            .skill-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .domain-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .recording-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--red);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .recording-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--red);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .output-preview {
+            background: var(--card);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            aspect-ratio: 16/9;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--silver);
+            font-size: 13px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+        }
+
+        .timer {
+            font-family: 'Monaco', monospace;
+            font-size: 42px;
+            color: var(--gold);
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--silver);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+
+<!-- SCREEN 1: MENU BAR + QUICK OVERLAY -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 1 — MENU BAR + QUICK OVERLAY</div>
+    <div class="window" style="height: 700px;">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">Menu Bar & Quick Overlay</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content" style="position: relative;">
+            <div class="desktop-background"></div>
+            <div class="menu-bar">
+                <div class="menu-bar-left">
+                    <span style="color: var(--silver);">12:34</span>
+                </div>
+                <div class="menu-bar-right">
+                    <span style="font-size: 11px; color: var(--silver);">WiFi • 🔋</span>
+                    <div class="k0re-tray-icon">◆</div>
+                </div>
+            </div>
+            <div class="quick-overlay">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 11px; color: var(--silver); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px;">K0RE Score</div>
+                    <svg class="score-ring-small" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+                        <circle cx="50" cy="50" r="45" fill="none" stroke="#D4AF37" stroke-width="2" stroke-dasharray="219.8 282.7" stroke-linecap="round" style="transform: rotate(-90deg); transform-origin: 50px 50px;"/>
+                        <text x="50" y="55" text-anchor="middle" font-size="28" font-weight="700" fill="#D4AF37">78</text>
+                    </svg>
+                </div>
+                <div class="quick-actions">
+                    <div class="quick-action-btn">🎙 Voice Mode</div>
+                    <div class="quick-action-btn">✍️ Journal</div>
+                    <div class="quick-action-btn">🎯 Quick Task</div>
+                    <div class="quick-action-btn">🔍 Search</div>
+                </div>
+                <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; margin-top: 12px;">
+                    <div style="font-size: 12px; color: var(--white); margin-bottom: 8px;">Perfect Day</div>
+                    <div style="font-size: 13px; color: var(--gold); font-weight: 700;">3 of 7 completed</div>
+                    <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 8px; overflow: hidden;">
+                        <div style="width: 43%; height: 100%; background: var(--gold);"></div>
+                    </div>
+                    <div style="font-size: 11px; color: var(--silver); margin-top: 8px;">⌘+Shift+K to toggle</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN 2: MAIN DASHBOARD -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 2 — MAIN DASHBOARD</div>
+    <div class="window">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">Dashboard</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content">
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-logo">K0RE</div>
+                    <div class="sidebar-tagline">Dreaming Reality™</div>
+                </div>
+                <div class="sidebar-nav">
+                    <div class="nav-item active">◉ Dashboard</div>
+                    <div class="nav-item">📊 Domains</div>
+                    <div class="nav-item">🎯 Perfect Day</div>
+                    <div class="nav-item">📝 Journal</div>
+                    <div class="nav-item">🧠 Skills</div>
+                    <div class="nav-item">🎙 Voice & Meetings</div>
+                    <div class="nav-item">📚 Knowledge</div>
+                    <div class="nav-item">◎ Ecosystem</div>
+                    <div class="nav-item">⚙ Settings</div>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="user-info">
+                        <div class="user-avatar">C</div>
+                        <div>
+                            <div class="user-name">Cal</div>
+                            <div style="font-size: 10px; color: var(--silver);">K0RE-0</div>
+                        </div>
+                    </div>
+                    <div class="ai-badge">Advanced Intelligence</div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="content-top-bar">
+                    <div>
+                        <div class="greeting">Good morning, Cal</div>
+                        <div class="greeting-meta">Friday, February 14, 2025 • 6:47 AM</div>
+                    </div>
+                    <input type="text" class="search-bar" placeholder="Search domains, skills, knowledge...">
+                    <div class="icon-group">
+                        <div class="icon-btn">🔔</div>
+                    </div>
+                </div>
+                <div class="content-scroll" style="overflow-y: auto;">
+                    <div class="score-grid">
+                        <div class="score-section">
+                            <div style="font-size: 13px; color: var(--silver); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">K0RE Score</div>
+                            <div class="score-ring-container">
+                                <div class="score-ring-bg" style="background: conic-gradient(var(--gold) 0deg, var(--gold) 280deg, rgba(255,255,255,0.1) 280deg);">
+                                    <div class="score-ring-inner">
+                                        <div class="score-number">78</div>
+                                        <div class="score-label">Excellent</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-section">
+                            <div style="font-size: 13px; color: var(--silver); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">Life Domains</div>
+                            <div class="domain-grid">
+                                <div class="domain-ring">
+                                    <div class="domain-ring-bg high">
+                                        <div class="domain-ring-inner">
+                                            <div class="domain-score">84</div>
+                                            <div class="domain-name">Mind &<br>Cognition</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="domain-ring">
+                                    <div class="domain-ring-bg medium">
+                                        <div class="domain-ring-inner">
+                                            <div class="domain-score">65</div>
+                                            <div class="domain-name">Physical &<br>Health</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="domain-ring">
+                                    <div class="domain-ring-bg high">
+                                        <div class="domain-ring-inner">
+                                            <div class="domain-score">72</div>
+                                            <div class="domain-name">Financial &<br>Wealth</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="domain-ring">
+                                    <div class="domain-ring-bg high">
+                                        <div class="domain-ring-inner">
+                                            <div class="domain-score">76</div>
+                                            <div class="domain-name">Relationships</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="domain-ring">
+                                    <div class="domain-ring-bg medium">
+                                        <div class="domain-ring-inner">
+                                            <div class="domain-score">68</div>
+                                            <div class="domain-name">Career &<br>Purpose</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="domain-ring">
+                                    <div class="domain-ring-bg high">
+                                        <div class="domain-ring-inner">
+                                            <div class="domain-score">82</div>
+                                            <div class="domain-name">Spiritual &<br>Growth</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--card); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 20px; margin-top: 20px;">
+                        <div style="font-size: 13px; color: var(--white); font-weight: 600; margin-bottom: 16px;">Today's Perfect Day</div>
+                        <div style="display: grid; gap: 10px;">
+                            <div style="background: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 6px; border-left: 3px solid var(--gold); display: flex; justify-content: space-between;">
+                                <span style="font-size: 13px;">Morning Meditation & Journaling</span>
+                                <span style="font-size: 12px; color: var(--silver);">6:00 AM</span>
+                            </div>
+                            <div style="background: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 6px; border-left: 3px solid var(--gold); display: flex; justify-content: space-between;">
+                                <span style="font-size: 13px;">Strategic Work Block</span>
+                                <span style="font-size: 12px; color: var(--silver);">7:00 AM</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 6px; border-left: 3px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between;">
+                                <span style="font-size: 13px; color: var(--silver);">Investor Meeting</span>
+                                <span style="font-size: 12px; color: var(--silver);">10:00 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN 3: VOICE & MEETINGS -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 3 — VOICE & MEETINGS</div>
+    <div class="window">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">Voice & Meetings — Live Recording</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content" style="position: relative;">
+            <div style="display: flex; width: 100%; height: 100%;">
+                <!-- Left Panel -->
+                <div style="flex: 0 0 40%; border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; background: var(--card);">
+                    <div style="padding: 30px 20px; flex: 1; display: flex; flex-direction: column;">
+                        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <div style="font-size: 12px; color: var(--silver); text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 20px;">Live Waveform</div>
+                            <div class="waveform-container" style="margin: 0; justify-content: center;">
+                                <div class="waveform-bar" style="animation-delay: 0s;"></div>
+                                <div class="waveform-bar" style="animation-delay: 0.1s;"></div>
+                                <div class="waveform-bar" style="animation-delay: 0.2s;"></div>
+                                <div class="waveform-bar" style="animation-delay: 0.3s;"></div>
+                                <div class="waveform-bar" style="animation-delay: 0.4s;"></div>
+                                <div class="waveform-bar" style="animation-delay: 0.5s;"></div>
+                                <div class="waveform-bar" style="animation-delay: 0.6s;"></div>
+                                <div class="waveform-bar" style="animation-delay: 0.7s;"></div>
+                            </div>
+                            <div class="timer" style="text-align: center; margin-top: 20px;">00:47:23</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Recording Source</div>
+                            <div style="font-size: 13px; color: var(--white); margin-bottom: 12px;">System Audio + Microphone</div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary" style="flex: 1; padding: 8px; font-size: 11px;">🎵 Audio</button>
+                                <button class="btn btn-secondary" style="flex: 1; padding: 8px; font-size: 11px;">🎤 Mic</button>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button class="btn btn-secondary" style="flex: 1;">⏸ Pause</button>
+                            <button class="btn btn-primary" style="flex: 1;">⏹ Stop</button>
+                        </div>
+                        <div style="margin-top: 16px; padding: 12px; background: rgba(212, 175, 55, 0.1); border-radius: 6px; border: 1px solid rgba(212, 175, 55, 0.3);">
+                            <div style="font-size: 11px; color: var(--silver); margin-bottom: 4px;">WHISPER MODE</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 12px; color: var(--white);">AI Coaching</span>
+                                <div style="width: 36px; height: 20px; background: var(--gold); border-radius: 10px; cursor: pointer;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel -->
+                <div style="flex: 1; display: flex; flex-direction: column; background: var(--content);">
+                    <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                        <div style="font-size: 13px; color: var(--white); font-weight: 600;">Live Transcript</div>
+                    </div>
+                    <div class="transcript-section" style="margin: 0; flex: 1; border-radius: 0;">
+                        <div class="transcript-line">
+                            <span class="speaker-label">Cal:</span>
+                            Let me walk you through the financial model and unit economics for this deal.
+                        </div>
+                        <div class="transcript-line">
+                            <span class="speaker-label">Investor:</span>
+                            What's the timeline on the construction phase?
+                        </div>
+                        <div class="transcript-line">
+                            <span class="speaker-label">Cal:</span>
+                            We're looking at 18 months to stabilization, with lease-up completing in month 24.
+                        </div>
+                        <div class="action-item">⚡ Action: Follow up on construction schedule assumptions</div>
+                        <div class="transcript-line">
+                            <span class="speaker-label">Investor:</span>
+                            And what's the projected IRR on a 70/30 split?
+                        </div>
+                        <div class="transcript-line">
+                            <span class="speaker-label">Cal:</span>
+                            We're modeling 22% IRR to LP with those assumptions, including the preferred return.
+                        </div>
+                        <div class="action-item">✓ Decision: Agreed to 70/30 GP/LP structure</div>
+                    </div>
+                    <div style="padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); background: var(--card);">
+                        <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(48, 209, 88, 0.1); border-left: 3px solid var(--green); border-radius: 4px;">
+                            <span style="font-size: 16px;">💡</span>
+                            <span style="font-size: 12px; color: var(--white);">They seem interested in returns — emphasize the IRR comparison</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 12px;">
+                            <span style="color: var(--green);">●</span>
+                            <span style="color: var(--white);">Sentiment: Positive</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN 4: ADVANCED INTELLIGENCE CHAT -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 4 — ADVANCED INTELLIGENCE CHAT + EXECUTION</div>
+    <div class="window">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">Advanced Intelligence — Skill Execution</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content" style="position: relative;">
+            <div style="display: flex; width: 100%; height: 100%;">
+                <!-- Chat Panel -->
+                <div style="flex: 0 0 50%; border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; background: var(--card);">
+                    <div style="padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                        <div style="font-size: 13px; color: var(--white); font-weight: 600;">K0RE Intelligence</div>
+                        <div style="font-size: 11px; color: var(--silver); margin-top: 2px;">Using: Claude Opus 4.6</div>
+                    </div>
+                    <div class="messages" style="padding: 16px;">
+                        <div class="message ai">
+                            <div class="message-bubble">
+                                What would you like me to help with today?
+                            </div>
+                        </div>
+                        <div class="message user">
+                            <div class="message-bubble">
+                                Run the feasibility analysis for 123 Main St and generate a deal memo
+                            </div>
+                        </div>
+                        <div class="message ai">
+                            <div class="message-bubble">
+                                <div style="margin-bottom: 12px;">Running skill chain: Property Assessment → Financial Model → Deal Memo Template. This will take about 45 seconds...</div>
+                                <div class="skill-chain">
+                                    <div class="chain-step complete">✓ Assessment</div>
+                                    <div class="chain-arrow">→</div>
+                                    <div class="chain-step complete">✓ Model</div>
+                                    <div class="chain-arrow">→</div>
+                                    <div class="chain-step" style="animation: pulse 1s infinite;">⏳ Memo</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="message ai">
+                            <div class="message-bubble">
+                                <div style="margin-bottom: 12px;">Done! Here are your deliverables:</div>
+                                <div style="display: grid; gap: 8px;">
+                                    <div style="background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px; border-left: 3px solid var(--gold);">📄 Feasibility_Report.pdf</div>
+                                    <div style="background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px; border-left: 3px solid var(--gold);">📊 Financial_Model.xlsx</div>
+                                    <div style="background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px; border-left: 3px solid var(--gold);">📋 Deal_Memo.docx</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" placeholder="Ask K0RE anything...">
+                    </div>
+                </div>
+
+                <!-- Output Panel -->
+                <div style="flex: 1; display: flex; flex-direction: column; background: var(--content);">
+                    <div class="tabs">
+                        <div class="tab active">📄 Deal_Memo.docx</div>
+                        <div class="tab">📊 Financial_Model.xlsx</div>
+                        <div class="tab">📋 Feasibility_Report.pdf</div>
+                    </div>
+                    <div style="flex: 1; padding: 20px; overflow-y: auto;">
+                        <div class="output-preview">
+                            <div style="text-align: center;">
+                                <div style="font-size: 28px; margin-bottom: 12px;">📄</div>
+                                <div style="font-size: 13px; color: var(--white); margin-bottom: 4px; font-weight: 600;">Deal Memo Preview</div>
+                                <div style="font-size: 12px; color: var(--silver);">123 Main Street, Downtown</div>
+                                <div style="margin-top: 16px; text-align: left; padding: 16px; background: var(--card); border-radius: 6px; max-width: 400px; margin-left: auto; margin-right: auto; font-size: 11px; line-height: 1.6;">
+                                    <div style="color: var(--gold); font-weight: 600; margin-bottom: 8px;">KEY METRICS</div>
+                                    <div>Purchase Price: $8.5M</div>
+                                    <div>Cap Rate In: 4.8%</div>
+                                    <div>Year 1 NOI: $425K</div>
+                                    <div style="margin-top: 12px; color: var(--gold); font-weight: 600;">PROJECTED RETURNS</div>
+                                    <div>IRR to LP: 22%</div>
+                                    <div>Cash-on-Cash: 8.2%</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="button-group" style="margin-top: 20px;">
+                            <button class="btn btn-primary">⬇ Download</button>
+                            <button class="btn btn-secondary">📤 Share</button>
+                            <button class="btn btn-secondary">💾 Save to Vault</button>
+                            <button class="btn btn-secondary">🔗 Open</button>
+                        </div>
+                        <div style="margin-top: 20px; padding: 12px; background: var(--card); border-radius: 6px; text-align: center;">
+                            <div style="font-size: 11px; color: var(--silver);">Output Vault: 847 deliverables</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN 5: SKILL MARKETPLACE -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 5 — SKILL BROWSER & MARKETPLACE</div>
+    <div class="window">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">Skill Marketplace</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content">
+            <div class="sidebar" style="background: var(--card);">
+                <div class="sidebar-header" style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 20px; margin-bottom: 0;">
+                    <div style="font-size: 16px; font-weight: 600; color: var(--white);">Skill Marketplace</div>
+                    <div style="font-size: 12px; color: var(--silver); margin-top: 8px;">1,247 skills available</div>
+                </div>
+                <div style="padding: 20px;">
+                    <input type="text" class="search-bar" placeholder="Search skills..." style="width: 100%; margin-bottom: 16px;">
+                    <div style="font-size: 11px; color: var(--silver); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Categories</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div class="filter-pill active">All</div>
+                        <div class="filter-pill">Installed</div>
+                        <div class="filter-pill">Core</div>
+                        <div class="filter-pill">Domain Packs</div>
+                        <div class="filter-pill">Expert</div>
+                        <div class="filter-pill">Community</div>
+                    </div>
+                </div>
+            </div>
+            <div class="main-content">
+                <div class="content-scroll">
+                    <div class="skill-grid">
+                        <div class="skill-card">
+                            <div class="skill-icon">🏠</div>
+                            <div class="skill-name">Mortgage Pro Pack</div>
+                            <div class="skill-creator">by K0RE</div>
+                            <div class="skill-desc">Loan analysis, deal memos, risk scoring, and investor relations</div>
+                            <div class="skill-meta">
+                                <span class="skill-rating">★★★★★ (1.2K)</span>
+                                <span style="color: var(--green); font-weight: 600;">✓ Installed</span>
+                            </div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">📊</div>
+                            <div class="skill-name">Financial Modeler</div>
+                            <div class="skill-creator">by K0RE</div>
+                            <div class="skill-desc">IRR, NPV, cash flow projections, and investor structure</div>
+                            <div class="skill-meta">
+                                <span class="skill-rating">★★★★★ (892)</span>
+                                <span style="color: var(--green); font-weight: 600;">✓ Installed</span>
+                            </div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">💪</div>
+                            <div class="skill-name">Fitness & Nutrition</div>
+                            <div class="skill-creator">by Community</div>
+                            <div class="skill-desc">Personalized meal plans, workouts, and progress tracking</div>
+                            <div class="skill-meta">
+                                <span class="skill-rating">★★★★☆ (456)</span>
+                                <span class="skill-price">$8/mo</span>
+                            </div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">📈</div>
+                            <div class="skill-name">Sales Cadence</div>
+                            <div class="skill-creator">by K0RE</div>
+                            <div class="skill-desc">Outreach sequences, follow-up automation, CRM sync</div>
+                            <div class="skill-meta">
+                                <span class="skill-rating">★★★★★ (734)</span>
+                                <span style="color: var(--green); font-weight: 600;">✓ Installed</span>
+                            </div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">✍️</div>
+                            <div class="skill-name">Content Creator</div>
+                            <div class="skill-creator">by Community</div>
+                            <div class="skill-desc">Blog posts, social media copy, email campaigns</div>
+                            <div class="skill-meta">
+                                <span class="skill-rating">★★★★☆ (512)</span>
+                                <span class="skill-price">$18/mo</span>
+                            </div>
+                        </div>
+                        <div class="skill-card">
+                            <div class="skill-icon">🧘</div>
+                            <div class="skill-name">Mindfulness Coach</div>
+                            <div class="skill-creator">by Expert</div>
+                            <div class="skill-desc">Meditation, breathwork, journaling prompts, progress</div>
+                            <div class="skill-meta">
+                                <span class="skill-rating">★★★★★ (667)</span>
+                                <span class="skill-price">$28/mo</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 40px; padding: 24px; background: var(--card); border-radius: 8px; text-align: center; border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <div style="font-size: 16px; margin-bottom: 8px;">✨</div>
+                        <div style="font-size: 14px; color: var(--white); font-weight: 600; margin-bottom: 8px;">Publish Your Own Skill</div>
+                        <div style="font-size: 12px; color: var(--silver); margin-bottom: 16px;">Available for Architect tier and above</div>
+                        <button class="btn btn-primary">Create Skill</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN 6: KNOWLEDGE LIBRARY -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 6 — KNOWLEDGE LIBRARY</div>
+    <div class="window">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">Knowledge Library</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content">
+            <div class="main-content" style="width: 100%;">
+                <div class="content-top-bar">
+                    <div>
+                        <div class="greeting">Your Library</div>
+                        <div class="greeting-meta">24 books · 340 hours of content</div>
+                    </div>
+                    <input type="text" class="search-bar" placeholder="Search library...">
+                    <div class="icon-group">
+                        <div class="icon-btn">🔍</div>
+                    </div>
+                </div>
+                <div style="padding: 0; display: flex;">
+                    <div style="flex: 1;">
+                        <div class="screen-nav">
+                            <div class="screen-nav-item active">Your Library</div>
+                            <div class="screen-nav-item">Network Shared</div>
+                            <div class="screen-nav-item">Recommendations</div>
+                        </div>
+                        <div class="content-scroll" style="padding: 20px 30px;">
+                            <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05)); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 8px; padding: 20px; margin-bottom: 30px; display: flex; gap: 20px;">
+                                <div style="width: 80px; height: 120px; background: linear-gradient(135deg, var(--gold), #b8860b); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 28px;">📕</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 4px;">The K0RE RedPaper — Part 1</div>
+                                    <div style="font-size: 12px; color: var(--silver); margin-bottom: 12px;">The complete system architecture & philosophy</div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-primary" style="padding: 8px 16px; font-size: 12px;">▶ Start Reading</button>
+                                        <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 12px;">Share</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; gap: 12px;">
+                                <div class="library-item">
+                                    <div class="library-cover">📗</div>
+                                    <div class="library-content">
+                                        <div class="library-title">Thinking, Fast and Slow</div>
+                                        <div class="library-meta">
+                                            <span>Daniel Kahneman</span>
+                                            <span>•</span>
+                                            <span>Audiobook</span>
+                                        </div>
+                                        <div class="library-progress">
+                                            <div class="library-progress-fill" style="width: 67%;"></div>
+                                        </div>
+                                        <div style="font-size: 11px; color: var(--silver); margin-top: 4px;">67% complete • K0RE Summary available</div>
+                                    </div>
+                                </div>
+                                <div class="library-item">
+                                    <div class="library-cover">📘</div>
+                                    <div class="library-content">
+                                        <div class="library-title">The Intelligent Investor</div>
+                                        <div class="library-meta">
+                                            <span>Benjamin Graham</span>
+                                            <span>•</span>
+                                            <span>Text + Audio</span>
+                                        </div>
+                                        <div class="library-progress">
+                                            <div class="library-progress-fill" style="width: 100%;"></div>
+                                        </div>
+                                        <div style="font-size: 11px; color: var(--silver); margin-top: 4px;">Completed • 12 highlights • 3 people shared this</div>
+                                    </div>
+                                </div>
+                                <div class="library-item">
+                                    <div class="library-cover">📙</div>
+                                    <div class="library-content">
+                                        <div class="library-title">$100M Offers</div>
+                                        <div class="library-meta">
+                                            <span>Alex Hormozi</span>
+                                            <span>•</span>
+                                            <span>Audiobook</span>
+                                        </div>
+                                        <div class="library-progress">
+                                            <div class="library-progress-fill" style="width: 45%;"></div>
+                                        </div>
+                                        <div style="font-size: 11px; color: var(--silver); margin-top: 4px;">45% complete • Skill chain: Offer Creation</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN 7: ECOSYSTEM VENN -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 7 — ECOSYSTEM VENN DIAGRAM</div>
+    <div class="window">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">Ecosystem — Your Journey</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content">
+            <div class="venn-container">
+                <div style="position: relative; margin-bottom: 40px;">
+                    <div class="venn-diagram">
+                        <div class="venn-circle venn-left">
+                            <div class="venn-circle-label">Mind</div>
+                            <div class="venn-circle-score">78</div>
+                        </div>
+                        <div class="venn-circle venn-right">
+                            <div class="venn-circle-label">Body</div>
+                            <div class="venn-circle-score">65</div>
+                        </div>
+                        <div class="venn-circle venn-bottom">
+                            <div class="venn-circle-label">Soul</div>
+                            <div class="venn-circle-score">82</div>
+                        </div>
+                        <div class="venn-center">
+                            <div class="venn-center-label">Dreaming Reality™</div>
+                            <div class="venn-center-score">78</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%; max-width: 600px;">
+                    <div style="text-align: center; padding: 16px; background: var(--card); border-radius: 8px; border: 1px solid rgba(48, 209, 88, 0.3); cursor: pointer; transition: all 0.2s;">
+                        <div style="font-size: 28px; margin-bottom: 8px;">🧠</div>
+                        <div style="font-size: 12px; color: var(--white); font-weight: 600; margin-bottom: 4px;">Mind</div>
+                        <div style="font-size: 11px; color: var(--silver);">Cognition, Learning, Clarity</div>
+                        <div style="font-size: 16px; color: var(--green); margin-top: 8px; font-weight: 700;">78</div>
+                    </div>
+                    <div style="text-align: center; padding: 16px; background: var(--card); border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); cursor: pointer; transition: all 0.2s;">
+                        <div style="font-size: 28px; margin-bottom: 8px;">💪</div>
+                        <div style="font-size: 12px; color: var(--white); font-weight: 600; margin-bottom: 4px;">Body</div>
+                        <div style="font-size: 11px; color: var(--silver);">Health, Fitness, Vitality</div>
+                        <div style="font-size: 16px; color: var(--gold); margin-top: 8px; font-weight: 700;">65</div>
+                    </div>
+                    <div style="text-align: center; padding: 16px; background: var(--card); border-radius: 8px; border: 1px solid rgba(255, 69, 58, 0.3); cursor: pointer; transition: all 0.2s;">
+                        <div style="font-size: 28px; margin-bottom: 8px;">✨</div>
+                        <div style="font-size: 12px; color: var(--white); font-weight: 600; margin-bottom: 4px;">Soul</div>
+                        <div style="font-size: 11px; color: var(--silver);">Purpose, Growth, Connection</div>
+                        <div style="font-size: 16px; color: var(--green); margin-top: 8px; font-weight: 700;">82</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCREEN 8: REVENUE DASHBOARD -->
+<div class="wireframe-section">
+    <div class="section-label">SCREEN 8 — REVENUE & PAYMENTS (ADMIN)</div>
+    <div class="window">
+        <div class="window-title-bar">
+            <div class="traffic-lights">
+                <div class="traffic-light red"></div>
+                <div class="traffic-light yellow"></div>
+                <div class="traffic-light green"></div>
+            </div>
+            <div class="window-title">K0RE — Revenue Dashboard (Admin)</div>
+            <div class="window-title-spacer"></div>
+        </div>
+        <div class="window-content" style="display: flex;">
+            <!-- Sidebar -->
+            <div style="width: 200px; background: var(--sidebar); border-right: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; overflow-y: auto;">
+                <div style="font-size: 14px; font-weight: 600; margin-bottom: 30px; letter-spacing: 1px;">◆ K0RE</div>
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">◉ Dashboard</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">📊 Domains</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">🎯 Perfect Day</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">📝 Journal</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">🧠 Skills</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">🎙 Voice & Meetings</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">📚 Knowledge Library</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">◎ Ecosystem</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; background: rgba(212, 175, 55, 0.1); color: var(--gold);">💰 Revenue</div>
+                    <div style="padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;">⚙ Settings</div>
+                </div>
+                <div style="padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 12px; color: var(--silver);">Cal (K0RE-0)</div>
+            </div>
+            <!-- Main content -->
+            <div style="flex: 1; padding: 24px; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <div>
+                        <div style="font-size: 18px; font-weight: 600;">Revenue Dashboard</div>
+                        <div style="font-size: 12px; color: var(--silver);">Powered by Stripe • Real-time</div>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <div style="background: var(--card); border: 1px solid rgba(212,175,55,0.15); border-radius: 8px; padding: 8px 16px; font-size: 12px; cursor: pointer;">This Month</div>
+                        <div style="background: var(--gold); color: #000; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer;">Export</div>
+                    </div>
+                </div>
+                <!-- Metrics Row -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                    <div style="background: var(--card); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 20px;">
+                        <div style="font-size: 11px; color: var(--silver); margin-bottom: 8px;">MRR</div>
+                        <div style="font-size: 28px; font-weight: 600; color: var(--gold);">$47,820</div>
+                        <div style="font-size: 11px; color: var(--green); margin-top: 4px;">↑ 12.4% vs last month</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 20px;">
+                        <div style="font-size: 11px; color: var(--silver); margin-bottom: 8px;">Active Subscribers</div>
+                        <div style="font-size: 28px; font-weight: 600;">428</div>
+                        <div style="font-size: 11px; color: var(--green); margin-top: 4px;">↑ 38 new this month</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 20px;">
+                        <div style="font-size: 11px; color: var(--silver); margin-bottom: 8px;">Marketplace GMV</div>
+                        <div style="font-size: 28px; font-weight: 600;">$8,340</div>
+                        <div style="font-size: 11px; color: var(--silver); margin-top: 4px;">K0RE share: $2,502</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 20px;">
+                        <div style="font-size: 11px; color: var(--silver); margin-bottom: 8px;">Churn Rate</div>
+                        <div style="font-size: 28px; font-weight: 600; color: var(--green);">2.1%</div>
+                        <div style="font-size: 11px; color: var(--green); margin-top: 4px;">↓ 0.3% vs last month</div>
+                    </div>
+                </div>
+                <!-- Tier Breakdown -->
+                <div style="background: var(--card); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+                    <div style="font-size: 14px; font-weight: 500; margin-bottom: 16px;">Tier Distribution</div>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; text-align: center;">
+                        <div>
+                            <div style="font-size: 20px; font-weight: 600;">210</div>
+                            <div style="font-size: 11px; color: var(--silver);">Observer</div>
+                            <div style="height: 4px; background: #333; border-radius: 2px; margin-top: 8px;"><div style="height: 100%; width: 100%; background: var(--silver); border-radius: 2px;"></div></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 600;">124</div>
+                            <div style="font-size: 11px; color: var(--silver);">Operator</div>
+                            <div style="height: 4px; background: #333; border-radius: 2px; margin-top: 8px;"><div style="height: 100%; width: 60%; background: var(--gold); border-radius: 2px;"></div></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 600;">67</div>
+                            <div style="font-size: 11px; color: var(--silver);">Commander</div>
+                            <div style="height: 4px; background: #333; border-radius: 2px; margin-top: 8px;"><div style="height: 100%; width: 40%; background: var(--gold); border-radius: 2px;"></div></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 600;">22</div>
+                            <div style="font-size: 11px; color: var(--silver);">Architect</div>
+                            <div style="height: 4px; background: #333; border-radius: 2px; margin-top: 8px;"><div style="height: 100%; width: 20%; background: var(--gold); border-radius: 2px;"></div></div>
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 600;">5</div>
+                            <div style="font-size: 11px; color: var(--silver);">Enterprise</div>
+                            <div style="height: 4px; background: #333; border-radius: 2px; margin-top: 8px;"><div style="height: 100%; width: 8%; background: var(--gold); border-radius: 2px;"></div></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Recent Transactions -->
+                <div style="background: var(--card); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 20px;">
+                    <div style="font-size: 14px; font-weight: 500; margin-bottom: 16px;">Recent Transactions</div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
+                        <span>Marcus T. — Commander Subscription</span><span style="color: var(--green);">+$198.00</span><span style="color: var(--silver);">2 min ago</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
+                        <span>Sarah K. — Fitness Pack (Marketplace)</span><span style="color: var(--green);">+$8.00</span><span style="color: var(--silver);">14 min ago</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
+                        <span>Dev P. — Operator → Commander Upgrade</span><span style="color: var(--green);">+$120.00</span><span style="color: var(--silver);">1 hr ago</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 12px;">
+                        <span>Payout to Skill Creator @CoachMike</span><span style="color: var(--red);">-$84.00</span><span style="color: var(--silver);">3 hrs ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WIREFRAME NAVIGATION -->
+<div class="wireframe-nav">
+    <a href="#">WEBSITE</a>
+    <a href="#">MOBILE</a>
+    <a href="#" style="color: #D4AF37;">DESKTOP</a>
+    <a href="#">COMPETITIVE</a>
+    <a href="#">VENN</a>
+</div>
+
+</body>
+</html>

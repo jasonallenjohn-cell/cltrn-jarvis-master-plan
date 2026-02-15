@@ -1,0 +1,23 @@
+{
+    "expo": {
+        "name": "K0RE",
+        "slug": "kore-mobile",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "userInterfaceStyle": "dark",
+        "assetBundlePatterns": [
+            "**/*"
+        ],
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.kore.mobile"
+        },
+        "android": {
+            "package": "com.kore.mobile"
+        },
+        "plugins": [
+            "expo-router"
+        ],
+        "scheme": "kore"
+    }
+}

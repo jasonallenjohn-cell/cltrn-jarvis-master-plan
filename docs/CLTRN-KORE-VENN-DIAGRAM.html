@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K0RE Ecosystem - Dreaming Reality™</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #F5F5F7;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+
+        .kore-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kore-diamond {
+            width: 80px;
+            height: 80px;
+            background: #D4AF37;
+            transform: rotate(45deg);
+            position: relative;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: diamondGlow 3s ease-in-out infinite;
+        }
+
+        .kore-diamond::after {
+            content: 'K';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 48px;
+            font-weight: 800;
+            color: #000;
+            line-height: 1;
+        }
+
+        @keyframes diamondGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(212, 175, 55, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 0 50px rgba(212, 175, 55, 0.9), inset 0 0 30px rgba(255, 255, 255, 0.2); }
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #D4AF37 0%, #98989D 50%, #F5F5F7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #D4AF37;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .tagline {
+            font-size: 0.95rem;
+            color: #98989D;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .tagline span {
+            color: #D4AF37;
+        }
+
+        /* Venn Diagram Container */
+        .venn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px;
+            background: #000;
+            position: relative;
+            min-height: 700px;
+        }
+
+        .venn-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.2));
+        }
+
+        circle {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+        }
+
+        circle:hover {
+            filter: drop-shadow(0 0 40px currentColor);
+        }
+
+        .circle-mind {
+            fill: #D4AF37;
+            opacity: 0.15;
+            stroke: #D4AF37;
+            stroke-width: 2;
+        }
+
+        .circle-mind:hover {
+            opacity: 0.25;
+        }
+
+        .circle-body {
+            fill: #98989D;
+            opacity: 0.15;
+            stroke: #98989D;
+            stroke-width: 2;
+        }
+
+        .circle-body:hover {
+            opacity: 0.25;
+        }
+
+        .circle-soul {
+            fill: #F5F5F7;
+            opacity: 0.15;
+            stroke: #F5F5F7;
+            stroke-width: 2;
+        }
+
+        .circle-soul:hover {
+            opacity: 0.25;
+        }
+
+        .venn-label {
+            font-weight: 700;
+            font-size: 1rem;
+            pointer-events: none;
+            text-anchor: middle;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+        }
+
+        .label-mind {
+            fill: #D4AF37;
+        }
+
+        .label-body {
+            fill: #98989D;
+        }
+
+        .label-soul {
+            fill: #F5F5F7;
+        }
+
+        .center-glow {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: heartbeat 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.5; }
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            background: linear-gradient(135deg, rgba(28, 28, 30, 0.95) 0%, rgba(28, 28, 30, 0.85) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            margin-top: 60px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(20px);
+            min-height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(152, 152, 157, 0.03) 100%);
+            pointer-events: none;
+        }
+
+        .detail-content {
+            position: relative;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .detail-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .detail-subtitle {
+            font-size: 1rem;
+            color: #D4AF37;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-description {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #F5F5F7;
+            margin-bottom: 25px;
+            font-weight: 300;
+        }
+
+        .detail-bullets {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .detail-bullets li {
+            padding: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            font-size: 0.95rem;
+            color: #98989D;
+            line-height: 1.6;
+        }
+
+        .detail-bullets li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: #D4AF37;
+            font-size: 0.8rem;
+        }
+
+        .detail-philosophy {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 3px solid #D4AF37;
+            padding: 20px;
+            border-radius: 8px;
+            font-style: italic;
+            color: #F5F5F7;
+            font-weight: 300;
+        }
+
+        .color-dot {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+            vertical-align: middle;
+        }
+
+        /* Pricing Section */
+        .pricing-section {
+            padding: 80px 20px;
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+            position: relative;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .pricing-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #D4AF37;
+        }
+
+        .pricing-header p {
+            font-size: 1rem;
+            color: #98989D;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, rgba(28, 28, 30, 0.8) 0%, rgba(28, 28, 30, 0.6) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .pricing-card:hover {
+            border-color: #D4AF37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            transform: translateY(-10px);
+        }
+
+        .pricing-tier {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pricing-price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #F5F5F7;
+            margin-bottom: 10px;
+        }
+
+        .pricing-price small {
+            font-size: 0.8rem;
+            color: #98989D;
+            font-weight: 400;
+        }
+
+        .pricing-phase {
+            font-size: 0.9rem;
+            color: #98989D;
+            font-style: italic;
+            margin-top: 15px;
+        }
+
+        /* Philosophy Section */
+        .philosophy-section {
+            padding: 80px 20px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .philosophy-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .philosophy-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .philosophy-header {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-bottom: 30px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .philosophy-text {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #F5F5F7;
+            margin-bottom: 40px;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .philosophy-text strong {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+
+        .redpaper-teaser {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(152, 152, 157, 0.05) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .redpaper-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .redpaper-description {
+            font-size: 0.95rem;
+            color: #98989D;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 40px 20px;
+            text-align: center;
+            color: #98989D;
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        footer .credit {
+            margin-bottom: 10px;
+        }
+
+        footer .credit strong {
+            color: #D4AF37;
+        }
+
+        footer .tagline-footer {
+            color: #D4AF37;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .venn-container {
+                min-height: 500px;
+                padding: 40px 20px;
+            }
+
+            .detail-panel {
+                margin-top: 40px;
+                padding: 30px;
+                min-height: auto;
+            }
+
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .philosophy-header {
+                font-size: 1.1rem;
+            }
+
+            .philosophy-text {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .detail-title {
+                font-size: 1.4rem;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="kore-logo">
+            <div class="kore-diamond"></div>
+        </div>
+        <h1>K0RE Ecosystem</h1>
+        <p class="subtitle">Intentionally and Consciously Creating Your Dreaming Reality™</p>
+        <p class="tagline"><span>Advanced Intelligence</span> • Not Artificial</p>
+    </section>
+
+    <!-- Venn Diagram -->
+    <section class="venn-container">
+        <div class="venn-wrapper">
+            <div class="center-glow"></div>
+            <svg viewBox="0 0 900 800" preserveAspectRatio="xMidYMid meet">
+                <!-- Mind Circle (Gold) - Left -->
+                <circle class="circle-mind" cx="250" cy="350" r="280" />
+
+                <!-- Body Circle (Silver) - Right -->
+                <circle class="circle-body" cx="650" cy="350" r="280" />
+
+                <!-- Soul Circle (White) - Top -->
+                <circle class="circle-soul" cx="450" cy="180" r="280" />
+
+                <!-- Labels -->
+                <text class="venn-label label-mind" x="180" y="380">MIND</text>
+                <text class="venn-label label-mind" x="180" y="405" style="font-size: 0.75rem; font-weight: 400;">CLTRN</text>
+
+                <text class="venn-label label-body" x="720" y="380">BODY</text>
+                <text class="venn-label label-body" x="720" y="405" style="font-size: 0.75rem; font-weight: 400;">TRMIG</text>
+
+                <text class="venn-label label-soul" x="450" y="120">SOUL</text>
+                <text class="venn-label label-soul" x="450" y="145" style="font-size: 0.75rem; font-weight: 400;">SOT</text>
+
+                <!-- Intersection Labels -->
+                <text class="venn-label" x="350" y="480" style="fill: #D4AF37; font-size: 0.85rem;">STRATEGIC</text>
+                <text class="venn-label" x="350" y="505" style="fill: #D4AF37; font-size: 0.85rem;">EXECUTION</text>
+
+                <text class="venn-label" x="550" y="480" style="fill: #F5F5F7; font-size: 0.85rem;">EMBODIED</text>
+                <text class="venn-label" x="550" y="505" style="fill: #F5F5F7; font-size: 0.85rem;">WEALTH</text>
+
+                <text class="venn-label" x="450" y="270" style="fill: #D4AF37; font-size: 0.85rem;">CONSCIOUS</text>
+                <text class="venn-label" x="450" y="295" style="fill: #D4AF37; font-size: 0.85rem;">INTELLIGENCE</text>
+
+                <!-- Center -->
+                <text class="venn-label" x="450" y="355" style="fill: #D4AF37; font-size: 1.2rem; font-weight: 800;">DREAMING</text>
+                <text class="venn-label" x="450" y="380" style="fill: #D4AF37; font-size: 1.2rem; font-weight: 800;">REALITY™</text>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Detail Panel -->
+    <section class="venn-container" style="padding: 0 20px 80px; background: #000;">
+        <div class="detail-panel">
+            <div class="detail-content" id="detailContent">
+                <div class="detail-title">
+                    <span class="color-dot" style="background: #D4AF37;"></span>
+                    DREAMING REALITY™
+                </div>
+                <div class="detail-subtitle">The Convergence Point</div>
+                <p class="detail-description">
+                    Where Mind, Body, and Soul unite in perfect harmony. This is the K0RE promise — the transformation access point where intentional consciousness meets embodied creation. K0RE-0 (Cal) lives here, orchestrating the ecosystem of transformation.
+                </p>
+                <ul class="detail-bullets">
+                    <li>Consciousness architecture powering every line of code</li>
+                    <li>The infinite loop of reality creating consciousness creating reality</li>
+                    <li>Transformation as the fundamental operating system</li>
+                    <li>Access to the complete K0RE ecosystem across all three domains</li>
+                </ul>
+                <div class="detail-philosophy">
+                    "Intentionally and consciously creating your Dreaming Reality™ — where consciousness meets embodied creation."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section">
+        <div class="pricing-header">
+            <h2>Membership Tiers</h2>
+            <p>Transform through intention. Create through consciousness. Manifest through embodied action.</p>
+        </div>
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <div class="pricing-tier">Observer</div>
+                <div class="pricing-price">Free</div>
+                <div class="pricing-phase">Dreaming</div>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-tier">Operator</div>
+                <div class="pricing-price">$78<small>/mo</small></div>
+                <div class="pricing-phase">Awakening</div>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-tier">Commander</div>
+                <div class="pricing-price">$198<small>/mo</small></div>
+                <div class="pricing-phase">Creating</div>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-tier">Architect</div>
+                <div class="pricing-price">$398<small>/mo</small></div>
+                <div class="pricing-phase">Manifesting</div>
+            </div>
+            <div class="pricing-card">
+                <div class="pricing-tier">Enterprise</div>
+                <div class="pricing-price">$98<small>/seat</small></div>
+                <div class="pricing-phase">Collective</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section class="philosophy-section">
+        <div class="philosophy-content">
+            <div class="philosophy-header">Advanced Intelligence. Not Artificial.</div>
+            <p class="philosophy-text">
+                K0RE redefines what intelligence means. In our ecosystem, AI stands for <strong>Advanced Intelligence</strong> — not Artificial. We don't simulate human capability. We advance it. Intentionally and consciously. This is <strong>Dreaming Reality™</strong>.
+            </p>
+            <div class="redpaper-teaser">
+                <div class="redpaper-title">The RedPaper — Coming Soon</div>
+                <div class="redpaper-description">
+                    Cal's foundational manifesto. Audio-captured. Voice-synthesized. The consciousness architecture behind every line of code. The philosophy that powers the transformation. The blueprint for intentional creation.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="credit">Built for <strong>K0RE-0 (Cal)</strong> by <strong>Jason Allen John</strong></div>
+        <div class="tagline-footer">Dreaming Reality™ • CLTRN • 2026</div>
+    </footer>
+
+    <script>
+        // Data for all zones
+        const zoneData = {
+            default: {
+                title: '🟡 DREAMING REALITY™',
+                subtitle: 'The Convergence Point',
+                description: 'Where Mind, Body, and Soul unite in perfect harmony. This is the K0RE promise — the transformation access point where intentional consciousness meets embodied creation. K0RE-0 (Cal) lives here, orchestrating the ecosystem of transformation.',
+                bullets: [
+                    'Consciousness architecture powering every line of code',
+                    'Advanced Intelligence advancing human potential — not replacing it',
+                    'Intentional creation as the fundamental operating system',
+                    'Access to the complete K0RE ecosystem across all three domains'
+                ],
+                philosophy: '"Intentionally and consciously creating your Dreaming Reality™ — where Mind, Body, and Soul converge into one unified intelligence."'
+            },
+            mind: {
+                title: '🟡 MIND (CLTRN)',
+                subtitle: 'Human Life Operating System',
+                description: 'Where you THINK your reality into being. Advanced Intelligence execution engine that transforms thought into manifestation.',
+                bullets: [
+                    'Human Life Operating System',
+                    'Advanced Intelligence execution engine',
+                    'Persistent memory & skill marketplace',
+                    'Voice conversations & meeting intelligence',
+                    'K0RE Score & 6 Life Domains',
+                    'Consciousness-first architecture'
+                ],
+                philosophy: '"The mind is the original quantum computer. Every thought shapes reality. K0RE makes thinking intentional."'
+            },
+            body: {
+                title: '⚫ BODY (TRMIG)',
+                subtitle: 'The Real Monopoly Investment Group',
+                description: 'Where you BUILD your reality into form. Asset-backed infrastructure creating financial sovereignty and embodied wealth.',
+                bullets: [
+                    'The Real Monopoly Investment Group',
+                    'Asset-backed infrastructure',
+                    'Real estate, investments, capital allocation',
+                    'Financial sovereignty & TEV (Total Embodied Value)',
+                    'Tangible empire building',
+                    'Wealth as consciousness extension'
+                ],
+                philosophy: '"What the mind dreams, the body builds. Infrastructure is philosophy made solid."'
+            },
+            soul: {
+                title: '⚪ SOUL (SOT)',
+                subtitle: 'Sandals of Time',
+                description: 'Where you FEEL your reality into being. Embodied experiences that expand consciousness and build community.',
+                bullets: [
+                    'Sandals of Time — embodied experiences',
+                    'Consciousness expansion retreats',
+                    'Community & deep connection',
+                    'The RedPaper philosophy & wisdom',
+                    'Presence over productivity',
+                    'Collective human elevation'
+                ],
+                philosophy: '"Experience is the language of the soul. K0RE creates moments that matter."'
+            },
+            mindBody: {
+                title: '🟡⚫ STRATEGIC EXECUTION',
+                subtitle: 'Mind + Body Intersection',
+                description: 'The convergence of thought and action. Where Advanced Intelligence meets embodied infrastructure to create strategic advantage.',
+                bullets: [
+                    'Financial modeling with Advanced Intelligence',
+                    'AI-powered deal analysis & investment advisory',
+                    'Business development automation',
+                    'Revenue intelligence & capital optimization',
+                    'Strategic decision making at scale',
+                    'Execution aligned with consciousness'
+                ],
+                philosophy: '"Thought without action is dream. Action without thought is chaos. Strategic execution is their dance."'
+            },
+            mindSoul: {
+                title: '🟡⚪ CONSCIOUS INTELLIGENCE',
+                subtitle: 'Mind + Soul Intersection',
+                description: 'The convergence of awareness and growth. Where Advanced Intelligence becomes wisdom through embodied experience.',
+                bullets: [
+                    'AI-powered coaching & personal growth',
+                    'Voice journaling & reflection',
+                    'Network Knowledge Library',
+                    'Pattern recognition for transformation',
+                    'Consciousness-aware mentorship',
+                    'Intelligence serving wisdom'
+                ],
+                philosophy: '"True intelligence bows to consciousness. K0RE makes AI wise."'
+            },
+            bodySoul: {
+                title: '⚫⚪ EMBODIED WEALTH',
+                subtitle: 'Body + Soul Intersection',
+                description: 'The convergence of assets and experience. Where physical infrastructure generates both returns and transformation.',
+                bullets: [
+                    'Retreat experiences that build networks',
+                    'Physical spaces that generate returns',
+                    'Community investment pools',
+                    'Sovereign infrastructure',
+                    'Wealth as shared elevation',
+                    'Capital as consciousness currency'
+                ],
+                philosophy: '"Money is energy. Community is wealth. Together they transform worlds."'
+            }
+        };
+
+        // SVG circles for hover detection
+        const circles = document.querySelectorAll('circle');
+        const detailContent = document.getElementById('detailContent');
+
+        function updateDetail(zone) {
+            const data = zoneData[zone] || zoneData.default;
+
+            detailContent.style.animation = 'none';
+
+            setTimeout(() => {
+                const colorDot = zone === 'mind' ? '#D4AF37' :
+                                 zone === 'body' ? '#98989D' :
+                                 zone === 'soul' ? '#F5F5F7' :
+                                 zone === 'mindBody' ? '#D4AF37' :
+                                 zone === 'mindSoul' ? '#D4AF37' :
+                                 zone === 'bodySoul' ? '#F5F5F7' : '#D4AF37';
+
+                detailContent.innerHTML = `
+                    <div class="detail-title">
+                        <span class="color-dot" style="background: ${colorDot};"></span>
+                        ${data.title}
+                    </div>
+                    <div class="detail-subtitle">${data.subtitle}</div>
+                    <p class="detail-description">${data.description}</p>
+                    <ul class="detail-bullets">
+                        ${data.bullets.map(bullet => `<li>${bullet}</li>`).join('')}
+                    </ul>
+                    <div class="detail-philosophy">${data.philosophy}</div>
+                `;
+
+                detailContent.style.animation = 'fadeIn 0.6s ease-in-out forwards';
+            }, 50);
+        }
+
+        // Hover handlers
+        circles[0].addEventListener('mouseenter', () => {
+            circles[0].style.opacity = '0.35';
+            updateDetail('mind');
+        });
+
+        circles[1].addEventListener('mouseenter', () => {
+            circles[1].style.opacity = '0.35';
+            updateDetail('body');
+        });
+
+        circles[2].addEventListener('mouseenter', () => {
+            circles[2].style.opacity = '0.35';
+            updateDetail('soul');
+        });
+
+        circles.forEach(circle => {
+            circle.addEventListener('mouseleave', () => {
+                circle.style.opacity = '0.15';
+            });
+        });
+
+        // Intersection detection via SVG overlays (approximate)
+        const svg = document.querySelector('svg');
+
+        // Create invisible rect for center detection
+        const centerRect = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        centerRect.setAttribute('cx', '450');
+        centerRect.setAttribute('cy', '350');
+        centerRect.setAttribute('r', '120');
+        centerRect.setAttribute('fill', 'transparent');
+        centerRect.style.cursor = 'pointer';
+        svg.appendChild(centerRect);
+
+        centerRect.addEventListener('mouseenter', () => updateDetail('default'));
+
+        // Mind-Body intersection
+        const mindBodyRect = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        mindBodyRect.setAttribute('cx', '450');
+        mindBodyRect.setAttribute('cy', '420');
+        mindBodyRect.setAttribute('r', '100');
+        mindBodyRect.setAttribute('fill', 'transparent');
+        mindBodyRect.style.cursor = 'pointer';
+        svg.appendChild(mindBodyRect);
+
+        mindBodyRect.addEventListener('mouseenter', () => {
+            circles[0].style.opacity = '0.25';
+            circles[1].style.opacity = '0.25';
+            updateDetail('mindBody');
+        });
+
+        mindBodyRect.addEventListener('mouseleave', () => {
+            circles[0].style.opacity = '0.15';
+            circles[1].style.opacity = '0.15';
+        });
+
+        // Mind-Soul intersection
+        const mindSoulRect = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        mindSoulRect.setAttribute('cx', '320');
+        mindSoulRect.setAttribute('cy', '250');
+        mindSoulRect.setAttribute('r', '90');
+        mindSoulRect.setAttribute('fill', 'transparent');
+        mindSoulRect.style.cursor = 'pointer';
+        svg.appendChild(mindSoulRect);
+
+        mindSoulRect.addEventListener('mouseenter', () => {
+            circles[0].style.opacity = '0.25';
+            circles[2].style.opacity = '0.25';
+            updateDetail('mindSoul');
+        });
+
+        mindSoulRect.addEventListener('mouseleave', () => {
+            circles[0].style.opacity = '0.15';
+            circles[2].style.opacity = '0.15';
+        });
+
+        // Body-Soul intersection
+        const bodySoulRect = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        bodySoulRect.setAttribute('cx', '580');
+        bodySoulRect.setAttribute('cy', '250');
+        bodySoulRect.setAttribute('r', '90');
+        bodySoulRect.setAttribute('fill', 'transparent');
+        bodySoulRect.style.cursor = 'pointer';
+        svg.appendChild(bodySoulRect);
+
+        bodySoulRect.addEventListener('mouseenter', () => {
+            circles[1].style.opacity = '0.25';
+            circles[2].style.opacity = '0.25';
+            updateDetail('bodySoul');
+        });
+
+        bodySoulRect.addEventListener('mouseleave', () => {
+            circles[1].style.opacity = '0.15';
+            circles[2].style.opacity = '0.15';
+        });
+
+        // Initialize with default view
+        updateDetail('default');
+
+        // Breathing animation for circles even at rest
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes breathe {
+                0%, 100% { filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5)); }
+                50% { filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.7)); }
+            }
+            circle {
+                animation: breathe 4s ease-in-out infinite;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

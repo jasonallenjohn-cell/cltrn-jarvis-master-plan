@@ -1,0 +1,10 @@
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/cargo_toml-ada96f405649b78d.d: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/cargo_toml.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/afs.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/error.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/inheritable.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libcargo_toml-ada96f405649b78d.rlib: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/cargo_toml.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/afs.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/error.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/inheritable.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libcargo_toml-ada96f405649b78d.rmeta: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/cargo_toml.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/afs.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/error.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/inheritable.rs
+
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/cargo_toml.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/afs.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/error.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cargo_toml-0.15.3/src/inheritable.rs:

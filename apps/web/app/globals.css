@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    @keyframes portalFade {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes titlePulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.8;
+        }
+    }
+
+    @keyframes dreamingPulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+    }
+
+    @keyframes breathing {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+            opacity: 0.6;
+        }
+
+        50% {
+            transform: translateY(12px);
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes waveAnimated {
+
+        0%,
+        100% {
+            height: 20px;
+        }
+
+        50% {
+            height: 120px;
+        }
+    }
+
+    @keyframes networkFloat {
+
+        0%,
+        100% {
+            transform: translate(0, 0);
+        }
+
+        25% {
+            transform: translate(20px, -20px);
+        }
+
+        50% {
+            transform: translate(0, 20px);
+        }
+
+        75% {
+            transform: translate(-20px, -10px);
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes diamondRotate {
+        from {
+            transform: rotateZ(0deg);
+        }
+
+        to {
+            transform: rotateZ(360deg);
+        }
+    }
+}
+
+:root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 10, 10, 10;
+    --background-end-rgb: 0, 0, 0;
+    --kore-black: #0A0A0A;
+    --kore-gold: #C9A84C;
+    --kore-silver: #A8A9AD;
+}
+
+body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(to bottom,
+            transparent,
+            rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}

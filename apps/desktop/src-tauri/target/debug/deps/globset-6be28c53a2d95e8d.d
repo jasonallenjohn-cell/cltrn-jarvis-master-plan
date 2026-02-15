@@ -1,0 +1,10 @@
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/globset-6be28c53a2d95e8d.d: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/fnv.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/glob.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/pathutil.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libglobset-6be28c53a2d95e8d.rlib: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/fnv.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/glob.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/pathutil.rs
+
+/Users/jasonallenjohn/.gemini/antigravity/scratch/kore/apps/desktop/src-tauri/target/debug/deps/libglobset-6be28c53a2d95e8d.rmeta: /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/lib.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/fnv.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/glob.rs /Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/pathutil.rs
+
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/lib.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/fnv.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/glob.rs:
+/Users/jasonallenjohn/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/globset-0.4.18/src/pathutil.rs:

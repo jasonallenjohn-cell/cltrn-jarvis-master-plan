@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K0RE — Competitive Landscape Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #000;
+            --gold: #D4AF37;
+            --silver: #98989D;
+            --white: #F5F5F7;
+            --card-bg: #1C1C1E;
+            --border-color: rgba(212, 175, 55, 0.2);
+            --border-color-hover: rgba(212, 175, 55, 0.6);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-mark {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .diamond {
+            width: 32px;
+            height: 32px;
+            background: var(--gold);
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--black);
+            font-size: 18px;
+            border-radius: 2px;
+        }
+
+        .diamond::before {
+            content: 'K';
+            transform: rotate(-45deg);
+        }
+
+        .nav-breadcrumb {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .nav-breadcrumb a {
+            color: var(--silver);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-breadcrumb a:hover {
+            color: var(--gold);
+        }
+
+        .confidential-badge {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 .gold-accent {
+            color: var(--gold);
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--silver);
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .hero .meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: var(--silver);
+            margin-top: 2rem;
+        }
+
+        /* Section Layout */
+        section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        section h2 {
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-button {
+            padding: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--white);
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button:hover {
+            border-color: var(--border-color-hover);
+            background: rgba(212, 175, 55, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(152, 152, 157, 0.05));
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Competitors Grid */
+        .competitors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .competitor-card {
+            background: linear-gradient(135deg, rgba(28, 28, 30, 0.8), rgba(28, 28, 30, 0.4));
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .competitor-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold);
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.15);
+            background: linear-gradient(135deg, rgba(28, 28, 30, 1), rgba(28, 28, 30, 0.6));
+        }
+
+        .competitor-header {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .competitor-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--black);
+            flex-shrink: 0;
+        }
+
+        .competitor-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .competitor-info .price {
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.95rem;
+            color: var(--silver);
+        }
+
+        .feature-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 0.6rem;
+        }
+
+        .strengths, .gaps {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+        }
+
+        .strengths h4, .gaps h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--silver);
+            margin-bottom: 0.5rem;
+        }
+
+        .strengths {
+            color: rgba(100, 200, 100, 0.8);
+        }
+
+        .gaps {
+            color: rgba(180, 140, 80, 0.8);
+        }
+
+        .threat-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+
+        .threat-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .threat-high {
+            background: rgba(220, 50, 50, 0.3);
+            color: #FF6B6B;
+            border: 1px solid rgba(220, 50, 50, 0.5);
+        }
+
+        .threat-medium {
+            background: rgba(220, 150, 50, 0.3);
+            color: #FFB347;
+            border: 1px solid rgba(220, 150, 50, 0.5);
+        }
+
+        .threat-low {
+            background: rgba(100, 180, 100, 0.3);
+            color: #51CF66;
+            border: 1px solid rgba(100, 180, 100, 0.5);
+        }
+
+        /* Feature Matrix */
+        .matrix-container {
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(28, 28, 30, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .feature-matrix th, .feature-matrix td {
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .feature-matrix th {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .feature-matrix td:first-child {
+            text-align: left;
+            background: rgba(212, 175, 55, 0.05);
+            font-weight: 500;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+
+        .feature-matrix tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .checkmark {
+            color: #51CF66;
+            font-weight: 700;
+        }
+
+        .xmark {
+            color: #FF6B6B;
+            font-weight: 700;
+        }
+
+        .partial {
+            color: #FFB347;
+            font-weight: 700;
+        }
+
+        /* Advantages Grid */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .advantage-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(152, 152, 157, 0.03));
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.25);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(152, 152, 157, 0.05));
+        }
+
+        .advantage-card h3 {
+            color: var(--gold);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .advantage-card p {
+            color: var(--silver);
+            line-height: 1.7;
+        }
+
+        /* Roadmap */
+        .roadmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .phase {
+            background: linear-gradient(135deg, rgba(28, 28, 30, 0.8), rgba(28, 28, 30, 0.4));
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            border-left: 4px solid var(--gold);
+        }
+
+        .phase h3 {
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+
+        .phase-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .phase-item::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            margin-top: 0.6rem;
+            flex-shrink: 0;
+        }
+
+        .phase-item-text {
+            flex: 1;
+        }
+
+        .phase-item-text strong {
+            display: block;
+            color: var(--white);
+            margin-bottom: 0.25rem;
+        }
+
+        .phase-item-text span {
+            color: var(--silver);
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--silver);
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-content p {
+            margin: 0.5rem 0;
+        }
+
+        .footer-content .credit {
+            color: var(--gold);
+            font-weight: 500;
+            margin-top: 1.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        section {
+            animation: slideUp 0.8s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            .header-container {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .nav-breadcrumb {
+                flex-basis: 100%;
+                font-size: 0.8rem;
+            }
+
+            .tabs {
+                grid-template-columns: 1fr;
+            }
+
+            .competitors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 3rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            section {
+                padding: 2.5rem 1rem;
+            }
+
+            section h2 {
+                font-size: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .feature-matrix {
+                font-size: 0.8rem;
+            }
+
+            .feature-matrix th, .feature-matrix td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .roadmap {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hidden content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo-mark">
+                <div class="diamond"></div>
+                <span style="font-weight: 600;">K0RE</span>
+            </div>
+            <nav class="nav-breadcrumb">
+                <a href="#market-map">Market Map</a>
+                <a href="#matrix">Feature Matrix</a>
+                <a href="#advantages">Advantages</a>
+                <a href="#roadmap">Roadmap</a>
+            </nav>
+            <div class="confidential-badge">CONFIDENTIAL — February 2026</div>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>K<span class="gold-accent">0RE</span> — Competitive Landscape Analysis</h1>
+        <p class="subtitle">Feature Aggregation & Market Positioning</p>
+        <div class="meta">
+            <span>15 Direct Competitors Analyzed</span>
+            <span>6 Market Categories</span>
+            <span>20+ Feature Vectors</span>
+        </div>
+    </div>
+
+    <!-- Section 1: Market Map -->
+    <section id="market-map">
+        <h2>Market Map</h2>
+        <p style="color: var(--silver); margin-bottom: 2.5rem;">Click to explore competitive landscape by category:</p>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="ai-life-os">
+                    AI Life OS & Assistants
+                </button>
+                <button class="tab-button" data-tab="meeting-intelligence">
+                    Meeting Intelligence
+                </button>
+                <button class="tab-button" data-tab="execution-skills">
+                    AI Execution & Skills
+                </button>
+                <button class="tab-button" data-tab="development-coaching">
+                    Personal Development
+                </button>
+                <button class="tab-button" data-tab="voice-ai">
+                    Voice & Conversation
+                </button>
+            </div>
+
+            <!-- AI Life OS Category -->
+            <div id="ai-life-os" class="tab-content active">
+                <div class="competitors-grid">
+                    <!-- Notion AI -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: linear-gradient(135deg, #fff, #f0f0f0); color: #000;">N</div>
+                            <div class="competitor-info">
+                                <h3>Notion AI</h3>
+                                <div class="price">$20/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Life OS</span>
+                        <ul class="feature-list">
+                            <li>Autonomous agents (20-min tasks)</li>
+                            <li>Multi-model choice (Claude, GPT-5.2, Gemini)</li>
+                            <li>Database-integrated memory</li>
+                            <li>Meeting transcription</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Workspace memory, model flexibility, massive user base</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Voice interface, meeting recording, skill marketplace, collective intelligence, life-wide memory</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-high">HIGH THREAT</span>
+                            <span style="font-size: 0.85rem;">Direct market overlap</span>
+                        </div>
+                    </div>
+
+                    <!-- Rewind AI -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #FF6B6B;">R</div>
+                            <div class="competitor-info">
+                                <h3>Rewind AI</h3>
+                                <div class="price">$19–20/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Life OS</span>
+                        <ul class="feature-list">
+                            <li>Records all screen/audio locally</li>
+                            <li>Searchable recall engine</li>
+                            <li>Instant summaries</li>
+                            <li>Privacy-first architecture</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Privacy-first local storage, passive recording, total recall</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>macOS only, no proactive suggestions, no execution, no voice personas, no skill system</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-medium">MEDIUM THREAT</span>
+                            <span style="font-size: 0.85rem;">Recording superiority</span>
+                        </div>
+                    </div>
+
+                    <!-- Google Personal Intelligence -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: linear-gradient(135deg, #4285F4, #EA4335);">G</div>
+                            <div class="competitor-info">
+                                <h3>Google Personal Intelligence</h3>
+                                <div class="price">Free</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Life OS</span>
+                        <ul class="feature-list">
+                            <li>Pulls from Gmail, Photos, YouTube history</li>
+                            <li>Personalized answers via Gemini</li>
+                            <li>Ecosystem integration</li>
+                            <li>Free tier with Google account</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Massive data pool, free, integrated across services</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Google lock-in, privacy concerns, no skill marketplace, no recording, no execution</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-high">HIGH THREAT</span>
+                            <span style="font-size: 0.85rem;">Data & reach advantage</span>
+                        </div>
+                    </div>
+
+                    <!-- Mem.ai -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #6366F1;">M</div>
+                            <div class="competitor-info">
+                                <h3>Mem.ai</h3>
+                                <div class="price">Free / $15/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Life OS</span>
+                        <ul class="feature-list">
+                            <li>Personal knowledge graph</li>
+                            <li>AI note synthesis</li>
+                            <li>Cross-device capture</li>
+                            <li>Relationship mapping</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Knowledge graph, relationship intelligence, capture ecosystem</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Limited execution, no voice interface, no meeting recording, no skill system</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-medium">MEDIUM THREAT</span>
+                            <span style="font-size: 0.85rem;">Memory competition</span>
+                        </div>
+                    </div>
+
+                    <!-- Lenovo Qira -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #FF6B35;">L</div>
+                            <div class="competitor-info">
+                                <h3>Lenovo Qira</h3>
+                                <div class="price">Bundled (Hardware)</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Life OS</span>
+                        <ul class="feature-list">
+                            <li>Device-native AI assistant</li>
+                            <li>Privacy-preserving on-device AI</li>
+                            <li>Hardware-integrated</li>
+                            <li>Snapdragon AI integration</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>On-device privacy, hardware integration, low latency</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Hardware-locked, limited model flexibility, no cross-platform, limited execution</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Hardware-specific</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meeting Intelligence Category -->
+            <div id="meeting-intelligence" class="tab-content">
+                <div class="competitors-grid">
+                    <!-- Otter.ai -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #FF8C42;">O</div>
+                            <div class="competitor-info">
+                                <h3>Otter.ai</h3>
+                                <div class="price">Free / $8.33–$30/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Meeting Intelligence</span>
+                        <ul class="feature-list">
+                            <li>Real-time transcription</li>
+                            <li>Slide capture in notes</li>
+                            <li>Conversational search</li>
+                            <li>Action item extraction</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Affordable, good real-time editing, slide capture</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Only 3 languages, no cross-channel synthesis, no execution, meeting-only</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Single-use focused</span>
+                        </div>
+                    </div>
+
+                    <!-- Fireflies.ai -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #4ECDC4;">F</div>
+                            <div class="competitor-info">
+                                <h3>Fireflies.ai</h3>
+                                <div class="price">Free / $10–$19/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Meeting Intelligence</span>
+                        <ul class="feature-list">
+                            <li>100+ language support</li>
+                            <li>Deep CRM integration (Salesforce, HubSpot)</li>
+                            <li>Unlimited transcription (paid)</li>
+                            <li>AI Assistant (AskFred)</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Best CRM integration, language coverage, team-friendly</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>No synthesis, no execution engine, no skill system, credit-gated AI</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-medium">MEDIUM THREAT</span>
+                            <span style="font-size: 0.85rem;">Sales-focused strength</span>
+                        </div>
+                    </div>
+
+                    <!-- Granola AI -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #8B4513;">G</div>
+                            <div class="competitor-info">
+                                <h3>Granola AI</h3>
+                                <div class="price">Free / $18/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Meeting Intelligence</span>
+                        <ul class="feature-list">
+                            <li>Bot-free transcription (local audio)</li>
+                            <li>Hybrid human-AI notes</li>
+                            <li>In-call AI chat</li>
+                            <li>Custom templates</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Privacy (no bot joining), hybrid note approach, in-call Q&A</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>No video recording, limited post-call automation, speaker attribution issues</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-medium">MEDIUM THREAT</span>
+                            <span style="font-size: 0.85rem;">Privacy + quality combo</span>
+                        </div>
+                    </div>
+
+                    <!-- Gong -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #0056B3;">G</div>
+                            <div class="competitor-info">
+                                <h3>Gong</h3>
+                                <div class="price">$18+/user/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Meeting Intelligence</span>
+                        <ul class="feature-list">
+                            <li>Conversation analytics for revenue teams</li>
+                            <li>Objection tracking</li>
+                            <li>Real-time coaching</li>
+                            <li>CRM automation</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Best-in-class sales coaching, pipeline insights, enterprise proven</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Sales-only, very expensive, feature bloat, no personal assistant</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Different market</span>
+                        </div>
+                    </div>
+
+                    <!-- Read.ai -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #1D4ED8;">R</div>
+                            <div class="competitor-info">
+                                <h3>Read.ai</h3>
+                                <div class="price">Free / $19.75–$29.75/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Meeting Intelligence</span>
+                        <ul class="feature-list">
+                            <li>Meeting summaries</li>
+                            <li>Engagement scoring</li>
+                            <li>Smart scheduling</li>
+                            <li>Cross-platform (Zoom, Teams, Meet)</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Engagement analytics, cross-platform support</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Meeting-only, no execution engine, no voice personas, no skill system</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Narrow scope</span>
+                        </div>
+                    </div>
+
+                    <!-- Meetily -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #FF6B9D;">M</div>
+                            <div class="competitor-info">
+                                <h3>Meetily</h3>
+                                <div class="price">Freemium</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Meeting Intelligence</span>
+                        <ul class="feature-list">
+                            <li>AI meeting transcription</li>
+                            <li>Action item automation</li>
+                            <li>Integration with productivity tools</li>
+                            <li>Team collaboration</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Simple workflow, action item automation</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>No voice, limited AI capabilities, no execution, basic features</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Early stage</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Execution & Skills Category -->
+            <div id="execution-skills" class="tab-content">
+                <div class="competitors-grid">
+                    <!-- OpenAI GPT Store -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #10A37F;">O</div>
+                            <div class="competitor-info">
+                                <h3>OpenAI GPT Store</h3>
+                                <div class="price">$20/month (ChatGPT Plus)</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Execution & Skills</span>
+                        <ul class="feature-list">
+                            <li>3M+ custom GPTs</li>
+                            <li>Agentic mini-apps with GPT-5.2</li>
+                            <li>Vertical AI niches</li>
+                            <li>Developer ecosystem</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Massive ecosystem, developer community, model power</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>No persistent memory, opaque revenue ($0.03/conversation), no voice/meeting, fragmented, no collective intelligence</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-high">HIGH THREAT</span>
+                            <span style="font-size: 0.85rem;">Scale & ecosystem</span>
+                        </div>
+                    </div>
+
+                    <!-- Sintra AI -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #9333EA;">S</div>
+                            <div class="competitor-info">
+                                <h3>Sintra AI</h3>
+                                <div class="price">$39–$97/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Execution & Skills</span>
+                        <ul class="feature-list">
+                            <li>12 specialized AI helpers</li>
+                            <li>Brain AI knowledge base</li>
+                            <li>90+ Power-Ups</li>
+                            <li>100+ languages</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Role-based AI employees, Brain AI memory, beginner-friendly</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>250 monthly credit limit, no voice, no meeting recording, credit limitations</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-medium">MEDIUM THREAT</span>
+                            <span style="font-size: 0.85rem;">Role-based concept</span>
+                        </div>
+                    </div>
+
+                    <!-- Motion -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #FF4500;">M</div>
+                            <div class="competitor-info">
+                                <h3>Motion</h3>
+                                <div class="price">$29–$39/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Execution & Skills</span>
+                        <ul class="feature-list">
+                            <li>AI calendar/scheduling</li>
+                            <li>AI task planner</li>
+                            <li>AI project manager</li>
+                            <li>AI Employees (Alfred, Chip)</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Calendar AI best-in-class, task prioritization, evolving to AI employees</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Poor mobile app (2.7/5), steep learning curve, no voice, no recording, no skill marketplace</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-medium">MEDIUM THREAT</span>
+                            <span style="font-size: 0.85rem;">Scheduling strength</span>
+                        </div>
+                    </div>
+
+                    <!-- Microsoft Copilot -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #00A4EF;">C</div>
+                            <div class="competitor-info">
+                                <h3>Microsoft Copilot Studio</h3>
+                                <div class="price">$30/user/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Execution & Skills</span>
+                        <ul class="feature-list">
+                            <li>Integrated across Office 365</li>
+                            <li>Meeting transcription in Teams</li>
+                            <li>Document generation</li>
+                            <li>Email drafting</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Deepest enterprise integration, huge install base, Office ecosystem</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>No personal life management, enterprise-only, no voice personas, no skill system, no collective intelligence</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-high">HIGH THREAT</span>
+                            <span style="font-size: 0.85rem;">Enterprise dominance</span>
+                        </div>
+                    </div>
+
+                    <!-- Poe -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #6C5CE7;">P</div>
+                            <div class="competitor-info">
+                                <h3>Poe</h3>
+                                <div class="price">Free / $20/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Execution & Skills</span>
+                        <ul class="feature-list">
+                            <li>Multi-model access (Claude, GPT, Gemini)</li>
+                            <li>Custom bot builder</li>
+                            <li>Conversation history</li>
+                            <li>Subscription model</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Multi-model access, custom bot builder, easy switching</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>No execution (output only), no meeting, no voice, no skill monetization, chat-only</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-medium">MEDIUM THREAT</span>
+                            <span style="font-size: 0.85rem;">Model flexibility</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Development Category -->
+            <div id="development-coaching" class="tab-content">
+                <div class="competitors-grid">
+                    <!-- Rocky.ai -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #E74C3C;">R</div>
+                            <div class="competitor-info">
+                                <h3>Rocky.ai</h3>
+                                <div class="price">~$15–$25/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Personal Development</span>
+                        <ul class="feature-list">
+                            <li>AI coaching conversations</li>
+                            <li>Goal tracking</li>
+                            <li>Habit building</li>
+                            <li>Journaling prompts</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Structured coaching, regular check-ins, habit tracking</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Coaching only, no meeting recording, no skill system, no execution</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Narrow scope</span>
+                        </div>
+                    </div>
+
+                    <!-- BetterUp -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #27AE60;">B</div>
+                            <div class="competitor-info">
+                                <h3>BetterUp</h3>
+                                <div class="price">~$300–500/user/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Personal Development</span>
+                        <ul class="feature-list">
+                            <li>Human + AI coaching</li>
+                            <li>Leadership development</li>
+                            <li>Mental fitness</li>
+                            <li>Career coaching</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Human coaching backed by AI, enterprise-proven, research-backed</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Extremely expensive, enterprise-only, no personal assistant, no execution</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Different market</span>
+                        </div>
+                    </div>
+
+                    <!-- Coachello.ai -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #F39C12;">C</div>
+                            <div class="competitor-info">
+                                <h3>Coachello.ai</h3>
+                                <div class="price">Freemium / Premium</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Personal Development</span>
+                        <ul class="feature-list">
+                            <li>AI coaching for health & fitness</li>
+                            <li>Personalized workout plans</li>
+                            <li>Nutrition guidance</li>
+                            <li>Progress tracking</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Domain-specific expertise, habit tracking, progress visualization</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Single-domain, no execution, no voice, limited scope, no meeting integration</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Niche vertical</span>
+                        </div>
+                    </div>
+
+                    <!-- Purpose App -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #8E44AD;">P</div>
+                            <div class="competitor-info">
+                                <h3>Purpose App</h3>
+                                <div class="price">Freemium</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Personal Development</span>
+                        <ul class="feature-list">
+                            <li>Goal-setting framework</li>
+                            <li>Life planning tools</li>
+                            <li>Reflection prompts</li>
+                            <li>Community support</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Structured frameworks, community aspect, reflection</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Limited AI, no automation, no voice, basic features, no execution</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Low-tech approach</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice & Conversation Category -->
+            <div id="voice-ai" class="tab-content">
+                <div class="competitors-grid">
+                    <!-- Hedy AI -->
+                    <div class="competitor-card">
+                        <div class="competitor-header">
+                            <div class="competitor-logo" style="background: #E91E63;">H</div>
+                            <div class="competitor-info">
+                                <h3>Hedy AI</h3>
+                                <div class="price">$9.99/month</div>
+                            </div>
+                        </div>
+                        <span class="category-tag">Voice & Conversation</span>
+                        <ul class="feature-list">
+                            <li>Voice-first AI assistant</li>
+                            <li>Conversational interface</li>
+                            <li>Personal productivity</li>
+                            <li>Natural interaction</li>
+                        </ul>
+                        <div class="strengths">
+                            <h4>⬆ Strengths to Replicate</h4>
+                            <p>Natural voice interaction, affordable, user-friendly</p>
+                        </div>
+                        <div class="gaps">
+                            <h4>⬇ K0RE Wins Here</h4>
+                            <p>Limited execution, no meeting recording, no skill system, early stage</p>
+                        </div>
+                        <div class="threat-indicator">
+                            <span class="threat-badge threat-low">LOW THREAT</span>
+                            <span style="font-size: 0.85rem;">Early stage</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: Feature Comparison Matrix -->
+    <section id="matrix">
+        <h2>Feature Comparison Matrix</h2>
+        <p style="color: var(--silver); margin-bottom: 2rem;">Comprehensive feature coverage across all competitors:</p>
+
+        <div class="matrix-container">
+            <table class="feature-matrix">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>K0RE</th>
+                        <th>Notion AI</th>
+                        <th>Rewind AI</th>
+                        <th>OpenAI Store</th>
+                        <th>Google PI</th>
+                        <th>Motion</th>
+                        <th>Granola</th>
+                        <th>Fireflies</th>
+                        <th>Otter.ai</th>
+                        <th>Gong</th>
+                        <th>Sintra</th>
+                        <th>Microsoft</th>
+                        <th>Rocky</th>
+                        <th>BetterUp</th>
+                        <th>Hedy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Multi-Model Access</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Persistent Memory</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                    </tr>
+                    <tr>
+                        <td>Voice Conversations</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Meeting Recording</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Whisper Coaching</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Skill Marketplace</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Document Generation (Excel, PDF, DOCX)</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>App Building</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Collective Intelligence</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Desktop App</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Mobile App</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Web App</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                    </tr>
+                    <tr>
+                        <td>Browser Extension</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Relationship Intelligence</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Real-Time Translation</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Custom Voice Personas</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Proactive Scheduling</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Financial Modeling</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>Domain-Specific Skills</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                    <tr>
+                        <td>White-Label Option</td>
+                        <td><span class="checkmark">✓</span></td>
+                        <td><span class="partial">◐</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                        <td><span class="xmark">✗</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Section 3: K0RE Competitive Advantages -->
+    <section id="advantages">
+        <h2>K0RE Competitive Advantages</h2>
+        <p style="color: var(--silver); margin-bottom: 2.5rem;">Unique differentiators no competitor currently matches:</p>
+
+        <div class="advantages-grid">
+            <div class="advantage-card">
+                <h3>Unified Intelligence Layer</h3>
+                <p>One platform spanning life management, work execution, meeting intelligence, real-time coaching, and personal development. No competitor covers all vectors simultaneously with deep integration.</p>
+            </div>
+
+            <div class="advantage-card">
+                <h3>Multi-Model Orchestration</h3>
+                <p>Users choose their AI backbone (Claude, GPT-5.2, Gemini) without vendor lock-in. Automatic cost optimization and model selection based on task complexity and user preference.</p>
+            </div>
+
+            <div class="advantage-card">
+                <h3>Skill Ecosystem + Marketplace</h3>
+                <p>Domain experts build, publish, and monetize specialized AI skills. Revenue sharing creates sustainable incentive for ecosystem growth. Goes beyond static GPTs toward true composable intelligence.</p>
+            </div>
+
+            <div class="advantage-card">
+                <h3>Collective Intelligence Network</h3>
+                <p>Learnings from every user interaction improve the platform for everyone. Anonymous skill sharing, knowledge aggregation, and community-driven continuous improvement unique to K0RE.</p>
+            </div>
+
+            <div class="advantage-card">
+                <h3>Voice-First with Meeting Recording</h3>
+                <p>Not just voice commands—full meeting intelligence with recording, transcription, real-time coaching whispers, speaker attribution, and relationship tracking across all conversations.</p>
+            </div>
+
+            <div class="advantage-card">
+                <h3>True Execution Engine</h3>
+                <p>Doesn't just suggest—creates, builds, and delivers. Generates spreadsheets, PDFs, Word documents, apps, financial models, deal memos, and directly executes on-system tasks without context switching.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Feature Aggregation Roadmap -->
+    <section id="roadmap">
+        <h2>Feature Aggregation Roadmap</h2>
+        <p style="color: var(--silver); margin-bottom: 2.5rem;">Strategic roadmap: what to replicate from competitors and when:</p>
+
+        <div class="roadmap">
+            <div class="phase">
+                <h3>Phase 1 (MVP)</h3>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Notion AI</strong>
+                        <span>Autonomous agents, multi-model selection, workspace memory architecture</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Granola AI</strong>
+                        <span>Bot-free recording, hybrid human-AI note synthesis, in-call Q&A</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Motion</strong>
+                        <span>AI scheduling engine, intelligent task prioritization, calendar parsing</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Hedy AI</strong>
+                        <span>Voice-first interface design, natural conversation flow</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase">
+                <h3>Phase 2 (Growth)</h3>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Fireflies.ai</strong>
+                        <span>100+ language support, deep CRM sync (Salesforce, HubSpot, Pipedrive)</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Sintra AI</strong>
+                        <span>Role-based AI employees, domain-specific helpers, knowledge base integration</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Gong</strong>
+                        <span>Sales coaching in real-time, objection tracking, deal prediction signals</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Rewind AI</strong>
+                        <span>Total recall search, advanced audio/video indexing, contextual retrieval</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase">
+                <h3>Phase 3 (Scale)</h3>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>OpenAI GPT Store Model</strong>
+                        <span>Skill marketplace with revenue sharing (~$0.05-0.10 per execution)</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>BetterUp Framework</strong>
+                        <span>Structured coaching methodology, multi-discipline coaching, accountability loops</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Microsoft Copilot Studio</strong>
+                        <span>Enterprise integration (Office 365, Azure), governance controls</span>
+                    </div>
+                </div>
+                <div class="phase-item">
+                    <div class="phase-item-text">
+                        <strong>Collective Intelligence</strong>
+                        <span>Community learning, skill sharing, network effects monetization</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p class="credit">Built for K0RE-0 (Cal) by Jason Allen John</p>
+            <p>376 Source Documents Synthesized • 28-Section Master Build Plan</p>
+            <p style="margin-top: 2rem; font-size: 0.85rem;">This analysis represents the competitive landscape as of February 2026. Market conditions evolve rapidly. Features, pricing, and competitive positioning subject to change.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.getAttribute('data-tab');
+
+                // Remove active class from all buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+
+                // Remove active class from all content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                // Add active class to corresponding content
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Smooth scroll to sections
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.competitor-card, .advantage-card, .phase').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
